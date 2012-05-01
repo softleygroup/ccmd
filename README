@@ -1,0 +1,9 @@
+
+Linux
+-----
+Running make in src/ compliles the static library libccmd.a in bin/linux
+
+Mac OS X
+--------
+XCode project file in build/macosx 
+

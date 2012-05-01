@@ -1,0 +1,4 @@
+Calcium			Ca	40.0	1	Yes	0.05	Yes	0.03	White	Yes
+Ammonia-d3		ND3	20.0	1	No	0.0	No	0.0	Blue	No	
+CalciumFluoride		CaF	59.0	1	No	0.0	No	0.0	Green	No
+Xenon			Xe	130.0	1	No	0.0	No	0.0	Red	No
