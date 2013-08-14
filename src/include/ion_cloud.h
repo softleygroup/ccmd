@@ -13,7 +13,8 @@
 
 class Ion;
 class Ion_trap;
-class Hist3D;
+class ImageCollection;
+class IonHistogram;
 class Cloud_params;
 class Vector3D;
 class Ion_type;
@@ -67,18 +68,25 @@ public:
     
     friend std::ostream& operator<<(std::ostream& os, const Ion_cloud& ic);
     
-    void update_position_histogram(Hist3D&) const;
+    void update_position_histogram(ImageCollection&) const;
+    void update_energy_histogram(IonHistogram&) const;
     
     // changes one ion from one type to another, returns true if successful
     bool change_ion(const std::string& name_in, const std::string& name_out);
     
+    void startStats() {runStats = true;}
+    void stopStats() {runStats = false;}
+    void updateStats();
+    void saveStats(std::string basePath) const;
 private:
     const Ion_trap* trap;
     const Cloud_params* cloud_params;
     friend class Coulomb_force;
     
     typedef std::vector<Ion*> Ion_ptr_vector;
-    Ion_ptr_vector ion_vec;    
+    Ion_ptr_vector ion_vec;
+    
+    bool runStats;
     
     void add_ion(Ion* ion_ptr) { ion_vec.push_back(ion_ptr); }
     

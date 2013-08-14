@@ -8,7 +8,7 @@
 #include <iostream>
 #include <cmath>
 
-struct Vector3D {
+class Vector3D {
 public:
     double x,y,z;
 

@@ -12,7 +12,7 @@ Pulsed_trap::Pulsed_trap(const Trap_params& params)
     update_trap_params();
     
     // Pulse parameters currently hardcoded
-    tau = 0.1; 
+    tau = 0.226; 
     pulse_height = v_rf;
     
     pulse_shape();

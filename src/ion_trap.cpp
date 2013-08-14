@@ -6,11 +6,10 @@
 
 #include "ccmd_sim.h"
 
-#include <boost/math/constants/constants.hpp>
 #include <iostream>
 #include <cmath>
 
-const double Ion_trap::pi = boost::math::constants::pi<double>();
+const double Ion_trap::pi = 3.141592653589793238462643383279502884;
 const double Ion_trap::epsilon_0 = 8.85418781762e-12;
 const double Ion_trap::electron_charge = 1.60217733e-19;
 const double Ion_trap::u_mass = 1.6605402e-27;

@@ -4,6 +4,8 @@
 
 #include "ion.h"
 #include "ccmd_sim.h"
+#include "IonHistogram.h"
+#include "Stats.h"
 
 #include <stdexcept>
 
@@ -68,5 +70,29 @@ std::string Ion::formula() const
 std::string Ion::color() const 
 { 
     return ion_type->color; 
+}
+
+const void Ion::recordKE(IonHistogram& ionHistogram)
+{
+    double energy;
+    double mon2 = 0.5 * ion_type->mass;
+    //total
+    energy = mon2 * vel.norm_sq();
+    ionHistogram.addIon(name() + "_total", energy);
+    //x - directed
+    energy = mon2 * v('x') * v('x');
+    ionHistogram.addIon(name() + "_x", energy);
+    //y - directed
+    energy = mon2 * v('y') * v('y');
+    ionHistogram.addIon(name() + "_y", energy);
+    //z - directed
+    energy = mon2 * v('z') * v('z');
+    ionHistogram.addIon(name() + "_z", energy);
+}
+
+void Ion::updateStats()
+{
+    posStats.append(pos);
+    velStats.append(vel*vel);
 }
 

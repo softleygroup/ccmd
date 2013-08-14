@@ -7,11 +7,14 @@
 #include "ccmd_sim.h"
 #include "ion.h"
 #include "vector3D.h"
-#include "hist3D.h"
+#include "ImageCollection.h"
+#include "IonHistogram.h"
+#include "Stats.h"
 
 #include <functional>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <map>
@@ -81,6 +84,8 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
         // move cloud centre to the origin
         Vector3D to_origin = -get_cloud_centre( *this );
         move_centre(to_origin);
+        
+        runStats = false;
     }
 }
 
@@ -267,23 +272,83 @@ double Ion_cloud::coulomb_energy() const
     return e;
 }
 
-void Ion_cloud::update_position_histogram(Hist3D& h) const
+void Ion_cloud::updateStats()
 {
-    for (int i=0; i<ion_vec.size(); ++i) {
-        if (ion_vec[i]->visible) {
-            Vector3D posn = ion_vec[i]->r();
-            Vector3D rotated_pos;
-            
-            // transform coordinates so that histogram xy axes are at 
-            // 45 degrees to the trap xy axes. This is convenient for 
-            // calculating a view between the electrodes of the trap
-            rotated_pos.x = (posn.x+posn.y)/sqrt(2.0);
-            rotated_pos.y = (posn.x-posn.y)/sqrt(2.0);
-            rotated_pos.z = posn.z;
-            h.update( rotated_pos );
-         }
+    typedef std::vector<Ion*>::const_iterator ion_itr;
+    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    {
+        (*ion)->updateStats();
     }
-    return;
+}
+
+void Ion_cloud::saveStats(std::string basePath) const {
+    std::string fileEnding = "_stats.dat";
+    std::string fileName;
+    std::string filerow;
+    Stats<Vector3D> energy;
+    Stats<Vector3D> pos;
+    Vector3D avg_energy, var_energy, avg_pos, var_pos;
+    double mon2;
+    
+    typedef std::map <std::string, std::string> FileText;
+    FileText fileContents;
+    
+    typedef std::vector<Ion*>::const_iterator ion_itr;
+    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    {
+        energy = (*ion)->velStats;
+        pos = (*ion)->posStats;
+        mon2 = ((*ion)->mass)/2;
+        avg_energy = energy.average();
+        var_energy = energy.variance();
+        avg_pos = pos.average();
+        var_pos = pos.variance();
+        
+        std::ostringstream strs;
+        strs << avg_energy[0]*mon2 << "\t" << var_energy[0]*mon2 << "\t";
+        strs << avg_energy[1]*mon2 << "\t" << var_energy[1]*mon2 << "\t";
+        strs << avg_energy[2]*mon2 << "\t" << var_energy[2]*mon2 << "\t";
+        strs << avg_pos[0] << "\t" << var_pos[0] << "\t";
+        strs << avg_pos[1] << "\t" << var_pos[1] << "\t";
+        strs << avg_pos[2] << "\t" << var_pos[2] << "\n";
+        filerow = strs.str();
+        fileContents[(*ion)->name()] += filerow;
+    }
+    
+    std::string header="#<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)\n";
+    for (FileText::iterator file=fileContents.begin(); file!=fileContents.end(); ++file)
+    {
+        fileName = basePath + file->first + fileEnding;
+        std::ofstream fileStream(fileName.c_str());
+        fileStream << header;
+        fileStream << file->second;
+        fileStream.close();
+    }
+    
+}
+
+void Ion_cloud::update_energy_histogram(IonHistogram& h) const
+{
+    typedef std::vector<Ion*>::const_iterator ion_itr;
+    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    {
+        (*ion)->recordKE(h);
+    }
+}
+
+void Ion_cloud::update_position_histogram(ImageCollection& h) const
+{
+    Vector3D posn;
+    Vector3D rotated_pos;
+    typedef std::vector<Ion*>::const_iterator ion_itr;
+    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    {
+        posn = (*ion)->r();
+        rotated_pos.x = (posn.x+posn.y)/sqrt(2.0);
+        rotated_pos.y = (posn.x-posn.y)/sqrt(2.0);
+        rotated_pos.z = posn.z;
+        h.addIon((*ion)->name(), rotated_pos);
+    }
 }
 
 void Ion_cloud::scale(double scale_factor)

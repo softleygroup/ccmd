@@ -2,10 +2,13 @@
 #define CCMD_ion_h
 
 #include "stochastic_heat.h"
+#include "Stats.h"
 
 class Vector3D;
 class Ion_trap;
 class Ion_type;
+class IonHistogram;
+template <class T> class Stats;
 
 // Base class providing interface for ion types
 class Ion {
@@ -56,6 +59,14 @@ protected:
     double mass;
     int charge;
     bool visible;
+    
+    const void recordKE(IonHistogram& ionHistogram);
+    
+    // Ion statistics
+    Stats<Vector3D> posStats;
+    Stats<Vector3D> velStats;
+    void updateStats();
+    void resetStats();
     
 private:
     Vector3D newion_pos();

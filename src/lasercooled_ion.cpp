@@ -53,7 +53,7 @@ void Lasercooled_ion::velocity_scale(double dt)
     // Note that this routine is called with dt/2, so use 
     // of "dt" referring to the complete timestep requires
     // multiplication by 2.
-    double two_dt = 2.0*dt;
+    // double two_dt = 2.0*dt;
 
     // Eqn. 3.6, undo friction term
     Vector3D friction = get_friction();

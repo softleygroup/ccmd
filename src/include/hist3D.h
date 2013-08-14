@@ -65,7 +65,8 @@ private:
 
 };
 
-struct histPixel {
+class histPixel {
+    public:
     int x;
     int y;
     double value;

@@ -36,7 +36,8 @@ Trap parameter files are assumed to be of the form:
 3.85e6		//	freq
 -----------------------------------------------------------------*/
 
-struct Trap_params {
+class Trap_params {
+public:
     Trap_params(const std::string& file_name=default_trap_file);
 
     // Radiofrequency parameters
@@ -68,7 +69,8 @@ private:
  5              //	Respa inner loop steps
 -----------------------------------------------------------------*/
 
-struct Integration_params {
+class Integration_params {
+public:
     Integration_params(const std::string& file_name = default_integrator_file);
     
     double time_step;       // Units are 2/Omega = 1/(pi*f))
@@ -87,7 +89,8 @@ private:
     std::string static default_integrator_file;
 };
 
-struct Ion_type {
+class Ion_type {
+    public:
     std::string name;       // Name to call ion
     std::string formula;    // Chemical formula
     bool visible;           // Visibility in camera image
@@ -134,7 +137,8 @@ struct Ion_type {
 
 -----------------------------------------------------------------*/
 
-struct Cloud_params {
+class Cloud_params {
+public:
     Cloud_params();
     Cloud_params(const std::string& numbers_file,
                  const std::string& types_file = ion_types_file);
