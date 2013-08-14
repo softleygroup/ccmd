@@ -33,15 +33,14 @@ CPPFLAGS += -O3 -fPIC -c
 
 all: $(program_NAME)
 
-
 $(program_NAME): $(program_OBJS)
 	ar -rcs $@ $^
 
-$(BUILD_DIR)bodysystemcuda.o: bodysystemcuda.cu bodysystemcuda.cpp include/bodysystemcuda.h
-	$(NVCC_PATH)/nvcc -O3 --include-path $(CUTIL_LIB) -c bodysystemcuda.cu -o $(BUILD_DIR)bodysystemcuda.o 
-
 $(BUILD_DIR)%.o : %.cpp
 	$(CXX) $< -o $@ $(CPPFLAGS) $(LDFLAGS)
+
+$(BUILD_DIR)bodysystemcuda.o: bodysystemcuda.cu bodysystemcuda.cpp include/bodysystemcuda.h
+	$(NVCC_PATH)/nvcc -O3 --include-path $(CUTIL_LIB) -c bodysystemcuda.cu -o $(BUILD_DIR)bodysystemcuda.o 
 
 clean:
 	@- $(RM) $(program_NAME)

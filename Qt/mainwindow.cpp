@@ -1,23 +1,25 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-//#include "../../Code/ccmd/CCMD/CCMD/Ion_trap.h"
-//#include "../../Code/ccmd/CCMD/CCMD/ion_cloud.h"
-//#include "../../Code/ccmd/CCMD/CCMD/integrator.h"
-
 #include "ccmd_sim.h"
 #include "ion_trap.h"
 #include "ion_cloud.h"
 
-//#include "integrator.h"
-#include "cuda_integrator.h"
+#include "integrator.h"
+//#include "cuda_integrator.h"
 
 #include "hist3D.h"
 #include "ccmd_image.h"
 
+#include "trap_param_model.h"
+#include "trap_param_delegate.h"
+
+#include <QTreeView>
 #include <QDebug>
 #include <QImage>
 #include <QFileDialog>
+
+void setup_trap_treeView(QTreeView* treeView, Trap_param_model* trapModel);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,9 +27,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     connect( ui->action_Exit, SIGNAL(triggered()), this, SLOT(close()) );
+
     ui->action_Save_image->setEnabled(false);
 
     std::string path_to_config = "../config/";
+    //std::string path_to_config = "/Users/mtb/Develop/ccmd/config/";
     std::string trap_param_file = path_to_config + "trap_config.txt";
     std::string ion_types_file = path_to_config + "ion_types.txt";
     std::string cloud_param_file = path_to_config + "ion_numbers.txt";
@@ -45,12 +49,22 @@ MainWindow::MainWindow(QWidget *parent) :
     cloud = new Ion_cloud(*trap, *cloud_params);
 
     // Construct integrator
-    //integrator = new RESPA_integrator(*trap, *cloud, *integrator_params);
-    integrator = new CUDA_integrator(*trap, *cloud, *integrator_params);
+    integrator = new RESPA_integrator(*trap, *cloud, *integrator_params);
+    //integrator = new CUDA_integrator(*trap, *cloud, *integrator_params);
 
     // Construct histogram
     hist = new Hist3D;
     hist->set_bin_size(0.1);
+
+    microscope_params = new Microscope_params();
+
+    /*
+    //  change all Ca to Xe
+    while ( cloud->change_ion("calcium", "xenon") )
+    {
+        qDebug() << "Ion changed!\n";
+    }
+    */
 
     // Update GL display
     setParticles(*cloud);
@@ -77,14 +91,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     statProgress->hide();
 
-    // Set trap parameter spin boxes
-    ui->vrf_spinBox->setValue( trap_params->v_rf );
-    //ui->vrf_spinBox->setAlignment(Qt::AlignRight);
-    ui->vend_spinBox->setValue( trap_params->v_end );
-
-    ui->Trap_groupBox->setLayout(ui->TrapParamLayout);
-
     statusBar()->showMessage("Initialised",1000);
+
+    // Tree view and model for trap parameters
+    trapModel = new Trap_param_model( *trap_params );
+    setup_trap_treeView(ui->trap_treeView, trapModel);
+    connect(trapModel,SIGNAL(parameters_changed()),
+            this,SLOT(sim_parameters_changed()));
 }
 
 MainWindow::~MainWindow()
@@ -133,7 +146,6 @@ void MainWindow::startSim()
 
         qApp->processEvents();
         ++time;
-        //qDebug() << time++ << '\n';
     }
 
 }
@@ -156,7 +168,11 @@ void MainWindow::update_ccdImage()
         statLabel->setText("Generating image");
         statProgress->show();
 
+        // Compute new image from histrogram data
         Microscope_image mImage(ccdImage.width(),ccdImage.height(), *hist);
+        //mImage.set_params(*microscope_params);
+        //qApp->processEvents();
+
         while ( !mImage.is_finished() ) {
                    mImage.draw();
                    statProgress->setValue( mImage.get_progress() );
@@ -198,19 +214,6 @@ void MainWindow::on_UpdateImage_button_clicked()
     update_ccdImage();
 }
 
-void MainWindow::on_vrf_spinBox_valueChanged(double arg1)
-{
-    trap_params->v_rf = ui->vrf_spinBox->value();
-    trap->update_trap_params();
-    cloud->update_params();
-}
-
-void MainWindow::on_vend_spinBox_valueChanged(double arg1)
-{
-    trap_params->v_end = ui->vend_spinBox->value();
-    trap->update_trap_params();
-    cloud->update_params();
-}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -248,3 +251,43 @@ void MainWindow::on_action_Save_image_triggered()
     saveImage();
 }
 
+void setup_trap_treeView(QTreeView* treeView, Trap_param_model* trapModel)
+{
+    // register model
+    treeView->setModel(trapModel);
+
+    // use custom delegate to edit parameters
+    treeView->setItemDelegate(new Trap_param_delegate(treeView) );
+
+    // expand, resize to each column, and then collapse
+    treeView->expandAll();
+    for (int column = 0; column < trapModel->columnCount(); ++column)
+        treeView->resizeColumnToContents(column);
+    treeView->collapseAll();
+    treeView->expandToDepth(0);
+
+    treeView->header()->setMovable(false);
+    treeView->setAnimated(true);
+    //treeView->setAlternatingRowColors(true);
+}
+
+void MainWindow::sim_parameters_changed()
+{
+    trap->update_trap_params();
+    cloud->update_params();
+}
+
+void MainWindow::on_ResetHistogram_button_clicked()
+{
+    hist->reset();
+}
+
+void MainWindow::on_w0_doubleSpinBox_valueChanged(double arg1)
+{
+    microscope_params->w0 = ui->w0_doubleSpinBox->value();
+}
+
+void MainWindow::on_z0_doubleSpinBox_valueChanged(double arg1)
+{
+    microscope_params->z0 = ui->z0_doubleSpinBox->value();
+}

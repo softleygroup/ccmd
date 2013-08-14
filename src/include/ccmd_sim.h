@@ -1,9 +1,13 @@
 //
 //  ccmd_sim.h
-//  CCMD
 //
-//  Created by Martin Bell on 16/04/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+
+// 
+// These classes contain parameters which are used to define the 
+// molecular dynamics simulation.
+//
+// Improvments: use XML to store/load parameters
+//              simulation parent class
 //
 
 #ifndef CCMD_ccmd_sim_h
@@ -14,6 +18,23 @@
 #include <map>
 
 #include <stdexcept>
+
+/*-----------------------------------------------------------------
+Trap_params: this struct is constructed by specifying a text file
+             containing the ion trap parameters.
+
+To do: implement pulsed trap type (currently only cosine defined
+       in constructor)
+ 
+Trap parameter files are assumed to be of the form:
+ 
+200.0		//	Vrf 
+2.0         //	Vend
+0.342		//	eta
+3.5e-3		//	r0
+2.75e-3		//	z0
+3.85e6		//	freq
+-----------------------------------------------------------------*/
 
 struct Trap_params {
     Trap_params(const std::string& file_name=default_trap_file);
@@ -37,15 +58,29 @@ private:
 };
 
 
+/*-----------------------------------------------------------------
+ Integration_params: this struct is constructed by specifying a text 
+ file containing the parameters for the Integrator class.
+ 
+ Integrator parameter files are assumed to be of the form:
+ 
+ 0.1			//	Timestep
+ 5              //	Respa inner loop steps
+-----------------------------------------------------------------*/
+
 struct Integration_params {
     Integration_params(const std::string& file_name = default_integrator_file);
     
     double time_step;       // Units are 2/Omega = 1/(pi*f))
     
-    // RESPA algorithm inner loop number 
+    // respa_steps == RESPA algorithm inner loop number 
     //
-    // respa_steps == 1 is equivalent to a velocity Verlet or
-    // Leapfrog algorithm, modified for friction
+    // respa_steps == 1 is equivalent to a Velocity Verlet 
+    // or Leapfrog algorithm
+    //
+    // See: M. Tuckerman, B. J. Berne and G. J. Martyna
+    //      J. Chem. Phys. 92, 1990 (1992)
+    // 
     int respa_steps; 
     
 private:
@@ -53,7 +88,6 @@ private:
 };
 
 struct Ion_type {
-    
     std::string name;       // Name to call ion
     std::string formula;    // Chemical formula
     bool visible;           // Visibility in camera image
@@ -70,30 +104,56 @@ struct Ion_type {
     
     // Comparison operator needed for map
     bool operator<(const Ion_type& rhs) const
-    { 
+    {
+        // compares by ion name
         return this->name < rhs.name;
     }
-
 };
 
-// Functor to compare Ion_type pointer names 
-struct ptr_name_less_than {
-    bool operator()(const Ion_type* lhs, const Ion_type* rhs) const
-    {
-        return lhs->name < rhs->name;
-    }
-};
+/*-----------------------------------------------------------------
+ Cloud_params: this struct is constructed by specifying two text 
+              files, 
+ 
+ File 1: contains numbers of each ion type in the cloud (required)
+
+ Assumed to be in the format (e.g.): 
+ 
+ 200 Ca
+ 100 Xe
+ 50 ND3
+ 
+ File 2: contains the ion type definitions (optional)
+ 
+ Types assumed to be in the format:
+ 
+ Name Formula Mass Charge Laser-cooled? Beta Heating? ...
+    Recoil Colour Visible?
+ 
+ e.g.
+ Calcium   Ca	40.0	1	Yes	 0.05	Yes	 0.03	White	Yes
+
+-----------------------------------------------------------------*/
 
 struct Cloud_params {
     Cloud_params();
-    Cloud_params(const std::string& numbers_file_name,
-                 const std::string& types_file_name=ion_types_file);
+    Cloud_params(const std::string& numbers_file,
+                 const std::string& types_file = ion_types_file);
     
-    std::vector<Ion_type> ion_types;
+    typedef std::vector<Ion_type> Ion_type_container;
+    Ion_type_container ion_types;
     
-    // Store ion numbers in a map ordered by names    
+    // Functor to compare Ion_type pointer names 
+    struct ptr_name_less_than {
+        bool operator()(const Ion_type* lhs, const Ion_type* rhs) const
+        {
+            return lhs->name < rhs->name;
+        }
+    };
+    
+    const Ion_type& get_Ion_type_by_name(const std::string&) const;
+    
+    // store ion numbers in a map ordered by names    
     std::map<Ion_type*,int,ptr_name_less_than> ion_numbers;
-    //std::map<Ion_type*,int> ion_numbers;
     
 private:
     static std::string ion_types_file;
@@ -103,6 +163,10 @@ private:
     void get_ion_numbers(const std::string& file_name);
 };
         
+//
+// *** Not currently implemented ***
+// Class designed to store simulation parameters
+//
 class ccmd_sim {
     double time_end;
         
@@ -113,23 +177,19 @@ class ccmd_sim {
 public:
     ccmd_sim();
     
-    void get_trap_params(Trap_params& params) const
-    {
+    void get_trap_params(Trap_params& params) const {
         params = pTrap;
     }
     
-    void set_trap_params(const Trap_params& params)
-    {
+    void set_trap_params(const Trap_params& params) {
         pTrap = params;
     }
     
-    void get_integrator_params(Integration_params& params) const
-    {
+    void get_integrator_params(Integration_params& params) const {
         params = pIntegrator;
     }
     
-    void set_integrator_params(const Integration_params& params)
-    {
+    void set_integrator_params(const Integration_params& params) {
         pIntegrator = params;
     }
     

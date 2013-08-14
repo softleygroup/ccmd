@@ -1,6 +1,11 @@
+//
+//  ion.cpp
+//
 
 #include "ion.h"
 #include "ccmd_sim.h"
+
+#include <stdexcept>
 
 Ion::Ion(const Ion_type& type) 
     : ion_type(&type) 
@@ -15,7 +20,6 @@ void Ion::update_ion_type()
     visible = ion_type->visible;
 }
 
-
 void Ion::drift(double dt)
 {
     pos += vel*dt;
@@ -27,28 +31,27 @@ inline void Ion::kick(double dt,const Vector3D& f)
     vel += f*time_over_mass;
 }
 
-// *** Modify or remove these functions ***
 double Ion::r(char coord) const
 {
+    // get position along a specified coordinate
 	switch (coord) {
 		case 'x': return pos[0];
 		case 'y': return pos[1];
 		case 'z': return pos[2];
-		default: 
-			// FUTURE: Throw an exception
-			return 999.9;
+		default:
+            throw std::runtime_error("Ion: r(x|y|z) invalid coordinate used" );
 	}
 } 
 
 double Ion::v(char coord) const
 {
+    // get velocity along a specified coordinate
 	switch (coord) {
 		case 'x': return vel[0];
 		case 'y': return vel[1];
 		case 'z': return vel[2];
 		default: 
-			// FUTURE: Throw an exception
-			return 999.9;
+            throw std::runtime_error("Ion: v(x|y|z) invalid coordinate used" );
 	}
 } 
 

@@ -1,9 +1,52 @@
+--------------------------------------------------------------------------
+   README for CCMD (Coulomb Crystal Molecular Dynamics)
+--------------------------------------------------------------------------
 
-Linux
------
+The CCMD (Coulomb Crystal Molecular Dynamics) code provides a framework for performing molecular dynamics simulations of trapped ion clouds. 
+
+Requirements (for complete functionality):
+
+Qt/QtSDK
+Boost
+CUDA library
+CUDA SDK
+
+**********
+Compiling
+**********
+
+Linux:
+------
 Running make in src/ compliles the static library libccmd.a in bin/linux
+Test programs can be compiled by running make in the Examples/ directory
+Executables are found in bin/linux
 
-Mac OS X
---------
+Mac OS X:
+---------
 XCode project file in build/macosx 
+Executables are found in bin/macosx
+
+Qt GUI:
+-------
+Linux: Run make, followed by qmake in Qt/
+Mac: Build in QtCreator
+
+********************
+Directory structure:
+********************
+
+bin/
+   linux/	libccmd.a and compiled examples for linux
+   mac/		libccmd.a compiled for the os x
+
+examples/	source code for simple program showing image generation
+   timing/	source code for program to compare CUDA timings	
+
+src/		source code and header files
+   include/	header files for public interfaces
+
+docs/		User guide and video showing GUI features 
+
+Qt/		GUI source code
+
 

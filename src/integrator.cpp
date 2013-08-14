@@ -1,9 +1,5 @@
 //
 //  integrator.cpp
-//  CCMD
-//
-//  Created by Martin Bell on 13/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #include <iostream>
@@ -18,9 +14,9 @@ Integrator::Integrator(Ion_trap& it, Ion_cloud& ic,
                        const Integration_params& params)
     : trap(&it), ions(&ic), f_coulomb(ic) 
 {
+    // get Coulomb forces on construction
     f_coulomb.update();
 }
 
-Integrator::~Integrator() {
-}
+Integrator::~Integrator() {}
 

@@ -7,21 +7,23 @@ class Vector3D;
 class Ion_trap;
 class Ion_type;
 
-// Base class for ion types
+// Base class providing interface for ion types
 class Ion {
 public:
     Ion(const Ion_type& type); 
 
-    virtual ~Ion() {};
+    virtual ~Ion() {}
 	
     virtual void update_ion_type();
     virtual void update_trap_force() {}
 
-    // Manipulator functions
+    // shifts ion position
     void move(const Vector3D& move_va) { pos += move_va; }
-
+    
+    // free flight 
     void drift(double dt);
 
+    // velocity modifying functions
     virtual void kick(double dt) {}
     virtual void kick(double dt, const Vector3D& f);
     virtual void velocity_scale(double dt) {}
@@ -30,7 +32,7 @@ public:
     void set_position(const Vector3D& r) { pos = r; }
     void set_velocity(const Vector3D& v) { vel = v; }
 
-    // Accessor functions
+    // accessor functions
     Vector3D r() const { return pos; } 
     double r(const char ch) const; 
     double r(int i) const { return pos[i]; } 
@@ -45,6 +47,8 @@ public:
     std::string formula() const;
     std::string color() const;
 
+    const Ion_type& get_type() const {return *ion_type; }
+    
 protected:  
     const Ion_type* ion_type;
     Vector3D pos;
@@ -60,7 +64,10 @@ private:
     friend class Ion_cloud;
 };
 
-
+//
+// Trapped-but-not-laser-cooled ion class. This class is used to model
+// sympathetically-cooled ions
+//
 class Trapped_ion : public Ion {
 public:
     virtual void kick(double dt);
@@ -82,7 +89,11 @@ private:
     friend class Ion_cloud;
 };
 
-
+//
+// Laser-cooled ion class. Heating term arising from photon
+// recoil is implemented as a Langevin process with a Gaussian
+// momentum distribution.
+//
 class Lasercooled_ion : public Trapped_ion {
 public:
     void kick(double dt);
@@ -95,7 +106,11 @@ protected:
     virtual void update_ion_type();
 private:
     double beta;
+    
+    // photon recoil heating
     Stochastic_heat heater;
+
+    Vector3D get_friction() const;
 
     friend class Lasercooled_ion_cloud;
     friend class Ion_cloud;

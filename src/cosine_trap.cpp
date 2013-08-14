@@ -1,9 +1,5 @@
 //
 //  cosine_trap.cpp
-//  CCMD
-//
-//  Created by Martin Bell on 02/03/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #include "ion_trap.h"
@@ -30,6 +26,7 @@ void Cosine_trap::evolve(double dt)
 
 Vector3D Cosine_trap::force_now(const Vector3D& r, double a, double q) const
 {
+    // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);
     f.x *= +2*q*cos_phase - a;
     f.y *= -2*q*cos_phase - a;

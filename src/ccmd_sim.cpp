@@ -1,49 +1,44 @@
 //
 //  ccmd_sim.cpp
-//  CCMD
-//
-//  Created by Martin Bell on 16/04/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #include "ccmd_sim.h"
-//#include "../ion_cloud.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include <cctype>
 
 using namespace std;
 
-// Default trap parameters taken from file
+// default trap parameters taken from file
 string Trap_params::default_trap_file = "../../../config/trap_config.txt";
 
-// Path to file containing ion type definitions
+// path to file containing ion type definitions
 std::string Cloud_params::ion_types_file = "../../../config/ion_types.txt";
 
-// Path to file containing ion numbers
+// path to file containing ion numbers
 std::string Cloud_params::ion_numbers_file= "../../../config/ion_numbers.txt";
 
-// Path to file containing integration parameters
+// path to file containing integration parameters
 std::string Integration_params::default_integrator_file = "../../../config/integrator.txt";
 
 
-std::string console_divide_line = 
-            "--------------------------------------------------";
+std::string console_divide_line = "--------------------------------------------------";
 
 bool is_yes_or_no(const std::string& test_string);
 void print_ion_numbers(std::pair<const Ion_type*,int> ion_type_no );
 void print_ion_type(const Ion_type& ion);
 
-// This function tries to read in a parameter of class T and 
-// throws a runtime_error if the input stream fails
+
 template <class T> 
 T read_parameter(istream& iss)
 {
-    // Read numeric value
+    // this function template tries to read in a parameter of class T 
+    // and throws a runtime_error if the input stream fails
+    
+    // reads numeric value
     T parameter_read;
     iss >> parameter_read;
     if ( !iss ) {
@@ -52,16 +47,20 @@ T read_parameter(istream& iss)
         throw runtime_error( error_msg.str() );
     }
     
-    // Ignore rest of the line
+    // ignores rest of the line
     string line;
     getline(iss, line);
     
     return parameter_read;
 }
 
+
 Trap_params::Trap_params(const std::string& file_name)
 {
-    // Try to load trap parameters from file
+    // constructor throws runtime_error if problem opening
+    // file or reading parameters
+    
+    // tries to load trap parameters from file
     ifstream ifs( file_name.c_str() );
     if ( !ifs ) {
         ifs.close();
@@ -73,7 +72,7 @@ Trap_params::Trap_params(const std::string& file_name)
         
     wave = Cosine;      // Cosine trap only for the moment
     
-    // Read in parameters from an ordered text file with each
+    // reads in parameters from an ordered text file with each
     // line written in the form: "value other_characters"
     // and ignoring the text
     try {
@@ -92,6 +91,8 @@ Trap_params::Trap_params(const std::string& file_name)
 }
 
 struct Compare_ion_names {
+    // compare Ion_types class by alphabetic ordering on name field
+
     Compare_ion_names(const Ion_type& new_type) 
         : rhs(new_type) {}
     bool operator()(const Ion_type& lhs) const 
@@ -107,6 +108,8 @@ private:
 };
 
 struct Compare_ion_formula {
+    // compare Ion_types class by alphabetic ordering on formula field
+
     Compare_ion_formula(const Ion_type& new_type) 
         : rhs(new_type) {}
     bool operator()(const Ion_type& lhs) const 
@@ -117,16 +120,16 @@ private:
     Ion_type rhs;
 };
 
-// Check if string is "yes" or "no", independent of case
-// Throws exception if neither of these
+
 bool is_yes_or_no(const std::string& test_string)
 {
+    // checks if string is "yes" or "no", independent of case
+    // throws exception if neither of these
+    
     string s(test_string); 
     
-    // Convert string to lower case;
-    //
-    // Pointer function diambiguates: 
-    //      int std::toupper(int); // from <cctype>
+    // converts string to lower case, pointer function diambiguates: 
+    //      int std::toupper(int);                   // from <cctype>
     //  from
     //      template <class chart>
     //      chart std::toupper(charT, const locale&); // from <locale>
@@ -146,6 +149,8 @@ bool is_yes_or_no(const std::string& test_string)
 
 void print_ion_type(const Ion_type& ion)
 {
+    // prints Ion_type fields to std::cout
+
     cout << ion.name << ' '
          << ion.formula << ' '
          << ion.mass << ' '
@@ -170,8 +175,7 @@ void print_ion_type(const Ion_type& ion)
 }
 
 void Cloud_params::get_ion_types(const std::string& file_name) {
-    
-    // Try to load trap parameters from file
+    // tries to load trap parameters from file
     ifstream ifs( file_name.c_str() );
     if ( !ifs ) {
         ifs.close();
@@ -181,7 +185,7 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
         throw runtime_error( error_msg.str() );
     }
     
-    // Read in ion type definitions from file line by line,
+    // reads in ion type definitions from file line by line,
     // with each line in the format:
     // 
     // Name Formula Mass Charge Laser-cooled? Beta ...
@@ -214,7 +218,7 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
         
         ++lines_read;
         
-        // Throw runtime_error if problem reading
+        // throws runtime_error if problem reading
         if ( !ions_iss) {
             ostringstream error_msg;
             error_msg << "Error reading parameters from file "
@@ -223,12 +227,12 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
             throw runtime_error( error_msg.str() );
         }
         
-        // Convert color to lower case
+        // converts color to lower case
         int (*pf)(int)=tolower;
         transform(new_type.color.begin(), new_type.color.end(), new_type.color.begin(), pf);
         
-        // Convert "Yes" or "No" parameters into bool
-        // Throw exception if this is not possible
+        // converts "Yes" or "No" parameters into bool
+        // throws exception if this is not possible
         try {
             new_type.is_laser_cooled = is_yes_or_no(laser_cooled_str);
             new_type.is_heated = is_yes_or_no(heating_str);
@@ -242,11 +246,11 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
             throw runtime_error( error_msg.str() );
         }
         
-        // Set redundant parameters to zero
+        // sets redundant parameters to zero
         if (!new_type.is_laser_cooled) new_type.beta = 0.0;
         if (!new_type.is_heated) new_type.recoil = 0.0;
         
-        // Throw runtime_error if ion names or formula are duplicated
+        // throws runtime_error if ion names or formula are duplicated
         typedef std::vector<Ion_type>::const_iterator type_itr;
         Compare_ion_names compare_by_names(new_type);
         
@@ -259,7 +263,7 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
                                          ion_types.end(), 
                                          compare_by_formula );
         
-        // Add new ion type if no duplicates
+        // adds new ion type if no duplicates found
         if ( check_names == ion_types.end() &&
              check_formula == ion_types.end()) {
             ion_types.push_back( new_type );
@@ -272,11 +276,11 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
             throw runtime_error( error_msg.str() );
         }
         
-        // Try to get next line
+        // tries to get next line
         getline(ifs,line);
     }
     
-    // Print ion types to screen
+    // prints ion types to std::cout
     cout << '\n' << console_divide_line << '\n';
     cout << '\n' << "Ion types read from file: " << file_name << "\n\n";
     cout << "Name, Formula, Mass, Charge, Laser-cooled?, Beta, Heating?, Recoil, Colour, Visible?" << "\n\n";
@@ -288,8 +292,6 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
 void print_ion_numbers(std::pair<const Ion_type*,int> ion_type_no ) {
     cout << '\t' << ion_type_no.second << ' ' << ion_type_no.first->formula << endl;
 }
-
-
 
 void Cloud_params::get_ion_numbers(const std::string& file_name) {
     
@@ -304,7 +306,7 @@ void Cloud_params::get_ion_numbers(const std::string& file_name) {
     
     string line;
     int lines_read = 0;
-    // Get first line
+    // gets first line
     getline(ifs,line);
     
     while ( ifs ) {
@@ -316,7 +318,7 @@ void Cloud_params::get_ion_numbers(const std::string& file_name) {
         
         if ( ion_stream ) {
             
-            // Dummy ion type to allow searching by name and formula
+            // dummy ion type to allow searching by name and formula
             Ion_type temp_type;
             temp_type.name = name;
             temp_type.formula = name;
@@ -327,7 +329,7 @@ void Cloud_params::get_ion_numbers(const std::string& file_name) {
                                            ion_types.end(), 
                                            compare_by_names );
                         
-            // If found name then update map of ion types and numbers
+            // if name found then update map of ion types and numbers
             if (check_names != ion_types.end()) { 
                 Ion_type* ion_type_ptr = &(*check_names);
                 ion_numbers[ ion_type_ptr ] = number;
@@ -339,17 +341,17 @@ void Cloud_params::get_ion_numbers(const std::string& file_name) {
                                              ion_types.end(), 
                                              compare_by_formula );
             
-            // If found formula then update map of ion types and numbers
+            // if found formula then update map of ion types and numbers
             if (check_formula != ion_types.end()) {  
                 Ion_type* ion_type_ptr = &(*check_formula);
                 ion_numbers[ ion_type_ptr ] = number;
             }
         }
         
-        // Try to get next line
+        // tries to get next line
         getline(ifs,line);
     }
-    // Write out ion formulas and numbers
+    // writes out ion formulas and numbers to std::cout
     cout << '\n' << console_divide_line << '\n';
     cout << '\n' << "Ion numbers read from file: " << file_name << '\n';
     for_each(ion_numbers.begin(), ion_numbers.end(), print_ion_numbers);
@@ -362,16 +364,51 @@ Cloud_params::Cloud_params()
     get_ion_numbers(ion_numbers_file);
 }
 
-Cloud_params::Cloud_params(const std::string& ion_numbers_file,
-                                const std::string& types_file_name)
+Cloud_params::Cloud_params(const std::string& numbers_file,
+                           const std::string& types_file)
 {
-    get_ion_types(types_file_name);
-    get_ion_numbers(ion_numbers_file);
+    get_ion_types(types_file);
+    get_ion_numbers(numbers_file);
+}
+
+struct Compare_Ion_types {
+    // case-insensitive compare for Ion_type names
+
+    Compare_Ion_types(const std::string& name) : name_(name)
+    {
+        lowercase = tolower;
+        transform(name_.begin(), name_.end(), name_.begin(), lowercase);
+    }
+    bool operator()(const Ion_type& type) const {
+        // converts to lower case
+        string type_name = type.name;
+        transform(type_name.begin(), type_name.end(), type_name.begin(), lowercase);
+
+        return type_name == name_;
+    }
+private:
+    std::string name_;
+    int (*lowercase)(int);      // pointer function to make lowercase
+};
+
+const Ion_type& Cloud_params::get_Ion_type_by_name(const std::string& name) const {
+    // finds an Ion_type specified by name, throws a runtime_error if type not found
+    
+    Ion_type_container::const_iterator found_type;
+    found_type = find_if(ion_types.begin(), ion_types.end(), 
+                         Compare_Ion_types(name) );
+    
+    if ( found_type == ion_types.end() ) {
+        std::ostringstream error_msg;
+        error_msg << "Error: unable to find ion type: " << name;
+        throw runtime_error( error_msg.str() );
+    }
+    return *found_type;
 }
 
 Integration_params::Integration_params(const std::string& file_name)
 {
-    // Try to load trap parameters from file
+    // tries to load trap parameters from file
     ifstream ifs( file_name.c_str() );
     if ( !ifs ) {
         ifs.close();
@@ -381,8 +418,8 @@ Integration_params::Integration_params(const std::string& file_name)
         throw runtime_error( error_msg.str() );
     }
     
-    // Read in parameters from an ordered text file with each
-    // line written in the form: "value other_characters"
+    // reads in parameters from an ordered text file with each
+    // line written in the form: value other_characters
     // and ignoring the text
     try {
         time_step = read_parameter<double>(ifs);

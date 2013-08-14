@@ -9,6 +9,14 @@
  *
  */
 
+//
+//  This code has been modified for use with the CCMD program
+//  (Martin Bell, April 2012)
+// 
+//  Note: the restriction that the number of threads must be a multiple of two
+//  has been removed.
+//
+
 #include <cutil_inline.h>    // includes cuda.h and cuda_runtime_api.h
 #include <math.h>
 

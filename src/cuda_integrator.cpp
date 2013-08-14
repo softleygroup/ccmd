@@ -1,9 +1,5 @@
 //
 //  cuda_integrator.cpp
-//  CCMD
-//
-//  Created by Martin Bell on 19/03/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 
@@ -12,13 +8,11 @@
 #include "ion_trap.h"
 #include "ion_cloud.h"
 
-/*
-#include <cutil_inline.h>    // includes cuda.h and cuda_runtime_api.h
-#include "ion_cloud.h" 
-#include "vector3D.h" 
-#include <algorithm>
 #include "bodysystemcuda.h"
-*/
+//
+//  CUDA-enabled GPU-based integrator
+//  see: http://http.developer.nvidia.com/GPUGems3/gpugems3_ch31.html
+//
 
 CUDA_integrator::CUDA_integrator(Ion_trap& it, Ion_cloud& ic, const Integration_params& params)
     : RESPA_integrator(it,ic,params)
@@ -26,18 +20,17 @@ CUDA_integrator::CUDA_integrator(Ion_trap& it, Ion_cloud& ic, const Integration_
     nbody = ions->number_of_ions();
     num_devices = 1;    // CUDA compatible cards
 
-    // Need to have a whole number of tiles > 0
-    p = 256;            // Threads per block
-    q = 1;              // Split body data over threads
+    // need to have a whole number of tiles > 0
+    p = 256;            // threads per block
+    q = 1;              // split body data over threads
 
     // Calculate the maximum number of threads per block
     int n = static_cast<int>(nbody);
     p = std::min(p,n);
     while ( n%p != 0 && p > 1 ) p--;
 
-    // ***Temporary***
     // Write number of threads per block to cout
-    std::cout << "\n\t p = " << p << "\n\n";
+    //std::cout << "\n\t p = " << p << "\n\n";
 
     // Allocate gpu simulation
     CUDA_nbody = new BodySystemCUDA<float>(nbody,num_devices,p,q);
@@ -85,17 +78,6 @@ void CUDA_integrator::arrays_from_gpu()
     for (int i=0; i<nbody; ++i) {
         int body_index = 4*i;
 
-        /*
-        // Reassign positions
-        Vector3D pos;
-        pos.x = static_cast<double>( hPos[0+body_index] );
-        pos.y = static_cast<double>( hPos[1+body_index] );
-        pos.z = static_cast<double>( hPos[2+body_index] );
-        
-        ions->set_ion_position(i, pos);
-        //std::cout << hPos[3+body_index] << '\n';
-        */ 
-
         // Reassign velocities
         Vector3D vel;
         vel.x = static_cast<double>( vel_ptr[0+body_index] );
@@ -107,15 +89,23 @@ void CUDA_integrator::arrays_from_gpu()
     return;
 }
 
+
+//
+//  CUDA evolve: algorithm is identical to RESPA_integrator 
+//
 void CUDA_integrator::evolve(double dt)
 {
     double half_dt = dt/2.0;
     double dt_respa = dt/respa_steps;
     double half_dt_respa = dt_respa/2.0;
     
+    // transfer positions and velocities to GPU memory
     arrays_to_gpu();
-    // Should kick with old force here
+    
+    // kick with old force here
     kick(half_dt);
+    
+    // return velocities from GPU memory
     arrays_from_gpu();
 
     ions->heat(half_dt);
@@ -131,8 +121,11 @@ void CUDA_integrator::evolve(double dt)
     }
 
     ions->heat(half_dt);
+
+    // transfer positions and velocities to GPU memory
     arrays_to_gpu();
     kick(half_dt);
+    // return velocities from GPU memory
     arrays_from_gpu();    
 
     return;

@@ -1,9 +1,5 @@
 //
 //  Trapped_ion.cpp
-//  CCMD
-//
-//  Created by Martin Bell on 23/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #include <iostream>
@@ -21,18 +17,18 @@ void Trapped_ion::update_ion_type()
 {
     Ion::update_ion_type();
     
-    // Trapping parameters depend on mass and charge
+    // trapping parameters depend on mass and charge
     update_trap_force();
 }
 
 void Trapped_ion::update_trap_force()
 {
-    // Calculate a and q trapping parameters
+    // calculate a and q trapping parameters
     double charge_over_mass = charge/mass;
     a_trap = trap->a_unit_mass*charge_over_mass; 
     q_trap = trap->q_unit_mass*charge_over_mass;
     
-    // Trap pseudopotential angular frequencies, in units of omega/2
+    // trap pseudopotential angular frequencies, in units of omega/2
     trap_omega.x = sqrt(a_trap + q_trap*q_trap/2);
     trap_omega.y = trap_omega.x;
     trap_omega.z = sqrt(-2*a_trap);
@@ -41,11 +37,11 @@ void Trapped_ion::update_trap_force()
 
 inline void Trapped_ion::kick(double dt)
 {
-    // Trap force
+    // trap force
     Vector3D f = trap->force_now(pos,a_trap,q_trap);
     f *= mass;
     
-    // Heating
+    // heating
     this->Ion::kick(dt,f);
 }
 

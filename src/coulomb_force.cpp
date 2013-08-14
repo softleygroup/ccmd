@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <exception>
 
+#include <assert.h>
+
 // To do: remove loops using std::transform
 
 Coulomb_force::Coulomb_force(const Ion_cloud& ic)
@@ -32,47 +34,45 @@ void Coulomb_force::update()
 
 void Coulomb_force::direct_force()
 {
-    // Evaluate Coulomb force by direct summation
+    // evaluates Coulomb force by direct summation, making use
+    // of force antisymmetry, F_ji = -F_ij
     Vector3D r1,r2,f;
     double r,r3;
     int q1,q2;
     
-    // Reinitialise forces
-    Vector3D null_vec = Vector3D(0.0,0.0,0.0);
+    // reinitialise forces
+    Vector3D null_vec = Vector3D(0.0, 0.0, 0.0);
     std::fill(force.begin(),force.end(), null_vec);
         
-    // Sum Coulomb force over all particles
+    // sum Coulomb force over all particles
     for (int i=0; i<ions->ion_vec.size(); ++i) {
         r1 = ions->ion_vec[i]->r();
         q1 = ions->ion_vec[i]->q();
         for (int j=i+1; j<ions->ion_vec.size(); ++j) {
             r2 = ions->ion_vec[j]->r();
             q2 = ions->ion_vec[j]->q();
-            // Force term calculation
-            /*
-             // Checking
-            if (r1 != r2) {
-                r = Vector3D::dist(r1,r2);
-            } else {
-                std::abort();
-            }
-            */
+    
+            // range checking disabled in release to improve performance
+            assert ( r1 != r2 );
+            
+            // force term calculation
             r = Vector3D::dist(r1,r2);
-
-            //r3 = pow(r,3);
             r3 = r*r*r;
             f = (r1-r2)/r3*q1*q2;
             
+            // update sum for ion "i"
             force[i] += f;
+            // update sum for ion "j"
             force[j] -= f;
         }
     }
 }
 
-Vector3D Coulomb_force::get_force(int i)
+Vector3D Coulomb_force::get_force(size_t i)
 { 
-    if ( i>=0 && i<ions->ion_vec.size() )
+    if ( i < ions->ion_vec.size() ) {
         return force[i]; 
-    // To be added: throw exception
-    std::abort();
+    } else {
+        throw std::runtime_error("Coulomb force: invalid index in get_force");
+    }
 }

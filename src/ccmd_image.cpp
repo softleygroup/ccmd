@@ -1,9 +1,5 @@
 //
 //  ccmd_image.cpp
-//  ccmd_image
-//
-//  Created by Martin Bell on 02/04/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #include "ccmd_image.h"
@@ -16,64 +12,20 @@
 CCMD_image::CCMD_image(int num_rows, int num_cols, const Hist3D& hist) 
     : rows(num_rows), cols(num_cols) 
 { 
-    allocate_image(); 
-    
-    double pixels_to_distance = 1;     // Conversion microns to pixels
-    double w0 = 5.0*pixels_to_distance;
-    double z0 = 50.0/pixels_to_distance;
-    
-    int zmin = 0;
-    int zmax = 0;
-    hist.minmax(Hist3D::x, zmin,zmax);
-    std::vector<histPixel> pixels;
-    
-    std::cout << "Number of image planes = " << zmax-zmin+1 << "\n\n";
-    std::cout << "Generating image";
-
-    //zmax = 50;
-    //zmin = -zmax;
-    
-    for (int z=zmin; z<zmax+1; ++z) {
-        std::cout << std::flush << ".";
-        pixels = hist.getPlane(Hist3D::x, z);
-
-        // Scale and move pixels to image centre
-        for (int i=0; i<pixels.size(); ++i) {
-            pixels[i].x *= pixels_to_distance;
-            pixels[i].y *= pixels_to_distance;
-            pixels[i].x += num_rows/2;
-            pixels[i].y += num_cols/2;
-        }
-        
-        // Update a new image for current plane
-        CCMD_image image_plane(num_rows,num_cols);
-        image_plane.set_pixel(pixels);
-        
-        // Get blur parameters
-        int dz = abs(z);
-        double blur_radius = w0/sqrt(2.0)*(1.0 + dz/z0);
-        int blur_pixels = 10*blur_radius + 10;
-        
-        Gauss_kernel blur_plane(blur_pixels,blur_radius);
-        image_plane.gaussian_blur( blur_plane );
-        
-        // Add image from current plane
-        *this += image_plane;
-    }    
-    this->normalise();
+    allocate_image();
 }
 
 
 double CCMD_image::get_pixel(int x, int y) const
 {
-    // Return zero if pixel coordinates out of range
+    // returns zero if pixel coordinates out of range
     if (x > rows || x < 1 || y > cols || y < 1) return 0.0;
     return pixels[x-1][y-1];
 }
 
 void CCMD_image::set_pixel(int x, int y, double pixel_val) 
 {
-    // No change if pixel coordinates out of range
+    // no change if pixel coordinates out of range
     if (x > rows || x < 1 || y > cols || y < 1) return;
     pixels[x-1][y-1] = pixel_val;
 }
@@ -85,22 +37,21 @@ void CCMD_image::set_pixel(const std::vector<histPixel>& pixels)
     }
 }
 
-
 Gauss_kernel::Gauss_kernel(int num_pixels, double sigma)
     : CCMD_image(1,num_pixels), s(sigma) 
 {
     double kernel_sum = 0.0;
-    // As kernel is symmetric, use only a single column 
+    // as kernel is separable/symmetric, use only a single column 
     for (int i=0; i<cols; ++i) {
         double x = i - cols/2;
         pixels[0][i] = gaussian(x,0.0,s);
         kernel_sum += pixels[0][i];
     }
     
-    // Square sum for 2D normalisation
+    // square sum for 2D normalisation
     kernel_sum *= kernel_sum;
     
-    // Normalise kernel
+    // normalise kernel
     for (int i=0; i<cols; ++i) {
         pixels[0][i] /= kernel_sum;
     }
@@ -109,21 +60,21 @@ Gauss_kernel::Gauss_kernel(int num_pixels, double sigma)
 
 double Gauss_kernel::gaussian(double x, double mu, double sigma)
 {
-    // Unnormalised 1D Gaussian function
+    // unnormalised 1D Gaussian function
     return exp( -(x-mu)*(x-mu)/(2.0*sigma*sigma) );
 }
 
 void CCMD_image::gaussian_blur(const Gauss_kernel& blurrer)
 {
     double* blur_ptr = blurrer.pixels[0];
-    // Apply filter to each row
+    // apply filter to each row
     for (int i=0; i<rows; ++i) {
         double* pixel_ptr = pixels[i];
         conv_1D(pixel_ptr, cols, blur_ptr, blurrer.cols);
     }
     
     this->transpose();
-    // Apply filter to each column
+    // apply filter to each column
     for (int i=0; i<rows; ++i) {
         double* pixel_ptr = pixels[i];
         conv_1D(pixel_ptr, cols, blur_ptr, blurrer.cols);
@@ -141,6 +92,7 @@ void CCMD_image::conv_1D(double u[], int m, double v[], int n)
     
     double w[m+n-1];
     
+    // convolution integral as discrete sum
     for (int k=1; k<m+n; ++k) {
         w[k-1] = 0;
         int jmin = std::max(1,k+1-n);
@@ -150,7 +102,7 @@ void CCMD_image::conv_1D(double u[], int m, double v[], int n)
         }
     }
     
-    // Copy convolution into input array
+    // copies convolution into input array
     for (int j=0; j<m; ++j) {
         u[j] = w[j+n/2];
     }
@@ -161,15 +113,15 @@ void CCMD_image::transpose()
 {
     CCMD_image image_in( *this );
     
-    // Delete pixel array
+    // delete pixel array
     this->cleanup();
-    // Swap dimensions
+    // swap dimensions
     this->rows = image_in.cols;
     this->cols = image_in.rows;
-    // Reallocate pixel array
+    // reallocate pixel array
     this->allocate_image();
     
-    // Copy pixel information
+    // copy pixel information
     for (int i=0; i<this->rows; ++i) {
         for (int j=0; j<this->cols; ++j) {
             this->pixels[i][j] = image_in.pixels[j][i];
@@ -177,27 +129,12 @@ void CCMD_image::transpose()
     }
 }
     
-std::ostream& operator<<(std::ostream& os, const CCMD_image& im)
-{
-    /*
-    for (int i=0; i<im.rows; ++i) {
-        for (int j=0; j<im.cols; ++j) {
-            if (im.pixels[i][j] > 0.0) {
-                os << 'o';
-            } else {
-                os << '.';
-            }
-        }
-        os << std::endl;
-    }
-    */     
-    
+std::ostream& operator<<(std::ostream& os, const CCMD_image& im){    
     for (int i=1; i<im.rows+1; ++i) {
         for (int j=1; j<im.cols+1; ++j) {
             os << i << ' ' << j << ' ' << im.get_pixel(i,j) << std::endl;
         }
     }    
-    
     return os;
 }
 
@@ -217,7 +154,7 @@ void CCMD_image::ouput_to_file(std::string file_name) const {
 
 void CCMD_image::normalise()
 {
-    // Find maximum
+    // finds brightest pixel in image
     double maxval = 0.0;
     for (int i=0; i<rows; ++i) {
         for (int j=0; j<cols; ++j) {
@@ -226,6 +163,7 @@ void CCMD_image::normalise()
         }
     }
     
+    // scales max brightness to 1
     for (int i=0; i<rows; ++i) {
         for (int j=0; j<cols; ++j) {
             double newpixval = get_pixel(i,j)/maxval;

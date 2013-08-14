@@ -9,6 +9,11 @@
  *
  */
 
+//
+//  This code has been modified for use with the CCMD program
+//  (Martin Bell, April 2012)
+// 
+
 // Modified to remove GL references
 
 #include <cutil_inline.h>    // includes cuda.h and cuda_runtime_api.h

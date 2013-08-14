@@ -1,9 +1,5 @@
 //
 //  Ion_trap.h
-//  CCMD
-//
-//  Created by Martin Bell on 16/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #ifndef CCMD_Ion_trap_h
@@ -15,17 +11,24 @@
 
 class Trap_params;
 
+// Base class to provide interface for ion trap types
 class Ion_trap {
     friend class Trapped_ion;
 public:
     Ion_trap();
     Ion_trap(const Trap_params& params);
     virtual ~Ion_trap();
-             
-    virtual Vector3D force_now(const Vector3D& r, double a, double q) const = 0; 
+    
+    // returns the force at a particular position in the trap
+    virtual Vector3D force_now(const Vector3D& r, double a, double q) const = 0;
+    
+    // evolves trap through a timestep
     virtual void evolve(double time) = 0;
     
+    // allows parameter update if trap_params have changed
     virtual void update_trap_params();
+    
+    // the ion trap parameters sets real length scale
     double get_length_scale() const { return length_scale; }
 
 private:    
@@ -53,7 +56,9 @@ protected:
     static const double u_mass;
 };
 
-
+//
+// Linear Paul ion with sinusoidal RF voltages
+//
 class Cosine_trap : public Ion_trap {
 public:
     Cosine_trap(const Trap_params& params);
@@ -69,6 +74,9 @@ private:
     double cos_phase;
 };
 
+//
+// Linear Paul ion with pulsed/square-wave RF voltages
+//
 class Pulsed_trap : public Ion_trap {
 public:
     Pulsed_trap(const Trap_params& params);

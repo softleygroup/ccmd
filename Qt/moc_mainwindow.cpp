@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Fri Apr 27 14:10:34 2012
+** Created: Wed May 23 15:39:36 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.6.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        4,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+      10,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -31,27 +31,31 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      12,   11,   11,   11, 0x08,
+      12,   11,   11,   11, 0x0a,
       37,   11,   11,   11, 0x08,
-      69,   61,   11,   11, 0x08,
-     105,   11,   11,   11, 0x08,
-     142,  137,   11,   11, 0x08,
-     178,  137,   11,   11, 0x08,
-     215,   11,   11,   11, 0x08,
-     245,   11,   11,   11, 0x08,
+      62,   11,   11,   11, 0x08,
+      94,   86,   11,   11, 0x08,
+     130,   11,   11,   11, 0x08,
+     162,   11,   11,   11, 0x08,
+     192,   11,   11,   11, 0x08,
+     225,   11,   11,   11, 0x08,
+     265,  260,   11,   11, 0x08,
+     306,  260,   11,   11, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MainWindow[] = {
-    "MainWindow\0\0on_startButton_clicked()\0"
+    "MainWindow\0\0sim_parameters_changed()\0"
+    "on_startButton_clicked()\0"
     "on_stopButton_clicked()\0checked\0"
     "on_ImageData_checkBox_toggled(bool)\0"
-    "on_UpdateImage_button_clicked()\0arg1\0"
-    "on_vrf_spinBox_valueChanged(double)\0"
-    "on_vend_spinBox_valueChanged(double)\0"
+    "on_UpdateImage_button_clicked()\0"
     "on_saveImage_Button_clicked()\0"
     "on_action_Save_image_triggered()\0"
+    "on_ResetHistogram_button_clicked()\0"
+    "arg1\0on_w0_doubleSpinBox_valueChanged(double)\0"
+    "on_z0_doubleSpinBox_valueChanged(double)\0"
 };
 
 const QMetaObject MainWindow::staticMetaObject = {
@@ -83,17 +87,19 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: on_startButton_clicked(); break;
-        case 1: on_stopButton_clicked(); break;
-        case 2: on_ImageData_checkBox_toggled((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 3: on_UpdateImage_button_clicked(); break;
-        case 4: on_vrf_spinBox_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
-        case 5: on_vend_spinBox_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
-        case 6: on_saveImage_Button_clicked(); break;
-        case 7: on_action_Save_image_triggered(); break;
+        case 0: sim_parameters_changed(); break;
+        case 1: on_startButton_clicked(); break;
+        case 2: on_stopButton_clicked(); break;
+        case 3: on_ImageData_checkBox_toggled((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 4: on_UpdateImage_button_clicked(); break;
+        case 5: on_saveImage_Button_clicked(); break;
+        case 6: on_action_Save_image_triggered(); break;
+        case 7: on_ResetHistogram_button_clicked(); break;
+        case 8: on_w0_doubleSpinBox_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 9: on_z0_doubleSpinBox_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 8;
+        _id -= 10;
     }
     return _id;
 }

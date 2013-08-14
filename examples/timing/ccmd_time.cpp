@@ -1,9 +1,7 @@
 //
-//  main.cpp
-//  CCMD
+//  ccmd_time.cpp
 //
-//  Created by Martin Bell on 18/04/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Compare execution times for the CUDA and RESPA integrators
 //
 
 #include <iostream>
@@ -70,6 +68,7 @@ int main (int argc, char * const argv[]) {
 
         // Construct trap
         Cosine_trap trap(trap_params);
+        
         // Construct ion cloud
         Ion_cloud cloud(trap, cloud_params);
 
@@ -82,7 +81,7 @@ int main (int argc, char * const argv[]) {
         // Evolution        
         int nt = 1000;
         
-	// Start timer for CUDA
+        // Start timer for CUDA
         stopWatchTimer();
 
         for (int t=0; t<nt; ++t) {    
@@ -100,7 +99,7 @@ int main (int argc, char * const argv[]) {
         std::cout << endl;
 
         
-	// Start timer for RESPA
+        // Start timer for RESPA
         stopWatchTimer(true);
 
         for (int t=0; t<nt; ++t) {    

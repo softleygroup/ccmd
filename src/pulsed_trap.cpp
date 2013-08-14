@@ -1,10 +1,8 @@
 //
 //  pulsed_trap.cpp
-//  CCMD
 //
-//  Created by Martin Bell on 02/03/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+
+// To do: Implement parameters for square wave
 
 #include "ion_trap.h"
 
@@ -13,8 +11,7 @@ Pulsed_trap::Pulsed_trap(const Trap_params& params)
 {
     update_trap_params();
     
-    //***To be completed*** 
-    // Pulse parameters
+    // Pulse parameters currently hardcoded
     tau = 0.1; 
     pulse_height = v_rf;
     
@@ -36,6 +33,7 @@ void Pulsed_trap::evolve(double dt)
 
 void Pulsed_trap::pulse_shape()
 {
+    // Implementation of square wave pulse shape
     double scaled_time = time_now/pi - floor( time_now/pi );
 
     if (scaled_time <= tau/2) {
@@ -57,6 +55,7 @@ void Pulsed_trap::pulse_shape()
 
 Vector3D Pulsed_trap::force_now(const Vector3D& r, double a, double q) const
 {
+    // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);
     f.x *= +2*q*pulse_height - a;
     f.y *= -2*q*pulse_height - a;

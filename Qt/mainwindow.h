@@ -14,6 +14,9 @@ class Trap_params;
 class Cloud_params;
 class Integration_params;
 class Hist3D;
+class Trap_param_model;
+class QTreeView;
+class Microscope_params;
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +35,9 @@ public:
 protected:
     void closeEvent(QCloseEvent *event);
 
+public slots:
+    void sim_parameters_changed();
+
 private slots:
     void on_startButton_clicked();
 
@@ -41,13 +47,15 @@ private slots:
 
     void on_UpdateImage_button_clicked();
 
-    void on_vrf_spinBox_valueChanged(double arg1);
-
-    void on_vend_spinBox_valueChanged(double arg1);
-
     void on_saveImage_Button_clicked();
 
     void on_action_Save_image_triggered();
+
+    void on_ResetHistogram_button_clicked();
+
+    void on_w0_doubleSpinBox_valueChanged(double arg1);
+
+    void on_z0_doubleSpinBox_valueChanged(double arg1);
 
 private:
     Ui::MainWindow *ui;
@@ -63,6 +71,9 @@ private:
     Cloud_params *cloud_params;
     Integration_params *integrator_params;
     Hist3D *hist;
+    Microscope_params *microscope_params;
+
+    Trap_param_model *trapModel;
 
     bool simRunning;
     bool collectImageData;

@@ -12,7 +12,7 @@
 
 Microscope_params::Microscope_params() 
 {
-    pixels_to_distance = 1;     
+    pixels_to_distance = 1;
     w0 = 5.0*pixels_to_distance;
     z0 = 50.0/pixels_to_distance;
     zmin = 0;
@@ -32,7 +32,7 @@ void Microscope_image::draw()
    
     pixels = hist_ptr->getPlane(Hist3D::x, plane_now);
         
-    // Scale and move pixels to image centre
+    // scales and moves pixels to image centre
     for (int i=0; i<pixels.size(); ++i) {
         pixels[i].x *= params.pixels_to_distance;
         pixels[i].y *= params.pixels_to_distance;
@@ -40,11 +40,11 @@ void Microscope_image::draw()
         pixels[i].y += cols/2;
     }
         
-    // Update a new image for current plane
+    // updates a new image for current plane
     CCMD_image image_plane(rows,cols);
     image_plane.set_pixel(pixels);
         
-    // Get blur parameters
+    // get blur parameters
     int dz = abs(plane_now);
     
     double blur_radius = params.w0/sqrt(2.0)*(1.0 + dz/params.z0);

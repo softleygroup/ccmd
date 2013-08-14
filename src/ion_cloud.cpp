@@ -1,13 +1,8 @@
 //
 //  ion_cloud.cpp
-//  CCMD
-//
-//  Created by Martin Bell on 09/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #include "ion_cloud.h"
-
 
 #include "ccmd_sim.h"
 #include "ion.h"
@@ -20,12 +15,9 @@
 #include <sstream>
 #include <iomanip>
 #include <map>
-//#include <string>
-
-//#include "eigs.h"
 
 // To do:   fix aspect ratio
-//          use std::for_each etc
+//#include "eigs.h"
 
 using namespace std;
 
@@ -51,8 +43,7 @@ struct position_ions {
 Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
     :  trap(&ion_trap), cloud_params(&params)  
 {
-
-    // Loop over ion types to initialise ion cloud
+    // loop over ion types to initialise ion cloud
     typedef map<Ion_type*,int>::const_iterator map_itr;
     for (map_itr p=cloud_params->ion_numbers.begin(); 
                  p!=cloud_params->ion_numbers.end();
@@ -60,9 +51,8 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
         Ion_type* type_ptr(p->first);
         int number_of_type(p->second);
         
-        // Allocate ions
-        // Construct ions with using *trap to ensure that changes to
-        // ion trap parameters propagate to the ions
+        // loop over ions numeber for type, construct ions using *trap to ensure 
+        // that changes to ion trap parameters are felt by the ions
         try {
             for (int i=0; i<number_of_type; ++i) {
                 if (type_ptr->is_laser_cooled) {
@@ -77,18 +67,18 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
             throw runtime_error( error_msg.str() );
         }
         
-        // Sort ions by mass
+        // sort ions by mass
         sort(ion_vec.begin(),ion_vec.end(), compare_ions_by_mass() );
         
-        // Generate initial positions
+        // generate initial positions
         vector<Vector3D> lattice = get_lattice( number_of_ions() );
         
-        // Move ions into position
+        // move ions into position
         transform(ion_vec.begin(), ion_vec.end(),
                   lattice.begin(), ion_vec.begin(),
                   position_ions() );
         
-        // Move cloud centre to the origin
+        // move cloud centre to the origin
         Vector3D to_origin = -get_cloud_centre( *this );
         move_centre(to_origin);
     }
@@ -96,12 +86,12 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
 
 void Ion_cloud::update_params()
 {
-    // Update types for ions
+    // update types for ions
     for_each(ion_vec.begin(),
              ion_vec.end(), 
              mem_fun(&Ion::update_ion_type));
     
-    // Update trap parameters used by ions
+    // update trap parameters used by ions
    for_each(ion_vec.begin(),
             ion_vec.end(), 
             mem_fun(&Ion::update_trap_force));
@@ -118,7 +108,7 @@ Ion_cloud::~Ion_cloud()
 
 int get_nearest_cube(int n)
 {
-    // Returns number which when cubed is closest to n 
+    // returns integer which when cubed is closest to n 
 	int min_cube = 1;
 	int max_cube = 1;
 	int i = 1;
@@ -133,7 +123,7 @@ int get_nearest_cube(int n)
 
 Vector3D Ion_cloud::get_cloud_centre(const Ion_cloud& ) const
 {
-    // 	Unweighted geometric centre of ion cloud
+    // 	unweighted geometric centre of ion cloud
 	Vector3D centre;
     double n_ions = ion_vec.size();
     
@@ -146,7 +136,7 @@ Vector3D Ion_cloud::get_cloud_centre(const Ion_cloud& ) const
 
 void Ion_cloud::move_centre(const Vector3D& v)
 {
-	// Place cloud centre at origin
+	// move the whole ion cloud
 	for (int i=0; i<ion_vec.size(); ++i) {
 		ion_vec[i]->move( v );
 	}
@@ -154,6 +144,11 @@ void Ion_cloud::move_centre(const Vector3D& v)
 
 std::ostream& operator<<(std::ostream& os, const Ion_cloud& ic)
 {
+    // outputs ion positions as 
+    // --------------------------------
+    //  Ion         x       y       z
+    // --------------------------------
+    //
     static bool first_call = true;
     
     if (first_call) {
@@ -180,7 +175,6 @@ std::ostream& operator<<(std::ostream& os, const Ion_cloud& ic)
             << std::setw(7) << ic.ion_vec[i]->r(z) << std::endl;
 	}
     
-	//os << header_space << header_line << std::endl;
 	os << std::endl;
     
 	return os;
@@ -194,11 +188,18 @@ void Ion_cloud::drift(double t)
     }
 }
 
+struct Kicker_t {
+    Kicker_t(double t) : t(t) {}
+    void operator()(Ion* ion_to_kick) {
+        ion_to_kick->kick(t);
+    }
+private:
+    double t;
+};
+
 void Ion_cloud::kick(double t)
 {
-    for (int i=0; i<ion_vec.size(); ++i) {
-        ion_vec[i]->kick(t);;
-    }
+    for_each(ion_vec.begin(), ion_vec.end(), Kicker_t(t) );
 }
 
 void Ion_cloud::kick(double t, const std::vector<Vector3D>& f)
@@ -207,12 +208,19 @@ void Ion_cloud::kick(double t, const std::vector<Vector3D>& f)
         ion_vec[i]->kick(t, f[i] );
     }
 }
- 
+
+struct Velocity_scaler {
+    Velocity_scaler(double dt) : dt(dt) {}
+    void operator()(Ion* ion_to_scale) {
+        ion_to_scale->velocity_scale(dt);
+    }
+private:
+    double dt;
+};
+
 void Ion_cloud::velocity_scale(double dt)
 {
-    for (int i=0; i<ion_vec.size(); ++i) {
-        ion_vec[i]->velocity_scale(dt);
-    }
+    for_each(ion_vec.begin(),ion_vec.end(), Velocity_scaler(dt));
 }
 
 void Ion_cloud::heat(double t)
@@ -265,11 +273,14 @@ void Ion_cloud::update_position_histogram(Hist3D& h) const
         if (ion_vec[i]->visible) {
             Vector3D posn = ion_vec[i]->r();
             Vector3D rotated_pos;
+            
+            // transform coordinates so that histogram xy axes are at 
+            // 45 degrees to the trap xy axes. This is convenient for 
+            // calculating a view between the electrodes of the trap
             rotated_pos.x = (posn.x+posn.y)/sqrt(2.0);
             rotated_pos.y = (posn.x-posn.y)/sqrt(2.0);
             rotated_pos.z = posn.z;
             h.update( rotated_pos );
-            //h.update( ion_vec[i]->pos );
          }
     }
     return;
@@ -309,8 +320,9 @@ std::vector<Vector3D> get_lattice(size_t n)
 
 double Ion_cloud::aspect_ratio() const
 {
+    // aspect ratio defined by maxmimum extent of ions
+    // in x or y and z directions 
     using namespace std;
-    
     
     double x_max = 0.0;
     double y_max = 0.0;
@@ -325,6 +337,10 @@ double Ion_cloud::aspect_ratio() const
     return z_max/max(x_max,y_max); 
     
 /*
+    // Aspect ratio defined by moment of inertia ellipsoid
+    // Requires diagonalisation routine
+    // NOT PORTABLE YET
+ 
     double w[3];
     double x,y,z = 0.0;
     
@@ -396,22 +412,93 @@ std::string Ion_cloud::ion_color(size_t ion_index) const
 
 void Ion_cloud::set_ion_position(size_t ion_index, const Vector3D& r)
 {
+    // throws runtime_error if invalid ion_index used
     if (ion_index < ion_vec.size()) {
         ion_vec[ion_index]->set_position(r);
         return;
     }
-    else
-        throw;
+    else {
+        ostringstream error_msg;
+        error_msg << "Error in Ion_cloud::set_ion_position: invalid ion_index: " 
+                  << ion_index;
+        
+        throw runtime_error( error_msg.str() );
+    }
 }
 
 void Ion_cloud::set_ion_velocity(size_t ion_index, const Vector3D& v)
 {
+    // throws runtime_error if invalid ion_index used
     if (ion_index < ion_vec.size()) {
         ion_vec[ion_index]->set_velocity(v);
         return;
     }
-    else
-        throw;
+    else {
+        ostringstream error_msg;
+        error_msg << "Error in Ion_cloud::set_ion_velocity: invalid ion_index: "
+                  << ion_index;
+        throw runtime_error( error_msg.str() );
+    }
 }
+
+struct isIon_type {
+    isIon_type(const Ion_type& type_in) : type_(type_in) {}
+    bool operator()(Ion* ion) const {
+        return &(ion->get_type()) == &type_;
+    }
+private:
+    const Ion_type& type_; 
+};
+
+// changes one ion from one type to another, returns true if successful
+bool Ion_cloud::change_ion(const std::string& name_in, const std::string& name_out) {
+    try {
+        const Ion_type& type_in = cloud_params->get_Ion_type_by_name(name_in);
+        const Ion_type& type_out = cloud_params->get_Ion_type_by_name(name_out);
+        return this->change_ion(type_in, type_out);
+    } catch (std::exception& e) {
+        std::cerr << e.what();
+        return false;
+    }
+}
+
+// changes one ion from one type to another, returns true if successful
+// throws runtime_error if unable to assign new ion
+bool Ion_cloud::change_ion(const Ion_type& type_in, const Ion_type& type_out) {
+    
+    Ion_ptr_vector::iterator ion_to_change;
+    ion_to_change = find_if(ion_vec.begin(), ion_vec.end(), isIon_type(type_in) );
+    
+    if ( ion_to_change == ion_vec.end() ) {
+        return false;
+    }
+    
+    Ion* new_ion = 0;
+    try {
+        // allocates new ion according to new type
+        if (type_out.is_laser_cooled)
+            new_ion = new Lasercooled_ion(*trap, type_out);
+        else
+            new_ion = new Trapped_ion(*trap, type_out);
+        
+    } catch (bad_alloc& ba) {
+        ostringstream error_msg;
+        error_msg << "bad_alloc in Ion_cloud::change_ion: " << ba.what();
+        throw runtime_error( error_msg.str() );
+    }    
+    
+    // keep original position and velocity
+    new_ion->set_position( (*ion_to_change)->r() );
+    new_ion->set_velocity( (*ion_to_change)->v() );
+    
+    // delete old ion and change pointer to new ion
+    delete *ion_to_change;
+    *ion_to_change = new_ion;
+    
+    return true;
+}
+
+
+
 
 

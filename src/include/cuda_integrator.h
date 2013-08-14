@@ -1,9 +1,5 @@
 //
-//  integrator.h
-//  CCMD
-//
-//  Created by Martin Bell on 13/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  cuda_integrator.h
 //
 
 #ifndef CCMD_cuda_integrator_h
@@ -17,7 +13,9 @@
 class Ion_cloud;
 class Ion_trap;
 class Integration_params;
-//class Vector3D;
+
+//template <typename T>
+//class BodySystemCUDA;
 
 class CUDA_integrator : public RESPA_integrator 
 {

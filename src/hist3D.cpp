@@ -1,14 +1,11 @@
 //
-//  Hist3D.cpp
-//  CCMD
-//
-//  Created by Martin Bell on 27/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  hist3D.cpp
 //
 
-#include <iostream>
 #include "hist3D.h"
-#include <exception>
+
+#include <iostream>
+#include <stdexcept>
 #include <cmath>
 #include <limits>
 
@@ -23,14 +20,17 @@ void Hist3D::update(const Vector3D& r)
 
 void Hist3D::set_bin_size(double size)
 { 
-    // Exception handling to be completed
-    if (!hist.empty()) throw; 
-        
+    // throws runtime_error if there is already histogram data defined
+    // with a different bin size
+    if (!hist.empty() && bin_size != size) {
+        throw runtime_error("Hist3D bin size already set for existing data");
+    }
     bin_size = size;
 }
 
 std::ostream& operator<<(std::ostream& os, const Hist3D& h)
 {
+    // outputs histogram in format: x y z density  
     typedef std::map<std::vector<int>,double>::const_iterator hist_it;
     for (hist_it p=h.hist.begin(); p != h.hist.end(); ++p) {
         Vector3D r = Hist3D::bin_to_Vector3D( p->first );
@@ -91,7 +91,6 @@ void Hist3D::output_image(std::ostream& os) const
 void Hist3D::get_vector_bounds(const vector<int>& v, 
                                vector<int>& min_store, vector<int>& max_store) const
 {
-    // Might be better to use std library here
     for (int i=0; i<v.size(); ++i) {
         min_store[i] = min(v[i], min_store[i]);
         max_store[i] = max(v[i], max_store[i]);
@@ -124,12 +123,8 @@ private:
 
 void Hist3D::minmax(const Hist3D::xyz& r, int& minr, int& maxr) const
 {
-    //
-    // Get maximum and minimum values from map's key vector
-    //
-    // This overwrites minr and maxr
-    //
-    
+    // gets maximum and minimum values from map's key vector
+    // overwrites minr and maxr
     if (hist.empty()) {
         minr = 0;
         maxr = 0;
@@ -151,9 +146,7 @@ void Hist3D::minmax(const Hist3D::xyz& r, int& minr, int& maxr) const
 
 std::vector<histPixel> Hist3D::getPlane(const Hist3D::xyz& r, int index) const
 {
-    //
-    // Return vector of histPixels found in plane specified by axis r
-    //
+    // returns vector of histPixels found in plane specified by axis r
     
     std::vector<histPixel> pixels;
     typedef std::map<std::vector<int>,double>::const_iterator hist_it;
@@ -192,24 +185,21 @@ std::vector<histPixel> Hist3D::getPlane(const Hist3D::xyz& r, int index) const
 
 void Hist3D::prune(double threshold)
 {
-    /*
-    Map has the important property that inserting a new element into a map does 
-    not invalidate iterators that point to existing elements Erasing an element 
-    from a map also does not invalidate any iterators, except, of course, for 
-    iterators that actually point to the element that is being erased.
-    */
-    
     typedef std::map<std::vector<int>,double>::const_iterator const_hist_it;
     typedef std::map<std::vector<int>,double>::iterator hist_it;
 
+    // find the maximum value in the histogram
     double max_val = 0;
     for (const_hist_it p = hist.begin(); p != hist.end(); ++p) {
         max_val = p->second > max_val ? p->second : max_val;
     }
     
+    // erase bins that fall below threshold
     hist_it p = hist.begin();
     while ( p != hist.end() ) {
         if (p->second < threshold*max_val) {
+            // erasing element does not invalidate iterator for map,
+            // except for element being erased
             hist.erase(p++);
         }
         else {
@@ -220,7 +210,10 @@ void Hist3D::prune(double threshold)
     return;
 }
 
-
+void Hist3D::reset() 
+{
+    hist.clear();    
+}
 
 
     

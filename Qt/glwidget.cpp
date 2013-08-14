@@ -11,7 +11,7 @@
 #include <string>
 #include <QString>
 
-// Constructor
+// constructor
 GLWidget::GLWidget(QWidget *parent) :
      QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
@@ -22,9 +22,12 @@ GLWidget::GLWidget(QWidget *parent) :
     connect(this,SIGNAL(xRotationChanged(int)), this, SLOT(setXRotation(int)));
     connect(this,SIGNAL(yRotationChanged(int)), this, SLOT(setYRotation(int)));
     connect(this,SIGNAL(zRotationChanged(int)), this, SLOT(setZRotation(int)));
+
+    // defines size of particles
+    step = 0.75;
 }
 
-// Destructor
+// destructor
 GLWidget::~GLWidget() {
     glDeleteTextures(1, &texture);
 }
@@ -39,7 +42,7 @@ void GLWidget::initializeGL()
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // Really nice perspective calculations
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // nice perspective calculations
 
     // Set up texture
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
@@ -90,12 +93,13 @@ void GLWidget::paintGL()
         glRotatef (rotate_x, -1, 0, 0);
         glTranslatef(-x, -y, -z);
 
+        //float step = 1.0;
         // Use triangle strip to draw particle
         glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2d(1, 1); glVertex3f(x + 0.5f, y + 0.5f, z);
-            glTexCoord2d(0, 1); glVertex3f(x - 0.5f, y + 0.5f, z);
-            glTexCoord2d(1, 0); glVertex3f(x + 0.5f, y - 0.5f, z);
-            glTexCoord2d(0, 0); glVertex3f(x - 0.5f, y - 0.5f, z);
+            glTexCoord2d(1, 1); glVertex3f(x + step, y + step, z);
+            glTexCoord2d(0, 1); glVertex3f(x - step, y + step, z);
+            glTexCoord2d(1, 0); glVertex3f(x + step, y - step, z);
+            glTexCoord2d(0, 0); glVertex3f(x - step, y - step, z);
         glEnd();
 
         // Retrieve stored matrix
@@ -120,6 +124,7 @@ void GLWidget::resizeGL(int width, int height)
 
 qreal GLWidget::aspect()
 {
+    // get aspect ratio
     qreal width = this->width();
     qreal height = this->height();
     return (qreal) width / ((qreal)height ? height : 1);
@@ -140,7 +145,7 @@ void GLWidget::setView()
     glMatrixMode(GL_MODELVIEW);
 }
 
-void Particle::move(const QVector3D& r)
+void GLWidget::Particle::move(const QVector3D& r)
 {
     pos += r;
 }
@@ -154,7 +159,6 @@ static void qNormalizeAngle(int &angle)
         angle -= 360 * 16;
 }
 
-//! [5]
 void GLWidget::setXRotation(int angle)
 {
     qNormalizeAngle(angle);
@@ -164,7 +168,6 @@ void GLWidget::setXRotation(int angle)
         updateGL();
     }
 }
-//! [5]
 
 void GLWidget::setYRotation(int angle)
 {
@@ -208,7 +211,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void GLWidget::setParticles(const Ion_cloud& ic)
 {
-
+    // (re)initialises particle vector and update GL object
     particle_vec.clear();    
     int n_particles = ic.number_of_ions();
 
@@ -233,12 +236,15 @@ void GLWidget::setParticles(const Ion_cloud& ic)
             new_particle.color = Qt::cyan;
         }
 
-
         particle_vec.append( new_particle );
     }
 
     updateGL();
 }
+
+
+double GLWidget::max_zoom_distance = 30.0;
+double GLWidget::min_zoom_distance = 5.0;
 
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
@@ -248,9 +254,10 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 
     // Change zoomed region size
     displayBoxEdge += numSteps;
-    // Ensure minimum size of 1 and maximum size of 50
-    displayBoxEdge = displayBoxEdge > 1.0 ? displayBoxEdge : 1;
-    displayBoxEdge = displayBoxEdge > 50.0 ? 50.0 : displayBoxEdge;
+
+    // Ensure minimum size and maximum size
+    displayBoxEdge = displayBoxEdge > min_zoom_distance ? displayBoxEdge : min_zoom_distance;
+    displayBoxEdge = displayBoxEdge > max_zoom_distance ? max_zoom_distance : displayBoxEdge;
 
     // Update view
     setView();

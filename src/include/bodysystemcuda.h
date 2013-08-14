@@ -9,6 +9,11 @@
  *
  */
 
+//
+//  This code has been modified for use with the CCMD program
+//  (Martin Bell, April 2012)
+// 
+
 #ifndef __BODYSYSTEMCUDA_H__
 #define __BODYSYSTEMCUDA_H__
 
@@ -16,7 +21,7 @@
 
 template <typename T>
 struct DeviceData {
-    T* dPos[2]; // mapped host pointers
+    T* dPos[2];     // mapped host pointers
     T* dVel;
     cudaEvent_t  event;
     unsigned int offset;

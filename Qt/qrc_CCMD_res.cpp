@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Resource object code
 **
-** Created: Fri Apr 27 14:10:36 2012
+** Created: Wed May 23 15:39:39 2012
 **      by: The Resource Compiler for Qt version 4.6.4
 **
 ** WARNING! All changes made in this file will be lost!
@@ -10,7 +10,7 @@
 #include <QtCore/qglobal.h>
 
 static const unsigned char qt_resource_data[] = {
-  // /home/tps24/mtb/code/ccmd/backups/ccmd/Qt/Particle_with_alpha_blur.png
+  // /home/tps24/mtb/code/submit/ccmd/Qt/Particle_with_alpha_blur.png
   0x0,0x0,0x6,0x9,
   0x89,
   0x50,0x4e,0x47,0xd,0xa,0x1a,0xa,0x0,0x0,0x0,0xd,0x49,0x48,0x44,0x52,0x0,
