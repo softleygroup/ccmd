@@ -26,8 +26,10 @@ inline void Lasercooled_ion::kick(double dt)
     
     // 1D radiation pressure force
     Vector3D pressure(0.0, 0.0, 0.015);
-    this->Ion::kick(dt,pressure);
-
+    if (heater.kick_direction(ion_type->direction))
+        this->Ion::kick(dt,pressure);
+    else
+        this->Ion::kick(dt,-pressure);
 
     // 1D Laser cooling friction force
     // This force must be evaluated last to allow its effect to be

@@ -213,6 +213,7 @@ void Cloud_params::get_ion_types(const std::string& file_name) {
                 >> new_type.beta
                 >> heating_str
                 >> new_type.recoil
+                >> new_type.direction
                 >> new_type.color
                 >> visible_str;
         

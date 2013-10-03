@@ -100,7 +100,8 @@ class Ion_type {
     double mass;            // Mass of ion in atomic mass units
     int charge;             // Charge of ion in electron charge units
     double beta;            // Velocity damping coefficient for laser cooling
-    double recoil;          // Magnitude of stochastic heating 
+    double recoil;          // Magnitude of stochastic heating
+    double direction;       // Ratio of left-to-right cooling intensity
     
     bool is_laser_cooled;
     bool is_heated;

@@ -18,13 +18,21 @@ class Stochastic_heat {
     // bind random number generator to distribution, forming a function
     variate_generator<mt19937&, normal_distribution<> > normal;
     
+    boost::random::uniform_real_distribution<> flat;
+    
     double kick_size;
 public:
-    Stochastic_heat() : normal(generator, norm_dist), kick_size(0.01) { }
+    Stochastic_heat() : normal(generator, norm_dist), flat(0.0, 1.0), kick_size(0.01) {
+    generator.seed(static_cast<unsigned int>(std::time(0)));
+    }
     Vector3D random_kick() 
        { return Vector3D( normal(), normal(), normal())*kick_size; }
     void set_kick_size(double d) { kick_size = d; }
     double get_kick_size() const { return kick_size; }
+    
+    bool kick_direction (const double p) {
+        double num = flat(generator);
+        return p>num;}
 };
 
 #endif
