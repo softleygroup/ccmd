@@ -1,0 +1,349 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A61EB9EF180C21770088DC00 /* ccmd_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DC180C21770088DC00 /* ccmd_image.cpp */; };
+		A61EB9F0180C21770088DC00 /* ccmd_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */; };
+		A61EB9F1180C21770088DC00 /* cosine_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DE180C21770088DC00 /* cosine_trap.cpp */; };
+		A61EB9F2180C21770088DC00 /* coulomb_force.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DF180C21770088DC00 /* coulomb_force.cpp */; };
+		A61EB9F3180C21770088DC00 /* hist1D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E0180C21770088DC00 /* hist1D.cpp */; };
+		A61EB9F4180C21770088DC00 /* hist3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E1180C21770088DC00 /* hist3D.cpp */; };
+		A61EB9F5180C21770088DC00 /* ImageCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E2180C21770088DC00 /* ImageCollection.cpp */; };
+		A61EB9F6180C21770088DC00 /* integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E3180C21770088DC00 /* integrator.cpp */; };
+		A61EB9F7180C21770088DC00 /* ion_cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E4180C21770088DC00 /* ion_cloud.cpp */; };
+		A61EB9F8180C21770088DC00 /* ion_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E5180C21770088DC00 /* ion_trap.cpp */; };
+		A61EB9F9180C21770088DC00 /* ion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E6180C21770088DC00 /* ion.cpp */; };
+		A61EB9FA180C21770088DC00 /* IonHistogram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E7180C21770088DC00 /* IonHistogram.cpp */; };
+		A61EB9FB180C21770088DC00 /* lasercooled_ion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E8180C21770088DC00 /* lasercooled_ion.cpp */; };
+		A61EB9FC180C21770088DC00 /* microscope_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E9180C21770088DC00 /* microscope_image.cpp */; };
+		A61EB9FD180C21770088DC00 /* pulsed_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EA180C21770088DC00 /* pulsed_trap.cpp */; };
+		A61EB9FE180C21770088DC00 /* respa_integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EB180C21770088DC00 /* respa_integrator.cpp */; };
+		A61EB9FF180C21770088DC00 /* stochastic_heat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EC180C21770088DC00 /* stochastic_heat.cpp */; };
+		A61EBA00180C21770088DC00 /* trapped_ion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9ED180C21770088DC00 /* trapped_ion.cpp */; };
+		A61EBA01180C21770088DC00 /* vector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EE180C21770088DC00 /* vector3D.cpp */; };
+		A61EBA12180C21DD0088DC00 /* ccmd_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EBA11180C21DD0088DC00 /* ccmd_test.cpp */; };
+		A66F948B17FD57B300D8E9D6 /* ccmd in CopyFiles */ = {isa = PBXBuildFile; fileRef = A66F943217FD551500D8E9D6 /* ccmd */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A66F943017FD551500D8E9D6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = ../bin/macosx;
+			dstSubfolderSpec = 16;
+			files = (
+				A66F948B17FD57B300D8E9D6 /* ccmd in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A61EB9DC180C21770088DC00 /* ccmd_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_image.cpp; path = ../../src/ccmd_image.cpp; sourceTree = "<group>"; };
+		A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_sim.cpp; path = ../../src/ccmd_sim.cpp; sourceTree = "<group>"; };
+		A61EB9DE180C21770088DC00 /* cosine_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cosine_trap.cpp; path = ../../src/cosine_trap.cpp; sourceTree = "<group>"; };
+		A61EB9DF180C21770088DC00 /* coulomb_force.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = coulomb_force.cpp; path = ../../src/coulomb_force.cpp; sourceTree = "<group>"; };
+		A61EB9E0180C21770088DC00 /* hist1D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hist1D.cpp; path = ../../src/hist1D.cpp; sourceTree = "<group>"; };
+		A61EB9E1180C21770088DC00 /* hist3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hist3D.cpp; path = ../../src/hist3D.cpp; sourceTree = "<group>"; };
+		A61EB9E2180C21770088DC00 /* ImageCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageCollection.cpp; path = ../../src/ImageCollection.cpp; sourceTree = "<group>"; };
+		A61EB9E3180C21770088DC00 /* integrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = integrator.cpp; path = ../../src/integrator.cpp; sourceTree = "<group>"; };
+		A61EB9E4180C21770088DC00 /* ion_cloud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ion_cloud.cpp; path = ../../src/ion_cloud.cpp; sourceTree = "<group>"; };
+		A61EB9E5180C21770088DC00 /* ion_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ion_trap.cpp; path = ../../src/ion_trap.cpp; sourceTree = "<group>"; };
+		A61EB9E6180C21770088DC00 /* ion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ion.cpp; path = ../../src/ion.cpp; sourceTree = "<group>"; };
+		A61EB9E7180C21770088DC00 /* IonHistogram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IonHistogram.cpp; path = ../../src/IonHistogram.cpp; sourceTree = "<group>"; };
+		A61EB9E8180C21770088DC00 /* lasercooled_ion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lasercooled_ion.cpp; path = ../../src/lasercooled_ion.cpp; sourceTree = "<group>"; };
+		A61EB9E9180C21770088DC00 /* microscope_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = microscope_image.cpp; path = ../../src/microscope_image.cpp; sourceTree = "<group>"; };
+		A61EB9EA180C21770088DC00 /* pulsed_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pulsed_trap.cpp; path = ../../src/pulsed_trap.cpp; sourceTree = "<group>"; };
+		A61EB9EB180C21770088DC00 /* respa_integrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = respa_integrator.cpp; path = ../../src/respa_integrator.cpp; sourceTree = "<group>"; };
+		A61EB9EC180C21770088DC00 /* stochastic_heat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stochastic_heat.cpp; path = ../../src/stochastic_heat.cpp; sourceTree = "<group>"; };
+		A61EB9ED180C21770088DC00 /* trapped_ion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trapped_ion.cpp; path = ../../src/trapped_ion.cpp; sourceTree = "<group>"; };
+		A61EB9EE180C21770088DC00 /* vector3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vector3D.cpp; path = ../../src/vector3D.cpp; sourceTree = "<group>"; };
+		A61EBA02180C21B80088DC00 /* ccmd_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmd_image.h; path = ../../src/include/ccmd_image.h; sourceTree = "<group>"; };
+		A61EBA03180C21B80088DC00 /* ccmd_sim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmd_sim.h; path = ../../src/include/ccmd_sim.h; sourceTree = "<group>"; };
+		A61EBA04180C21B80088DC00 /* coulomb_force.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = coulomb_force.h; path = ../../src/include/coulomb_force.h; sourceTree = "<group>"; };
+		A61EBA05180C21B80088DC00 /* cuda_integrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cuda_integrator.h; path = ../../src/include/cuda_integrator.h; sourceTree = "<group>"; };
+		A61EBA06180C21B80088DC00 /* Hist1D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Hist1D.h; path = ../../src/include/Hist1D.h; sourceTree = "<group>"; };
+		A61EBA07180C21B80088DC00 /* hist3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = hist3D.h; path = ../../src/include/hist3D.h; sourceTree = "<group>"; };
+		A61EBA08180C21B80088DC00 /* ImageCollection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ImageCollection.h; path = ../../src/include/ImageCollection.h; sourceTree = "<group>"; };
+		A61EBA09180C21B80088DC00 /* integrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = integrator.h; path = ../../src/include/integrator.h; sourceTree = "<group>"; };
+		A61EBA0A180C21B80088DC00 /* ion_cloud.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ion_cloud.h; path = ../../src/include/ion_cloud.h; sourceTree = "<group>"; };
+		A61EBA0B180C21B80088DC00 /* ion_trap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ion_trap.h; path = ../../src/include/ion_trap.h; sourceTree = "<group>"; };
+		A61EBA0C180C21B80088DC00 /* ion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ion.h; path = ../../src/include/ion.h; sourceTree = "<group>"; };
+		A61EBA0D180C21B80088DC00 /* IonHistogram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IonHistogram.h; path = ../../src/include/IonHistogram.h; sourceTree = "<group>"; };
+		A61EBA0E180C21B80088DC00 /* Stats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Stats.h; path = ../../src/include/Stats.h; sourceTree = "<group>"; };
+		A61EBA0F180C21B80088DC00 /* stochastic_heat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stochastic_heat.h; path = ../../src/include/stochastic_heat.h; sourceTree = "<group>"; };
+		A61EBA10180C21B80088DC00 /* vector3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vector3D.h; path = ../../src/include/vector3D.h; sourceTree = "<group>"; };
+		A61EBA11180C21DD0088DC00 /* ccmd_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_test.cpp; path = ../../examples/ccmd_test.cpp; sourceTree = "<group>"; };
+		A66F943217FD551500D8E9D6 /* ccmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ccmd; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A66F942F17FD551500D8E9D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6A2DB227155026C000726C3B = {
+			isa = PBXGroup;
+			children = (
+				A66F946017FD56D700D8E9D6 /* Src */,
+				A66F944D17FD56B500D8E9D6 /* Headers */,
+				6A2DB233155026C000726C3B /* Products */,
+				A61EBA11180C21DD0088DC00 /* ccmd_test.cpp */,
+			);
+			sourceTree = "<group>";
+		};
+		6A2DB233155026C000726C3B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A66F943217FD551500D8E9D6 /* ccmd */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A66F944D17FD56B500D8E9D6 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				A61EBA02180C21B80088DC00 /* ccmd_image.h */,
+				A61EBA03180C21B80088DC00 /* ccmd_sim.h */,
+				A61EBA04180C21B80088DC00 /* coulomb_force.h */,
+				A61EBA05180C21B80088DC00 /* cuda_integrator.h */,
+				A61EBA06180C21B80088DC00 /* Hist1D.h */,
+				A61EBA07180C21B80088DC00 /* hist3D.h */,
+				A61EBA08180C21B80088DC00 /* ImageCollection.h */,
+				A61EBA09180C21B80088DC00 /* integrator.h */,
+				A61EBA0A180C21B80088DC00 /* ion_cloud.h */,
+				A61EBA0B180C21B80088DC00 /* ion_trap.h */,
+				A61EBA0C180C21B80088DC00 /* ion.h */,
+				A61EBA0D180C21B80088DC00 /* IonHistogram.h */,
+				A61EBA0E180C21B80088DC00 /* Stats.h */,
+				A61EBA0F180C21B80088DC00 /* stochastic_heat.h */,
+				A61EBA10180C21B80088DC00 /* vector3D.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		A66F946017FD56D700D8E9D6 /* Src */ = {
+			isa = PBXGroup;
+			children = (
+				A61EB9DC180C21770088DC00 /* ccmd_image.cpp */,
+				A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */,
+				A61EB9DE180C21770088DC00 /* cosine_trap.cpp */,
+				A61EB9DF180C21770088DC00 /* coulomb_force.cpp */,
+				A61EB9E0180C21770088DC00 /* hist1D.cpp */,
+				A61EB9E1180C21770088DC00 /* hist3D.cpp */,
+				A61EB9E2180C21770088DC00 /* ImageCollection.cpp */,
+				A61EB9E3180C21770088DC00 /* integrator.cpp */,
+				A61EB9E4180C21770088DC00 /* ion_cloud.cpp */,
+				A61EB9E5180C21770088DC00 /* ion_trap.cpp */,
+				A61EB9E6180C21770088DC00 /* ion.cpp */,
+				A61EB9E7180C21770088DC00 /* IonHistogram.cpp */,
+				A61EB9E8180C21770088DC00 /* lasercooled_ion.cpp */,
+				A61EB9E9180C21770088DC00 /* microscope_image.cpp */,
+				A61EB9EA180C21770088DC00 /* pulsed_trap.cpp */,
+				A61EB9EB180C21770088DC00 /* respa_integrator.cpp */,
+				A61EB9EC180C21770088DC00 /* stochastic_heat.cpp */,
+				A61EB9ED180C21770088DC00 /* trapped_ion.cpp */,
+				A61EB9EE180C21770088DC00 /* vector3D.cpp */,
+			);
+			name = Src;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A66F943117FD551500D8E9D6 /* ccmd */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A66F943817FD551A00D8E9D6 /* Build configuration list for PBXNativeTarget "ccmd" */;
+			buildPhases = (
+				A66F942E17FD551500D8E9D6 /* Sources */,
+				A66F942F17FD551500D8E9D6 /* Frameworks */,
+				A66F943017FD551500D8E9D6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ccmd;
+			productName = ccmd_exe;
+			productReference = A66F943217FD551500D8E9D6 /* ccmd */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6A2DB229155026C000726C3B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = 6A2DB22C155026C000726C3B /* Build configuration list for PBXProject "ccmd" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 6A2DB227155026C000726C3B;
+			productRefGroup = 6A2DB233155026C000726C3B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A66F943117FD551500D8E9D6 /* ccmd */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A66F942E17FD551500D8E9D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A61EB9EF180C21770088DC00 /* ccmd_image.cpp in Sources */,
+				A61EB9F0180C21770088DC00 /* ccmd_sim.cpp in Sources */,
+				A61EB9F1180C21770088DC00 /* cosine_trap.cpp in Sources */,
+				A61EB9F2180C21770088DC00 /* coulomb_force.cpp in Sources */,
+				A61EB9F3180C21770088DC00 /* hist1D.cpp in Sources */,
+				A61EB9F4180C21770088DC00 /* hist3D.cpp in Sources */,
+				A61EB9F5180C21770088DC00 /* ImageCollection.cpp in Sources */,
+				A61EB9F6180C21770088DC00 /* integrator.cpp in Sources */,
+				A61EB9F7180C21770088DC00 /* ion_cloud.cpp in Sources */,
+				A61EB9F8180C21770088DC00 /* ion_trap.cpp in Sources */,
+				A61EB9F9180C21770088DC00 /* ion.cpp in Sources */,
+				A61EB9FA180C21770088DC00 /* IonHistogram.cpp in Sources */,
+				A61EB9FB180C21770088DC00 /* lasercooled_ion.cpp in Sources */,
+				A61EB9FC180C21770088DC00 /* microscope_image.cpp in Sources */,
+				A61EB9FD180C21770088DC00 /* pulsed_trap.cpp in Sources */,
+				A61EB9FE180C21770088DC00 /* respa_integrator.cpp in Sources */,
+				A61EB9FF180C21770088DC00 /* stochastic_heat.cpp in Sources */,
+				A61EBA00180C21770088DC00 /* trapped_ion.cpp in Sources */,
+				A61EBA01180C21770088DC00 /* vector3D.cpp in Sources */,
+				A61EBA12180C21DD0088DC00 /* ccmd_test.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6A2DB234155026C000726C3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		6A2DB235155026C000726C3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
+		A66F943917FD551A00D8E9D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				HEADER_SEARCH_PATHS = (
+					/opt/local/include,
+					"\"$(SRCROOT)/../../../src/include\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A66F943A17FD551A00D8E9D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				HEADER_SEARCH_PATHS = (
+					/opt/local/include,
+					"\"$(SRCROOT)/../../../src/include\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6A2DB22C155026C000726C3B /* Build configuration list for PBXProject "ccmd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A2DB234155026C000726C3B /* Debug */,
+				6A2DB235155026C000726C3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A66F943817FD551A00D8E9D6 /* Build configuration list for PBXNativeTarget "ccmd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A66F943917FD551A00D8E9D6 /* Debug */,
+				A66F943A17FD551A00D8E9D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6A2DB229155026C000726C3B /* Project object */;
+}
