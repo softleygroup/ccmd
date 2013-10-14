@@ -35,7 +35,7 @@ void IonHistogram::addIon(const std::string& name, const double& energy)
         histMap[name] = pTheHist;
     }
     
-    int bin_num = std::floor(energy/binWidth);
+    int bin_num = int(std::floor(energy/binWidth));
     ++(*pTheHist)[bin_num];
 }
 
@@ -74,3 +74,4 @@ void IonHistogram::writeFiles (const std::string& basePath)
         fileStream.close();
     }
 }
+

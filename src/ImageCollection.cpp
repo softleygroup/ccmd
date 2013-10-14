@@ -65,3 +65,4 @@ const void ImageCollection::writeFiles(const std::string &basePath)
         delete image;
     }
 }
+

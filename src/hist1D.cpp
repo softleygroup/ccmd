@@ -18,7 +18,7 @@ Hist1D::Hist1D(double width) : hist()
 
 void Hist1D::update(const double &p)
 {
-    int bin_num = std::floor(p/bin_width);
+    int bin_num = int(std::floor(p/bin_width));
     max_bin_num = std::max(max_bin_num, bin_num);
 //    max_bin_num = bin_num > max_bin_num ? bin_num : max_bin_num;
     ++ hist[bin_num];

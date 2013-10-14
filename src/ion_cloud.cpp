@@ -360,7 +360,7 @@ void Ion_cloud::scale(double scale_factor)
 
 std::vector<Vector3D> get_lattice(size_t n)
 {
-    int side = ceil( pow(n,1.0/3.0) );
+    int side = int(ceil( pow(n,1.0/3.0) ));
     std::vector<Vector3D> lattice;
 
 	Vector3D grid_pos;
