@@ -27,17 +27,17 @@
 		A61EBA00180C21770088DC00 /* trapped_ion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9ED180C21770088DC00 /* trapped_ion.cpp */; };
 		A61EBA01180C21770088DC00 /* vector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EE180C21770088DC00 /* vector3D.cpp */; };
 		A61EBA12180C21DD0088DC00 /* ccmd_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EBA11180C21DD0088DC00 /* ccmd_test.cpp */; };
-		A66F948B17FD57B300D8E9D6 /* ccmd in CopyFiles */ = {isa = PBXBuildFile; fileRef = A66F943217FD551500D8E9D6 /* ccmd */; };
+		A6B7E645180C2B30007AA48F /* ccmd in CopyFiles */ = {isa = PBXBuildFile; fileRef = A66F943217FD551500D8E9D6 /* ccmd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		A66F943017FD551500D8E9D6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = ../bin/macosx;
-			dstSubfolderSpec = 16;
+			dstPath = /Users/crennick/Documents/Oxford/IonTrap/ccmd/bin/macosx;
+			dstSubfolderSpec = 0;
 			files = (
-				A66F948B17FD57B300D8E9D6 /* ccmd in CopyFiles */,
+				A6B7E645180C2B30007AA48F /* ccmd in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

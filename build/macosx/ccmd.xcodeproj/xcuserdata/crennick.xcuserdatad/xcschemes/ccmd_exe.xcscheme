@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A66F943117FD551500D8E9D6"
-               BuildableName = "ccmd_exe"
+               BuildableName = "ccmd"
                BlueprintName = "ccmd"
                ReferencedContainer = "container:ccmd.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A66F943117FD551500D8E9D6"
-            BuildableName = "ccmd_exe"
+            BuildableName = "ccmd"
             BlueprintName = "ccmd"
             ReferencedContainer = "container:ccmd.xcodeproj">
          </BuildableReference>
@@ -52,7 +52,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A66F943117FD551500D8E9D6"
-            BuildableName = "ccmd_exe"
+            BuildableName = "ccmd"
             BlueprintName = "ccmd"
             ReferencedContainer = "container:ccmd.xcodeproj">
          </BuildableReference>
@@ -96,7 +96,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A66F943117FD551500D8E9D6"
-            BuildableName = "ccmd_exe"
+            BuildableName = "ccmd"
             BlueprintName = "ccmd"
             ReferencedContainer = "container:ccmd.xcodeproj">
          </BuildableReference>
