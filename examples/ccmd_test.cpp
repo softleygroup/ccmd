@@ -133,9 +133,9 @@ int main (int argc, char * const argv[]) {
         printProgBar(100);
         std::cout << endl;
         
-        cout << "total kinetic energy = " << KE << endl;
-        ionImages.writeFiles(path);
-        cloud.saveStats(path);
+        //cout << "total kinetic energy = " << KE << endl;
+        //ionImages.writeFiles(path);
+        //cloud.saveStats(path);
 
     } catch (std::exception& e) {
         cerr << "Error: " << e.what() << endl;
