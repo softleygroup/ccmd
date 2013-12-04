@@ -11,7 +11,7 @@
 #include "vector3D.h"
 #include "ccmd_image.h"
 
-#include <thread>
+#include <boost/thread.hpp>
 #include <list>
 
 
@@ -43,16 +43,41 @@ void ImageCollection::addIon(const std::string &name, const Vector3D &r)
     pIonHist->update(r);
 }
 
-const void ImageCollection::workerGenerateImage(Collection::const_iterator it, const std::string &basePath)
+const void ImageCollection::writeFiles(std::string const& basePath)
 {
-    std::string fileEnding = "_image.dat";
+    typedef std::list<ImageWorker*> ThreadList;
+    ThreadList threadList;
     
-    std::string fileName;
-    Hist3D* pIonHist;
+    for (Collection::const_iterator it=collection.begin();
+         it!=collection.end(); ++it)
+    {
+        ImageWorker *w = new ImageWorker(basePath, it);
+        threadList.push_back(w);
+    }
+    
+    for (ThreadList::iterator it_thread=threadList.begin(); it_thread!=threadList.end(); ++it_thread) {
+        (*it_thread)->join();
+        delete *it_thread;
+    }
+}
+
+ImageWorker::ImageWorker(
+                         std::string const& basePath,
+                         ImageCollection::Collection::const_iterator const& it)
+:basePath(basePath), fileName(it->first), pIonHist(it->second)
+{
+    m_Thread = boost::thread(&ImageWorker::generateAndSave, this);
+}
+
+void ImageWorker::join()
+{
+    m_Thread.join();
+}
+
+void ImageWorker::generateAndSave() {
+    std::string fileEnding = "_image.dat";
     Microscope_image* image;
     
-    fileName=it->first;
-    pIonHist=it->second;
     std::cout << "Generating image: " << fileName << std::endl;
     image = new Microscope_image(640, 640, (*pIonHist));
     while (!image->is_finished())
@@ -62,27 +87,7 @@ const void ImageCollection::workerGenerateImage(Collection::const_iterator it, c
     }
     std::cout << std::endl;
     image->ouput_to_file(basePath + fileName + fileEnding);
-    
     delete image;
-
 }
 
-
-const void ImageCollection::writeFiles(const std::string &basePath)
-{
-    typedef std::list<std::thread*> ThreadList;
-    ThreadList threadList;
-    
-    for (Collection::const_iterator it=collection.begin();
-         it!=collection.end(); ++it)
-    {
-        std::thread* worker = new std::thread(&ImageCollection::workerGenerateImage, this, it, basePath);
-        threadList.push_back(worker);
-    }
-    
-    for (ThreadList::iterator it_thread=threadList.begin(); it_thread!=threadList.end(); ++it_thread) {
-        (*it_thread)->join();
-        delete (*it_thread);
-    }
-}
 
