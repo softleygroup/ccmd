@@ -15,12 +15,12 @@ VPATH = ./
 # CUDA_INCLUDE = /usr/local/cuda/include
 # CUDA_LIB = /usr/local/cuda/lib
 # BOOST_INCLUDE = /home/tps24/mtb/boost_1_49_0
-BOOST_INCLUDE = /usr/include
+BOOST_INCLUDE = /opt/local/include
 CCMD_LIB = ../bin/linux 
 
 # program_INCLUDE_DIRS := $(CUDA_INCLUDE) $(BOOST_INCLUDE) ../src/include
 program_INCLUDE_DIRS := $(BOOST_INCLUDE) ../src/include
-program_LIBRARY_DIRS := $(CCMD_LIB) 
+program_LIBRARY_DIRS := $(CCMD_LIB) /opt/local/lib
 program_LIBRARIES := ccmd
 # program_LIBRARY_DIRS := $(CUDA_LIB) $(CCMD_LIB)
 # program_LIBRARIES := ccmd # cuda cudart
@@ -31,6 +31,7 @@ CPPFLAGS += -O3 -Wall -fPIC
 
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
+LDFLAGS += -lboost_thread-mt
 
 .PHONY: all clean distclean
 

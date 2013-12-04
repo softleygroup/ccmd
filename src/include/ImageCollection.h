@@ -14,6 +14,7 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <boost/thread.hpp>
 
 class Hist3D;
 class Vector3D;
@@ -24,19 +25,37 @@ public:
     ~ImageCollection();
     
     void addIon(const std::string& name, const Vector3D& r);
-    const void writeFiles(const std::string& basePath);
+    const void writeFiles(std::string const& basePath);
 private:
     typedef std::map<std::string, Hist3D*> Collection;
     Collection collection;
     double binSize;
     
+    friend class ImageWorker;
+};
+
+class ImageWorker
+{
+public:
+    ImageWorker(std::string const& basePath, ImageCollection::Collection::const_iterator const& it);
+    void join();
+    
+private:
+    friend class ImageCollection;
+    std::string basePath;
+    ImageCollection::Collection::iterator it;
+    boost::thread m_Thread;
+    std::string fileName;
+    Hist3D* pIonHist;
+    
+    void generateAndSave();
     
     static double stopWatchTimer() {
         static clock_t start = clock();
         double time_elapsed;
         time_elapsed = ( std::clock() - start )/static_cast<double>(CLOCKS_PER_SEC);
         return time_elapsed;
-    }
+    };
     
     static void printProgBar( int percent ){
         std::string bar;
@@ -53,7 +72,8 @@ private:
         std::cout.width( 3 );
         std::cout<< percent << "%     " << std::flush;
     }
-
 };
+
+
 
 #endif /* defined(__ccmd__ImageCollection__) */

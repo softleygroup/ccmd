@@ -18,7 +18,7 @@ VPATH = ./
 # BOOST_INCLUDE = /home/tps24/mtb/boost_1_49_0
 
 # program_INCLUDE_DIRS := $(CUDA_INCLUDE) $(BOOST_INCLUDE) ./include
-program_INCLUDE_DIRS := ./include /usr/include
+program_INCLUDE_DIRS := ./include /usr/include /opt/local/include
 # program_LIBRARY_DIRS := $(CUDA_LIB) 
 # program_LIBRARIES := cuda cudart
 
