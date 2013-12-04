@@ -32,6 +32,8 @@ void RESPA_integrator::evolve(double dt)
     
     // slow Coulomb force half-kick
     ions->kick(half_dt, f_coulomb.get_force() );
+    // get new slow force
+    f_coulomb.update();
     
     // ion stochastic heating for half-step
     ions->heat(half_dt);
@@ -59,9 +61,6 @@ void RESPA_integrator::evolve(double dt)
     
     // ion stochastic heating for half-step
     ions->heat(half_dt);
-    
-    // get new slow force
-    f_coulomb.update();
     
     // slow Coulomb force half-kick
     ions->kick(half_dt, f_coulomb.get_force());

@@ -8,6 +8,7 @@
 
 #include "vector3D.h"
 #include <vector>
+#include <boost/thread.hpp>
 
 class Ion_cloud;
 
@@ -17,7 +18,7 @@ class Ion_cloud;
 class Coulomb_force {
 public:
     Coulomb_force(const Ion_cloud& ic);  
-    const std::vector<Vector3D>& get_force() const { return force; };
+    const std::vector<Vector3D>& get_force();
     
     // return Coulomb force on a particular ion
     Vector3D get_force(size_t i);
@@ -25,9 +26,12 @@ public:
     // recalculate forces
     void update();
 private:
-    const Ion_cloud* ions;
+    const Ion_cloud* ionCloud;
+    std::vector<Vector3D> ionsCopy;
     std::vector<Vector3D> force;
     void direct_force();
+    
+    boost::thread m_Thread;
 };
 
 #endif

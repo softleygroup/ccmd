@@ -14,21 +14,31 @@
 #include <cmath>
 #include <algorithm>
 #include <exception>
+#include <boost/thread.hpp>
 
 #include <assert.h>
+
 
 // To do: remove loops using std::transform
 
 Coulomb_force::Coulomb_force(const Ion_cloud& ic)
-    : ions(&ic) 
+    : ionCloud(&ic)
 {
     force = std::vector<Vector3D>( ic.number_of_ions() );
+    ionsCopy = std::vector<Vector3D>(ic.number_of_ions());
 }
 
 
 void Coulomb_force::update() 
 {
-    direct_force();
+    //direct_force();
+    // Start calculating force in another thread so the integrator can get on with the
+    // fast force calculation. Create a local copy of the ion positions so we can
+    // work on them without them changing
+    for (int i=0; i<ionsCopy.size(); i++) {
+        ionsCopy[i] = ionCloud->ion_vec[i]->r();
+    }
+    m_Thread = boost::thread(&Coulomb_force::direct_force, this);
     return;
 }
 
@@ -45,12 +55,12 @@ void Coulomb_force::direct_force()
     std::fill(force.begin(),force.end(), null_vec);
         
     // sum Coulomb force over all particles
-    for (int i=0; i<ions->ion_vec.size(); ++i) {
-        r1 = ions->ion_vec[i]->r();
-        q1 = ions->ion_vec[i]->q();
-        for (int j=i+1; j<ions->ion_vec.size(); ++j) {
-            r2 = ions->ion_vec[j]->r();
-            q2 = ions->ion_vec[j]->q();
+    for (int i=0; i<ionsCopy.size(); ++i) {
+        r1 = ionsCopy[i];
+        q1 = ionCloud->ion_vec[i]->q();
+        for (int j=i+1; j<ionsCopy.size(); ++j) {
+            r2 = ionsCopy[j];
+            q2 = ionCloud->ion_vec[j]->q();
     
             // range checking disabled in release to improve performance
             assert ( r1 != r2 );
@@ -68,9 +78,16 @@ void Coulomb_force::direct_force()
     }
 }
 
+const std::vector<Vector3D>& Coulomb_force::get_force()
+{
+    //Ensure the thread has finished before returning the new force.
+    m_Thread.join();
+    return force;
+};
+
 Vector3D Coulomb_force::get_force(size_t i)
 { 
-    if ( i < ions->ion_vec.size() ) {
+    if ( i < ionCloud->ion_vec.size() ) {
         return force[i]; 
     } else {
         throw std::runtime_error("Coulomb force: invalid index in get_force");
