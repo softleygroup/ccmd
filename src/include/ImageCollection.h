@@ -30,6 +30,7 @@ private:
     Collection collection;
     double binSize;
     
+    const void workerGenerateImage(Collection::const_iterator it, const std::string &basePath);
     
     static double stopWatchTimer() {
         static clock_t start = clock();

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>81DA3FAF-225E-42EF-9028-FC2653CF2540</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ccmd</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3DAF53CD-D521-435A-9D04-311AF5FA493F</key>
+		<string>file:///Users/crennick/Dropbox/ccmd/</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>build/macosx/ccmd.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3DAF53CD-D521-435A-9D04-311AF5FA493F</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>file:///Users/crennick/Dropbox/ccmd/</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3DAF53CD-D521-435A-9D04-311AF5FA493F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3DAF53CD-D521-435A-9D04-311AF5FA493F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ccmd</string>
+		</dict>
+	</array>
+</dict>
+</plist>
