@@ -27,6 +27,7 @@
 		A61EBA00180C21770088DC00 /* trapped_ion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9ED180C21770088DC00 /* trapped_ion.cpp */; };
 		A61EBA01180C21770088DC00 /* vector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EE180C21770088DC00 /* vector3D.cpp */; };
 		A61EBA12180C21DD0088DC00 /* ccmd_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EBA11180C21DD0088DC00 /* ccmd_test.cpp */; };
+		A6785BC91851C24D00B83CBA /* DataWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6785BC71851C24D00B83CBA /* DataWriter.cpp */; };
 		A6B7E645180C2B30007AA48F /* ccmd in CopyFiles */ = {isa = PBXBuildFile; fileRef = A66F943217FD551500D8E9D6 /* ccmd */; };
 /* End PBXBuildFile section */
 
@@ -75,11 +76,13 @@
 		A61EBA0B180C21B80088DC00 /* ion_trap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ion_trap.h; path = ../../src/include/ion_trap.h; sourceTree = "<group>"; };
 		A61EBA0C180C21B80088DC00 /* ion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ion.h; path = ../../src/include/ion.h; sourceTree = "<group>"; };
 		A61EBA0D180C21B80088DC00 /* IonHistogram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IonHistogram.h; path = ../../src/include/IonHistogram.h; sourceTree = "<group>"; };
-		A61EBA0E180C21B80088DC00 /* Stats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Stats.h; path = ../../src/include/Stats.h; sourceTree = "<group>"; };
+		A61EBA0E180C21B80088DC00 /* Stats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Stats.h; path = ../../src/include/Stats.h; sourceTree = SOURCE_ROOT; };
 		A61EBA0F180C21B80088DC00 /* stochastic_heat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stochastic_heat.h; path = ../../src/include/stochastic_heat.h; sourceTree = "<group>"; };
 		A61EBA10180C21B80088DC00 /* vector3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vector3D.h; path = ../../src/include/vector3D.h; sourceTree = "<group>"; };
 		A61EBA11180C21DD0088DC00 /* ccmd_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_test.cpp; path = ../../examples/ccmd_test.cpp; sourceTree = "<group>"; };
 		A66F943217FD551500D8E9D6 /* ccmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ccmd; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6785BC71851C24D00B83CBA /* DataWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DataWriter.cpp; path = ../../src/DataWriter.cpp; sourceTree = "<group>"; };
+		A6785BCA186042E000B83CBA /* DataWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataWriter.h; path = ../../src/include/DataWriter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +117,7 @@
 		A66F944D17FD56B500D8E9D6 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				A6785BCA186042E000B83CBA /* DataWriter.h */,
 				A61EBA02180C21B80088DC00 /* ccmd_image.h */,
 				A61EBA03180C21B80088DC00 /* ccmd_sim.h */,
 				A61EBA04180C21B80088DC00 /* coulomb_force.h */,
@@ -136,6 +140,7 @@
 		A66F946017FD56D700D8E9D6 /* Src */ = {
 			isa = PBXGroup;
 			children = (
+				A6785BC71851C24D00B83CBA /* DataWriter.cpp */,
 				A61EB9DC180C21770088DC00 /* ccmd_image.cpp */,
 				A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */,
 				A61EB9DE180C21770088DC00 /* cosine_trap.cpp */,
@@ -225,6 +230,7 @@
 				A61EB9FC180C21770088DC00 /* microscope_image.cpp in Sources */,
 				A61EB9FD180C21770088DC00 /* pulsed_trap.cpp in Sources */,
 				A61EB9FE180C21770088DC00 /* respa_integrator.cpp in Sources */,
+				A6785BC91851C24D00B83CBA /* DataWriter.cpp in Sources */,
 				A61EB9FF180C21770088DC00 /* stochastic_heat.cpp in Sources */,
 				A61EBA00180C21770088DC00 /* trapped_ion.cpp in Sources */,
 				A61EBA01180C21770088DC00 /* vector3D.cpp in Sources */,
