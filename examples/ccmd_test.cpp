@@ -108,8 +108,8 @@ int main (int argc, char * const argv[]) {
         printProgBar(100);
         cout << '\n';
         
-        // Evolution        
-        int nt = 100000;
+        // Evolution
+        int nt = 20000;
         
         cout << flush << "Accuiring histogram data" << endl;
 
@@ -134,7 +134,7 @@ int main (int argc, char * const argv[]) {
         std::cout << endl;
         
         cout << "total kinetic energy = " << KE << endl;
-        ionImages.writeFiles(path);
+        //ionImages.writeFiles(path);
         cloud.saveStats(path);
 
     } catch (std::exception& e) {

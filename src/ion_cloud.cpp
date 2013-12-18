@@ -10,6 +10,7 @@
 #include "ImageCollection.h"
 #include "IonHistogram.h"
 #include "Stats.h"
+#include "DataWriter.h"
 
 #include <functional>
 #include <algorithm>
@@ -18,6 +19,7 @@
 #include <sstream>
 #include <iomanip>
 #include <map>
+#include <vector>
 
 // To do:   fix aspect ratio
 //#include "eigs.h"
@@ -282,13 +284,31 @@ void Ion_cloud::updateStats()
 }
 
 void Ion_cloud::saveStats(std::string basePath) const {
-    std::string fileEnding = "_stats.dat";
+    std::string statsfileEnding = "_stats.csv";
+    std::string posFileEnding = "_pos.csv";
+    
+    DataWriter writer(",");
+    typedef std::vector<Ion*>::const_iterator ion_itr;
+    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    {
+    	std::string name = (*ion)->name() + posFileEnding;
+    	std::list<double> rowdata;
+        rowdata.push_back(((*ion)->pos)[0]);
+        rowdata.push_back(((*ion)->pos)[1]);
+        rowdata.push_back(((*ion)->pos)[2]);
+        rowdata.push_back(((*ion)->vel)[0]);
+        rowdata.push_back(((*ion)->vel)[1]);
+        rowdata.push_back(((*ion)->vel)[2]);
+        writer.writeRow(name, rowdata);
+    }
+    /*
     std::string fileName;
     std::string filerow;
     Stats<Vector3D> energy;
     Stats<Vector3D> pos;
     Vector3D avg_energy, var_energy, avg_pos, var_pos;
     double mon2;
+    std::ostringstream strs;
     
     typedef std::map <std::string, std::string> FileText;
     FileText fileContents;
@@ -296,6 +316,7 @@ void Ion_cloud::saveStats(std::string basePath) const {
     typedef std::vector<Ion*>::const_iterator ion_itr;
     for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
     {
+        /*
         energy = (*ion)->velStats;
         pos = (*ion)->posStats;
         mon2 = ((*ion)->mass)/2;
@@ -304,7 +325,8 @@ void Ion_cloud::saveStats(std::string basePath) const {
         avg_pos = pos.average();
         var_pos = pos.variance();
         
-        std::ostringstream strs;
+        // Make and store line of output file
+        strs.clear();
         strs << avg_energy[0]*mon2 << "\t" << var_energy[0]*mon2 << "\t";
         strs << avg_energy[1]*mon2 << "\t" << var_energy[1]*mon2 << "\t";
         strs << avg_energy[2]*mon2 << "\t" << var_energy[2]*mon2 << "\t";
@@ -312,19 +334,31 @@ void Ion_cloud::saveStats(std::string basePath) const {
         strs << avg_pos[1] << "\t" << var_pos[1] << "\t";
         strs << avg_pos[2] << "\t" << var_pos[2] << "\n";
         filerow = strs.str();
-        fileContents[(*ion)->name()] += filerow;
+        fileContents[((*ion)->name()) + statsfileEnding] += filerow;
+        */
+        // Make and store line of position and velocity file
+    /*
+        strs.clear();
+        strs << ((*ion)->pos)[0] << "\t" << ((*ion)->pos)[1] << "\t" << ((*ion)->pos)[2] << "\t";
+        strs << ((*ion)->vel)[0] << "\t" << ((*ion)->vel)[1] << "\t" << ((*ion)->vel)[2] << "\n";
+        filerow = strs.str();
+        fileContents[((*ion)->name()) + posFileEnding] += filerow;
+     
     }
     
     std::string header="#<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)\n";
     for (FileText::iterator file=fileContents.begin(); file!=fileContents.end(); ++file)
     {
-        fileName = basePath + file->first + fileEnding;
+        fileName = file->first;
         std::ofstream fileStream(fileName.c_str());
-        fileStream << header;
+        //fileStream << header;
         fileStream << file->second;
         fileStream.close();
     }
     
+    // Save ion final position and velocity
+    
+    */
 }
 
 void Ion_cloud::update_energy_histogram(IonHistogram& h) const
