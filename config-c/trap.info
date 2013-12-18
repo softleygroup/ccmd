@@ -1,0 +1,33 @@
+trap {
+    vrf     200.0
+    vend    2.0
+    eta     0.342
+    r0      3.5e-3
+    z0      2.75e-3
+    freq    3.85e6
+}
+integrator {
+    timestep    0.1
+    respasteps  5       ; Respa inner loop steps
+}
+ionnumbers {
+    Ca      100
+    CaF     50
+}
+iontype {
+    CaF {
+        name        CalciumFluoride
+        mass        59.0
+        charge      1
+    }
+    Ca {
+        name        Calcium
+        mass        40.0
+        charge      1
+        lasercooled true
+        beta        0.05
+        heating     true
+        recoil      0.03
+        direction   0.5
+    }
+}

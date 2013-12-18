@@ -66,6 +66,7 @@ int main (int argc, char * const argv[]) {
 	    path += "/";
 
     // Parameter file paths
+    string info_file = path + "trap.info";
     string trap_param_file = path + "trap_config.txt";
     string ion_types_file = path + "ion_types.txt";
     string cloud_param_file = path + "ion_numbers.txt";
@@ -73,9 +74,9 @@ int main (int argc, char * const argv[]) {
     
     try {
         // Get simulation parameters from files
-        Trap_params trap_params(trap_param_file);
-        Cloud_params cloud_params(cloud_param_file,ion_types_file);
-        Integration_params integrator_params(integrator_param_file);
+        Trap_params trap_params(info_file);
+        Cloud_params cloud_params(info_file);
+        Integration_params integrator_params(info_file);
         
         // Construct trap
         //Cosine_trap trap(trap_params);

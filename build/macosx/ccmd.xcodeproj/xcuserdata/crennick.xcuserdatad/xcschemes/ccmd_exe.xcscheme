@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/crennick/Documents/Oxford/IonTrap/ccmd/config-c"
+            argument = "/Users/crennick/Documents/work/ccmd/config-c"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

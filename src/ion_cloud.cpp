@@ -20,6 +20,7 @@
 #include <iomanip>
 #include <map>
 #include <vector>
+#include <list>
 
 // To do:   fix aspect ratio
 //#include "eigs.h"
@@ -49,21 +50,16 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
     :  trap(&ion_trap), cloud_params(&params)  
 {
     // loop over ion types to initialise ion cloud
-    typedef map<Ion_type*,int>::const_iterator map_itr;
-    for (map_itr p=cloud_params->ion_numbers.begin(); 
-                 p!=cloud_params->ion_numbers.end();
-               ++p) {
-        Ion_type* type_ptr(p->first);
-        int number_of_type(p->second);
-        
+    for (std::list<Ion_type>::const_iterator it=cloud_params->ionTypeList.begin();
+         it!=cloud_params->ionTypeList.end(); ++it) {
         // loop over ions numeber for type, construct ions using *trap to ensure 
         // that changes to ion trap parameters are felt by the ions
         try {
-            for (int i=0; i<number_of_type; ++i) {
-                if (type_ptr->is_laser_cooled) {
-                    add_ion(new Lasercooled_ion(*trap, *type_ptr));
+            for (int i=0; i<it->number; ++i) {
+                if (it->is_laser_cooled) {
+                    add_ion(new Lasercooled_ion(*trap, *it));
                 } else {
-                    add_ion(new Trapped_ion(*trap, *type_ptr));
+                    add_ion(new Trapped_ion(*trap, *it));
                 }
             }
         } catch (bad_alloc& ba) {
@@ -504,11 +500,6 @@ std::string Ion_cloud::ion_formula(size_t ion_index) const
     return ion_vec[ion_index]->formula();
 }
 
-std::string Ion_cloud::ion_color(size_t ion_index) const
-{
-    return ion_vec[ion_index]->color();
-}
-
 void Ion_cloud::set_ion_position(size_t ion_index, const Vector3D& r)
 {
     // throws runtime_error if invalid ion_index used
@@ -550,16 +541,16 @@ private:
 };
 
 // changes one ion from one type to another, returns true if successful
-bool Ion_cloud::change_ion(const std::string& name_in, const std::string& name_out) {
-    try {
-        const Ion_type& type_in = cloud_params->get_Ion_type_by_name(name_in);
-        const Ion_type& type_out = cloud_params->get_Ion_type_by_name(name_out);
-        return this->change_ion(type_in, type_out);
-    } catch (std::exception& e) {
-        std::cerr << e.what();
-        return false;
-    }
-}
+//bool Ion_cloud::change_ion(const std::string& name_in, const std::string& name_out) {
+//    try {
+//        const Ion_type& type_in = cloud_params->get_Ion_type_by_name(name_in);
+//        const Ion_type& type_out = cloud_params->get_Ion_type_by_name(name_out);
+//        return this->change_ion(type_in, type_out);
+//    } catch (std::exception& e) {
+//        std::cerr << e.what();
+//        return false;
+//    }
+//}
 
 // changes one ion from one type to another, returns true if successful
 // throws runtime_error if unable to assign new ion

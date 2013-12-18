@@ -55,7 +55,6 @@ public:
     double ion_mass(size_t ion_index) const;
     std::string ion_name(size_t ion_index) const;
     std::string ion_formula(size_t ion_index) const;
-    std::string ion_color(size_t ion_index) const;
     
     // direct calculation of Coulomb sum
     double coulomb_energy() const;

@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <list>
 
 #include <stdexcept>
 
@@ -91,10 +92,9 @@ private:
 
 class Ion_type {
     public:
+    int number;             // Number of these in the trap.
     std::string name;       // Name to call ion
     std::string formula;    // Chemical formula
-    bool visible;           // Visibility in camera image
-    std::string color;      // Colour used for visualisation
     
     // Ion physical properties
     double mass;            // Mass of ion in atomic mass units
@@ -141,30 +141,32 @@ class Ion_type {
 class Cloud_params {
 public:
     Cloud_params();
-    Cloud_params(const std::string& numbers_file,
-                 const std::string& types_file = ion_types_file);
+    Cloud_params(const std::string& numbers_file);
     
-    typedef std::vector<Ion_type> Ion_type_container;
-    Ion_type_container ion_types;
+//    typedef std::vector<Ion_type> Ion_type_container;
+//    Ion_type_container ion_types;
     
     // Functor to compare Ion_type pointer names 
-    struct ptr_name_less_than {
-        bool operator()(const Ion_type* lhs, const Ion_type* rhs) const
-        {
-            return lhs->name < rhs->name;
-        }
-    };
+//    struct ptr_name_less_than {
+//        bool operator()(const Ion_type* lhs, const Ion_type* rhs) const
+//        {
+//            return lhs->name < rhs->name;
+//        }
+//    };
     
-    const Ion_type& get_Ion_type_by_name(const std::string&) const;
+//    const Ion_type& get_Ion_type_by_name(const std::string&) const;
     
     // store ion numbers in a map ordered by names    
-    std::map<Ion_type*,int,ptr_name_less_than> ion_numbers;
+    //std::map<Ion_type*,int,ptr_name_less_than> ion_numbers;
+
+    // store ion types in a list
+    std::list<Ion_type> ionTypeList;
     
 private:
     static std::string ion_types_file;
     static std::string ion_numbers_file;
 
-    void get_ion_types(const std::string& file_name);
+//    void get_ion_types(const std::string& file_name);
     void get_ion_numbers(const std::string& file_name);
 };
         
