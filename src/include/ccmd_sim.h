@@ -84,7 +84,10 @@ public:
     // See: M. Tuckerman, B. J. Berne and G. J. Martyna
     //      J. Chem. Phys. 92, 1990 (1992)
     // 
-    int respa_steps; 
+    int respa_steps;
+    
+    double cool_steps;     // Number of timesteps for cooling stage.
+    double hist_steps;     // Number of steps to collect statistics.
     
 private:
     std::string static default_integrator_file;

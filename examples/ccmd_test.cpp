@@ -96,7 +96,7 @@ int main (int argc, char * const argv[]) {
         
         // Cool down ion cloud
         cout << flush << "Running cool down" << endl;
-        int nt_cool = 20000;
+        int nt_cool = integrator_params.cool_steps;
         for (int t=0; t<nt_cool; ++t) {    
             integrator.evolve();
             
@@ -110,7 +110,7 @@ int main (int argc, char * const argv[]) {
         cout << '\n';
         
         // Evolution
-        int nt = 20000;
+        int nt = integrator_params.hist_steps;
         
         cout << flush << "Accuiring histogram data" << endl;
 
@@ -135,7 +135,7 @@ int main (int argc, char * const argv[]) {
         std::cout << endl;
         
         cout << "total kinetic energy = " << KE << endl;
-        //ionImages.writeFiles(path);
+        ionImages.writeFiles(path);
         cloud.saveStats(path);
 
     } catch (std::exception& e) {

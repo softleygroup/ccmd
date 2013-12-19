@@ -75,7 +75,7 @@ void ImageWorker::join()
 }
 
 void ImageWorker::generateAndSave() {
-    std::string fileEnding = "_image.dat";
+    std::string fileEnding = "_image.png";
     Microscope_image* image;
     
     std::cout << "Generating image: " << fileName << std::endl;

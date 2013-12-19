@@ -1,7 +1,7 @@
 trap {
-    vrf     200.0
+    vrf     300.0
     vend    2.0
-    eta     0.342
+    eta     0.244
     r0      3.5e-3
     z0      2.75e-3
     freq    3.85e6
@@ -9,6 +9,8 @@ trap {
 integrator {
     timestep    0.1
     respasteps  5       ; Respa inner loop steps
+    coolsteps   20000
+    histsteps   20000
 }
 ionnumbers {
     Ca      100
@@ -25,9 +27,9 @@ iontype {
         mass        40.0
         charge      1
         lasercooled true
-        beta        0.05
+        beta        0.6
         heating     true
-        recoil      0.03
+        recoil      0.01
         direction   0.5
     }
 }

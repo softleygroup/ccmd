@@ -180,6 +180,8 @@ Integration_params::Integration_params(const std::string& file_name)
     try {
         time_step   = pt.get<double>("integrator.timestep");
         respa_steps = pt.get<double>("integrator.respasteps");
+        cool_steps   = pt.get<int>("integrator.coolsteps");
+        hist_steps   = pt.get<int>("integrator.histsteps");
     } catch(const boost::property_tree::ptree_error &e) {
         ostringstream error_msg;
         cout << e.what() << endl;
