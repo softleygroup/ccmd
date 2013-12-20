@@ -76,7 +76,8 @@ public:
     void startStats() {runStats = true;}
     void stopStats() {runStats = false;}
     void updateStats();
-    void saveStats(std::string basePath) const;
+    void saveStats(const std::string basePath, const double length_scale,
+                   const double time_scale) const;
 private:
     const Ion_trap* trap;
     const Cloud_params* cloud_params;

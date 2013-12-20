@@ -136,7 +136,7 @@ int main (int argc, char * const argv[]) {
         
         cout << "total kinetic energy = " << KE << endl;
         ionImages.writeFiles(path);
-        cloud.saveStats(path);
+        cloud.saveStats(path, trap.get_length_scale(), trap.get_time_scale());
 
     } catch (std::exception& e) {
         cerr << "Error: " << e.what() << endl;

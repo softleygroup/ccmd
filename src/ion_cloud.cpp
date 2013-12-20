@@ -279,22 +279,26 @@ void Ion_cloud::updateStats()
     }
 }
 
-void Ion_cloud::saveStats(std::string basePath) const {
+void Ion_cloud::saveStats(const std::string basePath,
+                          const double length_scale,
+                          const double time_scale) const {
     std::string statsfileEnding = "_stats.csv";
     std::string posFileEnding = "_pos.csv";
     
+    double vel_scale = length_scale/time_scale;
     DataWriter writer(",");
     typedef std::vector<Ion*>::const_iterator ion_itr;
     for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
     {
     	std::string name = (*ion)->name() + posFileEnding;
     	std::list<double> rowdata;
-        rowdata.push_back(((*ion)->pos)[0]);
-        rowdata.push_back(((*ion)->pos)[1]);
-        rowdata.push_back(((*ion)->pos)[2]);
-        rowdata.push_back(((*ion)->vel)[0]);
-        rowdata.push_back(((*ion)->vel)[1]);
-        rowdata.push_back(((*ion)->vel)[2]);
+        // Scale reduced units to real=world units and append to file
+        rowdata.push_back(((*ion)->pos)[0] * length_scale);
+        rowdata.push_back(((*ion)->pos)[1] * length_scale);
+        rowdata.push_back(((*ion)->pos)[2] * length_scale);
+        rowdata.push_back(((*ion)->vel)[0] * vel_scale);
+        rowdata.push_back(((*ion)->vel)[1] * vel_scale);
+        rowdata.push_back(((*ion)->vel)[2] * vel_scale);
         writer.writeRow(name, rowdata);
     }
     /*
