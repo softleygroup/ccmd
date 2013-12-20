@@ -18,12 +18,12 @@ BOOST_INCLUDE = /u/tps/crennick/boost_1_55_0
 
 INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
 LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
-LIBRARIES := -lboost_system -lboost_thread -lpthread -lrt
+LIBRARIES := -lboost_system -lboost_thread -lpthread -lrt -lpng -lz
 
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 # CPPFLAGS += -I$(CUTIL_LIB)
 #CPPFLAGS += -O3 -Wall -fPIC -c
-CPPFLAGS += -O3 -std=c99
+CPPFLAGS += -O3 -std=gnu++98
 
 LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
 

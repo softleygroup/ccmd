@@ -286,19 +286,34 @@ void Ion_cloud::saveStats(const std::string basePath,
     std::string posFileEnding = "_pos.csv";
     
     double vel_scale = length_scale/time_scale;
+    double x, y, z, rotated_x, rotated_y;
+    double sqrt2 = 1.414213562;
     DataWriter writer(",");
     typedef std::vector<Ion*>::const_iterator ion_itr;
     for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
     {
     	std::string name = (*ion)->name() + posFileEnding;
     	std::list<double> rowdata;
-        // Scale reduced units to real=world units and append to file
-        rowdata.push_back(((*ion)->pos)[0] * length_scale);
-        rowdata.push_back(((*ion)->pos)[1] * length_scale);
-        rowdata.push_back(((*ion)->pos)[2] * length_scale);
-        rowdata.push_back(((*ion)->vel)[0] * vel_scale);
-        rowdata.push_back(((*ion)->vel)[1] * vel_scale);
-        rowdata.push_back(((*ion)->vel)[2] * vel_scale);
+        // Scale reduced units to real=world units and rotate to align to
+        // axes between rods (calculation has axes crossing rods.)
+        x = ((*ion)->pos)[0] * length_scale;
+        y = ((*ion)->pos)[1] * length_scale;
+        z = ((*ion)->pos)[2] * length_scale;
+        rotated_x = (x+y)/sqrt2;
+        rotated_y = (x-y)/sqrt2;
+        rowdata.push_back(rotated_x);
+        rowdata.push_back(rotated_y);
+        rowdata.push_back(z);
+        
+        x = ((*ion)->vel)[0] * vel_scale;
+        y = ((*ion)->vel)[1] * vel_scale;
+        z = ((*ion)->vel)[2] * vel_scale;
+        rotated_x = (x+y)/sqrt2;
+        rotated_y = (x-y)/sqrt2;
+        rowdata.push_back(rotated_x);
+        rowdata.push_back(rotated_y);
+        rowdata.push_back(z);
+        
         writer.writeRow(name, rowdata);
     }
     /*
