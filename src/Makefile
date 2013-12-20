@@ -1,44 +1,42 @@
-program_NAME := ../bin/linux/libccmd.a 
-program_C_SRCS := $(wildcard *.c)
-program_CXX_SRCS := $(wildcard *.cpp)
+CC = icpc
+# EXECUTABLE:= ../bin/linux/libccmd.a 
+EXECUTABLE:= ../bin/linux/ccmd 
+
+C_SRCS := $(wildcard *.c)
+CXX_SRCS := $(wildcard *.cpp)
 # program_CU_SRCS := $(wildcard *.cu)
-program_C_OBJS := ${program_C_SRCS:.c=.o}
-program_CXX_OBJS := ${program_CXX_SRCS:.cpp=.o}
+C_OBJS := ${C_SRCS:.c=.o}
+CXX_OBJS := ${CXX_SRCS:.cpp=.o}
 # program_CU_OBJS := ${program_CU_SRCS:.cu=.o}
-program_OBJS := $(program_C_OBJS) $(program_CXX_OBJS)
+OBJS := $(C_OBJS) $(CXX_OBJS)
 
 BUILD_DIR := ../build/linux/
-program_OBJS := $(addprefix $(BUILD_DIR), $(program_OBJS))
+OBJS := $(addprefix $(BUILD_DIR), $(OBJS))
 VPATH = ./ 
 
-# NVCC_PATH = /usr/local/cuda/bin
-# CUTIL_LIB = /export/home/tps24/mtb/NVIDIA_GPU_Computing_SDK/C/common/inc
-# CUDA_INCLUDE = /usr/local/cuda/include
-# CUDA_LIB = /usr/local/cuda/lib
-# BOOST_INCLUDE = /home/tps24/mtb/boost_1_49_0
+BOOST_INCLUDE = /u/tps/crennick/boost_1_55_0
 
-# program_INCLUDE_DIRS := $(CUDA_INCLUDE) $(BOOST_INCLUDE) ./include
-program_INCLUDE_DIRS := ./include /usr/include /opt/local/include
-# program_LIBRARY_DIRS := $(CUDA_LIB) 
-# program_LIBRARIES := cuda cudart
+INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
+LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
+LIBRARIES := -lboost_system -lboost_thread -lpthread -lrt
 
-CPPFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
+CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 # CPPFLAGS += -I$(CUTIL_LIB)
 #CPPFLAGS += -O3 -Wall -fPIC -c
-CPPFLAGS += -O3 -fPIC -c
+CPPFLAGS += -O3 -std=c99
 
-#LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
-#LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
+LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
 
 .PHONY: all clean distclean
 
-all: $(program_NAME)
+all: $(EXECUTABLE)
 
-$(program_NAME): $(program_OBJS)
-	ar -rcs $@ $^
+$(EXECUTABLE): $(OBJS)
+#	ar rc $@ $^  
+	$(CC) -o $@ $^ -static $(LIBRARY_DIR) $(LIBRARIES)
 
 $(BUILD_DIR)%.o : %.cpp
-	$(CXX) $< -o $@ $(CPPFLAGS) $(LDFLAGS)
+	$(CC) -c $< -o $@ $(CPPFLAGS)
 
 # $(BUILD_DIR)bodysystemcuda.o: bodysystemcuda.cu bodysystemcuda.cpp include/bodysystemcuda.h
 # 	$(NVCC_PATH)/nvcc -O3 --include-path $(CUTIL_LIB) -c bodysystemcuda.cu -o $(BUILD_DIR)bodysystemcuda.o 
