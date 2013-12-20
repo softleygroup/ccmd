@@ -43,6 +43,7 @@ void Ion_trap::update_trap_params()
     
     length_scale = electron_charge*electron_charge/(pi*epsilon_0*u_mass*omega*omega);
     length_scale = pow(length_scale, 1.0/3.0);
+    time_scale = 1/(pi * freq);
 }
 
 Ion_trap::~Ion_trap() {

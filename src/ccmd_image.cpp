@@ -8,6 +8,15 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+
+#define png_infopp_NULL (png_infopp)NULL
+#define int_p_NULL (int*)NULL
+
+#include <boost/gil/image.hpp>
+#include <boost/gil/typedefs.hpp>
+#include <boost/gil/extension/io/png_dynamic_io.hpp>
+
 
 CCMD_image::CCMD_image(int num_rows, int num_cols, const Hist3D& hist) 
     : rows(num_rows), cols(num_cols) 
@@ -142,7 +151,7 @@ void CCMD_image::set_pixel(const histPixel& pixel) {
     set_pixel(pixel.x,pixel.y,pixel.value); 
 }
 
-void CCMD_image::ouput_to_file(std::string file_name) const {
+void CCMD_image::ouput_to_file(std::string file_name) {
     std::ofstream image_out;
     image_out.open( file_name.c_str() );
     if ( !image_out ) {
@@ -150,6 +159,18 @@ void CCMD_image::ouput_to_file(std::string file_name) const {
     }
     image_out << *this;
     std::cout << "Image output to file: " << file_name << '\n';
+    
+    normalise();
+    boost::gil::gray8_image_t img(rows+1, cols+1);
+    boost::gil::gray8_view_t view = boost::gil::view(img);
+    
+    for (int i=1; i<rows+1; ++i) {
+        for (int j=1; j<cols+1; ++j) {
+            view(i,j) = boost::gil::gray8_pixel_t((uint8_t)(
+                                                get_pixel(i, j)*254));
+        }
+    }
+    boost::gil::png_write_view(file_name, view);
 }
 
 void CCMD_image::normalise()

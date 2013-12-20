@@ -55,7 +55,6 @@ public:
     double ion_mass(size_t ion_index) const;
     std::string ion_name(size_t ion_index) const;
     std::string ion_formula(size_t ion_index) const;
-    std::string ion_color(size_t ion_index) const;
     
     // direct calculation of Coulomb sum
     double coulomb_energy() const;
@@ -77,7 +76,8 @@ public:
     void startStats() {runStats = true;}
     void stopStats() {runStats = false;}
     void updateStats();
-    void saveStats(std::string basePath) const;
+    void saveStats(const std::string basePath, const double length_scale,
+                   const double time_scale) const;
 private:
     const Ion_trap* trap;
     const Cloud_params* cloud_params;

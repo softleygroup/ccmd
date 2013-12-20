@@ -329,12 +329,18 @@
 		A66F943917FD551A00D8E9D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				HEADER_SEARCH_PATHS = (
 					/opt/local/include,
 					"\"$(SRCROOT)/../../../src/include\"",
+				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-lboost_thread-mt",
+					"-lboost_system-mt",
+					"-lpng",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = "";
@@ -344,7 +350,7 @@
 		A66F943A17FD551A00D8E9D6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -352,6 +358,12 @@
 				HEADER_SEARCH_PATHS = (
 					/opt/local/include,
 					"\"$(SRCROOT)/../../../src/include\"",
+				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-lboost_thread-mt",
+					"-lboost_system-mt",
+					"-lpng",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = "";

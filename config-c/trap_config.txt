@@ -1,6 +1,12 @@
-300.0		//	Vrf 
-4.0		//	Vend
-0.244  //	eta
-3.5e-3		//	r0
-2.75e-3		//	z0
-3.85e6		//	freq
+trap {
+    vrf     200.0
+    vend    2.0
+    eta     0.342
+    r0      3.5e-3
+    z0      2.75e-3
+    freq    3.85e6
+}
+integrator {
+    timestep    0.1
+    respastep   5       ; Respa inner loop steps
+}

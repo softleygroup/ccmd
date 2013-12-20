@@ -48,7 +48,6 @@ public:
     int q() const {return charge;}
     std::string name() const;
     std::string formula() const;
-    std::string color() const;
 
     const Ion_type& get_type() const {return *ion_type; }
     

@@ -72,7 +72,7 @@ public:
     // makes maximum intensity == 1
     void normalise();
     
-    void ouput_to_file(std::string file_name) const;
+    void ouput_to_file(std::string file_name);
     friend std::ostream& operator<<(std::ostream& os, const CCMD_image& im);
 
 private:

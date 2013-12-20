@@ -66,6 +66,7 @@ int main (int argc, char * const argv[]) {
 	    path += "/";
 
     // Parameter file paths
+    string info_file = path + "trap.info";
     string trap_param_file = path + "trap_config.txt";
     string ion_types_file = path + "ion_types.txt";
     string cloud_param_file = path + "ion_numbers.txt";
@@ -73,9 +74,9 @@ int main (int argc, char * const argv[]) {
     
     try {
         // Get simulation parameters from files
-        Trap_params trap_params(trap_param_file);
-        Cloud_params cloud_params(cloud_param_file,ion_types_file);
-        Integration_params integrator_params(integrator_param_file);
+        Trap_params trap_params(info_file);
+        Cloud_params cloud_params(info_file);
+        Integration_params integrator_params(info_file);
         
         // Construct trap
         //Cosine_trap trap(trap_params);
@@ -95,7 +96,7 @@ int main (int argc, char * const argv[]) {
         
         // Cool down ion cloud
         cout << flush << "Running cool down" << endl;
-        int nt_cool = 20000;
+        int nt_cool = integrator_params.cool_steps;
         for (int t=0; t<nt_cool; ++t) {    
             integrator.evolve();
             
@@ -109,7 +110,7 @@ int main (int argc, char * const argv[]) {
         cout << '\n';
         
         // Evolution
-        int nt = 20000;
+        int nt = integrator_params.hist_steps;
         
         cout << flush << "Accuiring histogram data" << endl;
 
@@ -134,8 +135,8 @@ int main (int argc, char * const argv[]) {
         std::cout << endl;
         
         cout << "total kinetic energy = " << KE << endl;
-        //ionImages.writeFiles(path);
-        cloud.saveStats(path);
+        ionImages.writeFiles(path);
+        cloud.saveStats(path, trap.get_length_scale(), trap.get_time_scale());
 
     } catch (std::exception& e) {
         cerr << "Error: " << e.what() << endl;

@@ -30,6 +30,7 @@ public:
     
     // the ion trap parameters sets real length scale
     double get_length_scale() const { return length_scale; }
+    double get_time_scale() const { return time_scale; }
 
 private:    
     double v_end;
@@ -42,6 +43,7 @@ private:
     double a_unit_mass;
     double q_unit_mass;
     double length_scale;
+    double time_scale;
  
 protected:
     const Trap_params* trap_params;

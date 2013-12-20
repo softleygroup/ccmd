@@ -19,7 +19,6 @@ void Ion::update_ion_type()
 {
     mass = ion_type->mass;
     charge = ion_type->charge;
-    visible = ion_type->visible;
 }
 
 void Ion::drift(double dt)
@@ -67,10 +66,6 @@ std::string Ion::formula() const
     return ion_type->formula; 
 }
 
-std::string Ion::color() const 
-{ 
-    return ion_type->color; 
-}
 
 const void Ion::recordKE(IonHistogram& ionHistogram)
 {
