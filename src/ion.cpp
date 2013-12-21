@@ -15,16 +15,13 @@
  *  The ion base class stores position and velocity, and provides functions to 
  *  update the position due to free-flight, and acceleration due to a force.
  *  This class also stores ion information: mass, charge, name and formula.
+ *
+ *  The position and velocity vectors are hidden as private variables; they
+ *  can be read-out, but only modified correctly by a force or free flight.
  */
 
-
-Ion::Ion(const Ion_type& type) 
-    : ion_type(&type) 
-{
-    update_ion_type();
-}
-
-void Ion::update_ion_type()
+Ion::Ion(const Ion_type& type)
+: ion_type(&type)
 {
     mass = ion_type->mass;
     charge = ion_type->charge;
@@ -52,41 +49,6 @@ inline void Ion::kick(const double dt, const Vector3D& f)
     vel += f*time_over_mass;
 }
 
-double Ion::r(char coord) const
-{
-    // get position along a specified coordinate
-	switch (coord) {
-		case 'x': return pos[0];
-		case 'y': return pos[1];
-		case 'z': return pos[2];
-		default:
-            throw std::runtime_error("Ion: r(x|y|z) invalid coordinate used" );
-	}
-} 
-
-
-double Ion::v(char coord) const
-{
-    // get velocity along a specified coordinate
-	switch (coord) {
-		case 'x': return vel[0];
-		case 'y': return vel[1];
-		case 'z': return vel[2];
-		default: 
-            throw std::runtime_error("Ion: v(x|y|z) invalid coordinate used" );
-	}
-} 
-
-std::string Ion::name() const 
-{ 
-    return ion_type->name; 
-}
-
-std::string Ion::formula() const 
-{ 
-    return ion_type->formula; 
-}
-
 /**
  *  @brief Add the kinetic energy of this ion to a histogram.
  *  Calculate the total kinetic energy and kinetic energy directed along each
@@ -95,7 +57,7 @@ std::string Ion::formula() const
  *
  *  @param ionHistogram A reference to the histogram object to update.
  */
-const void Ion::recordKE(IonHistogram& ionHistogram)
+void Ion::recordKE(IonHistogram& ionHistogram) const
 {
     double energy;
     double mon2 = 0.5 * ion_type->mass;
@@ -103,13 +65,13 @@ const void Ion::recordKE(IonHistogram& ionHistogram)
     energy = mon2 * vel.norm_sq();
     ionHistogram.addIon(name() + "_total", energy);
     //x - directed
-    energy = mon2 * v('x') * v('x');
+    energy = mon2 * vel[0] * vel[0];
     ionHistogram.addIon(name() + "_x", energy);
     //y - directed
-    energy = mon2 * v('y') * v('y');
+    energy = mon2 * vel[1] * vel[1];
     ionHistogram.addIon(name() + "_y", energy);
     //z - directed
-    energy = mon2 * v('z') * v('z');
+    energy = mon2 * vel[2] * vel[2];
     ionHistogram.addIon(name() + "_z", energy);
 }
 

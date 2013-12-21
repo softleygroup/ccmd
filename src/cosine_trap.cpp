@@ -8,7 +8,6 @@
 Cosine_trap::Cosine_trap(const Trap_params& params) 
     : Ion_trap(params)
 {
-    update_trap_params();
     phase = phi0;
     cos_phase = cos(phase);
     

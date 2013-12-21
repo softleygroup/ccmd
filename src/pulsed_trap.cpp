@@ -9,7 +9,7 @@
 Pulsed_trap::Pulsed_trap(const Trap_params& params) 
     : Ion_trap(params)
 {
-    update_trap_params();
+//    update_trap_params();
     
     // Pulse parameters currently hardcoded
     tau = 0.226; 
@@ -47,13 +47,13 @@ void Pulsed_trap::pulse_shape()
     return;
 }
 
-Vector3D Pulsed_trap::force_now(const Vector3D& r) const
-{
-    // Force calculation in scaled Mathieu parameter units
-    Vector3D f(r);
-    f.x *= +2*q_unit_mass*pulse_height - a_unit_mass;
-    f.y *= -2*q_unit_mass*pulse_height - a_unit_mass;
-    f.z *= 2*a_unit_mass;
-
-    return f;
-}
+//Vector3D Pulsed_trap::force_now(const Vector3D& r) const
+//{
+//    // Force calculation in scaled Mathieu parameter units
+//    Vector3D f(r);
+//    f.x *= +2*q_unit_mass*pulse_height - a_unit_mass;
+//    f.y *= -2*q_unit_mass*pulse_height - a_unit_mass;
+//    f.z *= 2*a_unit_mass;
+//
+//    return f;
+//}

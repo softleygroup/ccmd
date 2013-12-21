@@ -34,7 +34,7 @@ std::vector<Vector3D> get_lattice(size_t n);
 struct compare_ions_by_mass {
     bool operator()(const Ion* lhs, const Ion* rhs) const 
     {
-        return lhs->m() < rhs->m();
+        return lhs->get_mass() < rhs->get_mass();
     }
 };
 
@@ -104,18 +104,18 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
     }
 }
 
-void Ion_cloud::update_params()
-{
-    // update types for ions
-    for_each(ion_vec.begin(),
-             ion_vec.end(), 
-             mem_fun(&Ion::update_ion_type));
-    
-    // update trap parameters used by ions
-//   for_each(ion_vec.begin(),
-//            ion_vec.end(),
-//            mem_fun(&Ion::update_trap_force));
-}
+//void Ion_cloud::update_params()
+//{
+//    // update types for ions
+//    for_each(ion_vec.begin(),
+//             ion_vec.end(), 
+//             mem_fun(&Ion::update_ion_type));
+//    
+//    // update trap parameters used by ions
+////   for_each(ion_vec.begin(),
+////            ion_vec.end(),
+////            mem_fun(&Ion::update_trap_force));
+//}
 
 Ion_cloud::~Ion_cloud()
 {
@@ -148,7 +148,7 @@ Vector3D Ion_cloud::get_cloud_centre(const Ion_cloud& ) const
     double n_ions = ion_vec.size();
     
 	for (int i=0; i<n_ions; ++i)
-		centre += ion_vec[i]->r();
+		centre += ion_vec[i]->get_pos();
     
 	centre /= n_ions;
 	return centre;
@@ -162,43 +162,43 @@ void Ion_cloud::move_centre(const Vector3D& v)
 	}
 }
 
-std::ostream& operator<<(std::ostream& os, const Ion_cloud& ic)
-{
-    // outputs ion positions as 
-    // --------------------------------
-    //  Ion         x       y       z
-    // --------------------------------
-    //
-    static bool first_call = true;
-    
-    if (first_call) {
-        std::string header_space(7,' ');
-        std::string header_line(33,'-');
-        std::string header = " Ion         x       y       z";
-    
-        os << header_space << header << std::endl;
-        os << header_space << header_line << std::endl;
-    
-        first_call = false;
-    }
-    
-	os.setf(std::ios::fixed);
-	os.precision(6);
-	os << setiosflags( std::ios::right );
-    
-	enum XYZ{x,y,z};
-	for (int i=0; i<ic.ion_vec.size(); ++i) {
-		os << std::setw(10) << i+1 << '\t';
-        
-		os << std::setw(7) << ic.ion_vec[i]->r(x) << ' '
-            << std::setw(7) << ic.ion_vec[i]->r(y) << ' '
-            << std::setw(7) << ic.ion_vec[i]->r(z) << std::endl;
-	}
-    
-	os << std::endl;
-    
-	return os;
-}
+//std::ostream& operator<<(std::ostream& os, const Ion_cloud& ic)
+//{
+//    // outputs ion positions as 
+//    // --------------------------------
+//    //  Ion         x       y       z
+//    // --------------------------------
+//    //
+//    static bool first_call = true;
+//    
+//    if (first_call) {
+//        std::string header_space(7,' ');
+//        std::string header_line(33,'-');
+//        std::string header = " Ion         x       y       z";
+//    
+//        os << header_space << header << std::endl;
+//        os << header_space << header_line << std::endl;
+//    
+//        first_call = false;
+//    }
+//    
+//	os.setf(std::ios::fixed);
+//	os.precision(6);
+//	os << setiosflags( std::ios::right );
+//    
+//	enum XYZ{x,y,z};
+//	for (int i=0; i<ic.ion_vec.size(); ++i) {
+//		os << std::setw(10) << i+1 << '\t';
+//        
+//		os << std::setw(7) << ic.ion_vec[i]->r(x) << ' '
+//            << std::setw(7) << ic.ion_vec[i]->r(y) << ' '
+//            << std::setw(7) << ic.ion_vec[i]->r(z) << std::endl;
+//	}
+//    
+//	os << std::endl;
+//    
+//	return os;
+//}
 
 
 void Ion_cloud::drift(double t)
@@ -255,8 +255,8 @@ double Ion_cloud::kinetic_energy() const
     double e = 0;
     double m;
     for (int i=0; i<ion_vec.size(); ++i) {
-        m = ion_vec[i]->mass;
-        e += 0.5*m*( ion_vec[i]->vel.norm_sq() );
+        m = ion_vec[i]->get_mass();
+        e += 0.5*m*( ion_vec[i]->get_vel().norm_sq() );
     }
     return e;
 }
@@ -269,11 +269,11 @@ double Ion_cloud::coulomb_energy() const
     double r;
     
     for (int i=0; i<ion_vec.size(); ++i) {
-        r1 = ion_vec[i]->pos;
-        q1 = ion_vec[i]->charge;
+        r1 = ion_vec[i]->get_pos();
+        q1 = ion_vec[i]->get_charge();
         for (int j=i+1; j<ion_vec.size(); ++j) {
-            r2 = ion_vec[j]->pos;
-            q2 = ion_vec[j]->charge;
+            r2 = ion_vec[j]->get_pos();
+            q2 = ion_vec[j]->get_charge();
             
             if (r1 != r2) {
                 r = Vector3D::dist(r1,r2);
@@ -313,18 +313,18 @@ void Ion_cloud::saveStats(const std::string basePath,
     	std::list<double> rowdata;
         // Scale reduced units to real=world units and rotate to align to
         // axes between rods (calculation has axes crossing rods.)
-        x = ((*ion)->pos)[0] * length_scale;
-        y = ((*ion)->pos)[1] * length_scale;
-        z = ((*ion)->pos)[2] * length_scale;
+        x = ((*ion)->get_pos())[0] * length_scale;
+        y = ((*ion)->get_pos())[1] * length_scale;
+        z = ((*ion)->get_pos())[2] * length_scale;
         rotated_x = (x+y)/sqrt2;
         rotated_y = (x-y)/sqrt2;
         rowdata.push_back(rotated_x);
         rowdata.push_back(rotated_y);
         rowdata.push_back(z);
         
-        x = ((*ion)->vel)[0] * vel_scale;
-        y = ((*ion)->vel)[1] * vel_scale;
-        z = ((*ion)->vel)[2] * vel_scale;
+        x = ((*ion)->get_vel())[0] * vel_scale;
+        y = ((*ion)->get_vel())[1] * vel_scale;
+        z = ((*ion)->get_vel())[2] * vel_scale;
         rotated_x = (x+y)/sqrt2;
         rotated_y = (x-y)/sqrt2;
         rowdata.push_back(rotated_x);
@@ -409,7 +409,7 @@ void Ion_cloud::update_position_histogram(ImageCollection& h) const
     typedef std::vector<Ion*>::const_iterator ion_itr;
     for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
     {
-        posn = (*ion)->r();
+        posn = (*ion)->get_pos();
         rotated_pos.x = (posn.x+posn.y)/sqrt(2.0);
         rotated_pos.y = (posn.x-posn.y)/sqrt(2.0);
         rotated_pos.z = posn.z;
@@ -417,12 +417,12 @@ void Ion_cloud::update_position_histogram(ImageCollection& h) const
     }
 }
 
-void Ion_cloud::scale(double scale_factor)
-{
-    for (int i=0; i<ion_vec.size(); ++i) {
-        ion_vec[i]->pos = ion_vec[i]->pos*scale_factor;
-    }
-}
+//void Ion_cloud::scale(double scale_factor)
+//{
+//    for (int i=0; i<ion_vec.size(); ++i) {
+//        ion_vec[i]->pos() = ion_vec[i]->pos()*scale_factor;
+//    }
+//}
 
 std::vector<Vector3D> get_lattice(size_t n)
 {
@@ -460,10 +460,9 @@ double Ion_cloud::aspect_ratio() const
     double z_max = 0.0;
 
     for (int i=0; i<ion_vec.size(); ++i) {
-        x_max = max(x_max, abs(ion_vec[i]->pos.x) );
-        y_max = max(y_max, abs(ion_vec[i]->pos.y) );
-        z_max = max(z_max, abs(ion_vec[i]->pos.z) );
-
+        x_max = max(x_max, abs(ion_vec[i]->get_pos().x) );
+        y_max = max(y_max, abs(ion_vec[i]->get_pos().y) );
+        z_max = max(z_max, abs(ion_vec[i]->get_pos().z) );
     };
     return z_max/max(x_max,y_max); 
     
@@ -503,7 +502,7 @@ double Ion_cloud::aspect_ratio() const
 Vector3D Ion_cloud::ion_position(size_t ion_index) const
 {
     if (ion_index < ion_vec.size())
-        return ion_vec[ion_index]->r();
+        return ion_vec[ion_index]->get_pos();
     else
         throw;
 }
@@ -511,19 +510,19 @@ Vector3D Ion_cloud::ion_position(size_t ion_index) const
 Vector3D Ion_cloud::ion_velocity(size_t ion_index) const
 {
     if (ion_index < ion_vec.size())
-        return ion_vec[ion_index]->v();
+        return ion_vec[ion_index]->get_vel();
     else
         throw;
 }
 
 int Ion_cloud::ion_charge(size_t ion_index) const
 {
-    return ion_vec[ion_index]->q();
+    return ion_vec[ion_index]->get_charge();
 }
 
 double Ion_cloud::ion_mass(size_t ion_index) const
 {
-    return ion_vec[ion_index]->m();
+    return ion_vec[ion_index]->get_mass();
 }
 
 std::string Ion_cloud::ion_name(size_t ion_index) const
@@ -614,8 +613,8 @@ bool Ion_cloud::change_ion(const Ion_type& type_in, const Ion_type& type_out) {
     }    
     
     // keep original position and velocity
-    new_ion->set_position( (*ion_to_change)->r() );
-    new_ion->set_velocity( (*ion_to_change)->v() );
+    new_ion->set_position( (*ion_to_change)->get_pos() );
+    new_ion->set_velocity( (*ion_to_change)->get_vel() );
     
     // delete old ion and change pointer to new ion
     delete *ion_to_change;

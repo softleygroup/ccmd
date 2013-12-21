@@ -10,12 +10,6 @@
 Lasercooled_ion::Lasercooled_ion(const Ion_trap& ion_trap, const Ion_type& type) 
     : Trapped_ion(ion_trap,type)   
 {
-    update_ion_type();
-}
-
-void Lasercooled_ion::update_ion_type()
-{
-    Trapped_ion::update_ion_type();
     beta = ion_type->beta;
     heater.set_kick_size( sqrt(ion_type->recoil) );
 }

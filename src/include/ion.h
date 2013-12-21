@@ -5,23 +5,18 @@
 
 #include "stochastic_heat.h"
 #include "Stats.h"
+#include "ccmd_sim.h"
 
 class Vector3D;
 class Ion_trap;
-class Ion_type;
 class IonHistogram;
 template <class T> class Stats;
 
-// Base class providing interface for ion types
+
 class Ion {
 public:
-    Ion(const Ion_type& type); 
-
+    Ion(const Ion_type& type);
     virtual ~Ion() {}
-	
-    virtual void update_ion_type();
-//    virtual void update_trap_force() {}
-
     // shifts ion position
     void move(const Vector3D& move_va) { pos += move_va; }
     
@@ -29,51 +24,42 @@ public:
     void drift(const double dt);
 
     // velocity modifying functions
-    virtual void kick(double dt) {}
+    // Subclasses must provide their own force calculation
+    virtual void kick(double dt) = 0;
     virtual void kick(double dt, const Vector3D& f);
     virtual void velocity_scale(double dt) {}
     virtual void heat(double dt) {}
 
+    // These should only be called once on initialising the ion;
     void set_position(const Vector3D& r) { pos = r; }
     void set_velocity(const Vector3D& v) { vel = v; }
 
+    void recordKE(IonHistogram& ionHistogram) const;
+    
     // accessor functions
-    Vector3D r() const { return pos; } 
-    double r(const char ch) const; 
-    double r(int i) const { return pos[i]; } 
-    
-    Vector3D v() const { return vel; } 
-    double v(char coord) const;
-    double v(int i) const { return vel[i]; } 
-    
-    double m() const {return mass;}
-    int q() const {return charge;}
-    std::string name() const;
-    std::string formula() const;
-
     const Ion_type& get_type() const {return *ion_type; }
+    std::string name() const {return ion_type->name;}
+    std::string formula() const {return ion_type->formula;}
+    const Vector3D& get_pos() const {return pos;}
+    const Vector3D& get_vel() const {return vel;}
+    const double get_mass() const {return mass;}
+    const double get_charge() const {return charge;}
     
-protected:  
+    void updateStats();
+    void resetStats();
+protected:
     const Ion_type* ion_type;
     Vector3D pos;
     Vector3D vel;
     double mass;
     int charge;
-    bool visible;
     
-    const void recordKE(IonHistogram& ionHistogram);
     
     // Ion statistics
     Stats<Vector3D> posStats;
     Stats<Vector3D> velStats;
-    void updateStats();
-    void resetStats();
     
-private:
-    Vector3D newion_pos();
-    Vector3D newion_vel();
-
-    friend class Ion_cloud;
+//    friend class Ion_cloud;
 };
 
 
@@ -85,8 +71,6 @@ public:
 protected:    
     Trapped_ion(const Ion_trap& ion_trap,const Ion_type& type); 
     ~Trapped_ion() {}
-    
-    virtual void update_ion_type();
 private:
     const Ion_trap* trap;
 //    Vector3D trap_omega;
@@ -111,8 +95,6 @@ public:
 protected:
     Lasercooled_ion(const Ion_trap& ion_trap,const Ion_type& type); 
     ~Lasercooled_ion() {}
-
-    virtual void update_ion_type();
 private:
     double beta;
     
