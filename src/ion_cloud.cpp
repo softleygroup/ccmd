@@ -1,7 +1,7 @@
-//
-//  ion_cloud.cpp
-//
-
+/**
+ *  @file ion_cloud.cpp
+ *  @brief Class to hold a collection of ions and perform actions on each.
+ */
 #include "ion_cloud.h"
 
 #include "ccmd_sim.h"
@@ -46,6 +46,23 @@ struct position_ions {
     }
 };
 
+/**
+ * @brief Build a cloud of ions from the given parameters.
+ *
+ * Build a new ion cloud from the parameters held in the `params` object. The
+ * trapped ions will be given a pointer to the `ion_trap`. A pointer to each ion
+ * object is put into the list of all ions, `all_ions`, and a list of the
+ * specific types, `lasercooled_ions` and `trapped_ions`.
+ *
+ * Generate a set of lattice points for the initial ion positions, then centre
+ * the ion cloud.
+ *
+ * Statistics are off by default.
+ *
+ * @param ion_trap  A pointer to the ion trap object;
+ * @param params    A reference to the cloud parameters object.
+ *
+ */
 Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
     :  trap(&ion_trap), cloud_params(&params)  
 {
@@ -95,9 +112,9 @@ void Ion_cloud::update_params()
              mem_fun(&Ion::update_ion_type));
     
     // update trap parameters used by ions
-   for_each(ion_vec.begin(),
-            ion_vec.end(), 
-            mem_fun(&Ion::update_trap_force));
+//   for_each(ion_vec.begin(),
+//            ion_vec.end(),
+//            mem_fun(&Ion::update_trap_force));
 }
 
 Ion_cloud::~Ion_cloud()

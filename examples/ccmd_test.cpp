@@ -79,8 +79,8 @@ int main (int argc, char * const argv[]) {
         Integration_params integrator_params(info_file);
         
         // Construct trap
-        //Cosine_trap trap(trap_params);
-        Pulsed_trap trap(trap_params);
+        Cosine_trap trap(trap_params);
+//        Pulsed_trap trap(trap_params);
         
         // Construct ion cloud
         Ion_cloud cloud(trap, cloud_params);

@@ -19,12 +19,6 @@ Pulsed_trap::Pulsed_trap(const Trap_params& params)
     return;
 }
 
-void Pulsed_trap::update_trap_params()
-{
-    Ion_trap::update_trap_params();
-}
-
-
 void Pulsed_trap::evolve(double dt)
 {
     time_now += dt;
@@ -53,13 +47,13 @@ void Pulsed_trap::pulse_shape()
     return;
 }
 
-Vector3D Pulsed_trap::force_now(const Vector3D& r, double a, double q) const
+Vector3D Pulsed_trap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);
-    f.x *= +2*q*pulse_height - a;
-    f.y *= -2*q*pulse_height - a;
-    f.z *= 2*a;
+    f.x *= +2*q_unit_mass*pulse_height - a_unit_mass;
+    f.y *= -2*q_unit_mass*pulse_height - a_unit_mass;
+    f.z *= 2*a_unit_mass;
 
     return f;
 }

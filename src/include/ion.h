@@ -1,6 +1,8 @@
 #ifndef CCMD_ion_h
 #define CCMD_ion_h
 
+#include <boost/shared_ptr.hpp>
+
 #include "stochastic_heat.h"
 #include "Stats.h"
 
@@ -18,13 +20,13 @@ public:
     virtual ~Ion() {}
 	
     virtual void update_ion_type();
-    virtual void update_trap_force() {}
+//    virtual void update_trap_force() {}
 
     // shifts ion position
     void move(const Vector3D& move_va) { pos += move_va; }
     
     // free flight 
-    void drift(double dt);
+    void drift(const double dt);
 
     // velocity modifying functions
     virtual void kick(double dt) {}
@@ -74,15 +76,12 @@ private:
     friend class Ion_cloud;
 };
 
-//
-// Trapped-but-not-laser-cooled ion class. This class is used to model
-// sympathetically-cooled ions
-//
+
 class Trapped_ion : public Ion {
 public:
     virtual void kick(double dt);
     virtual void velocity_scale(double dt) {}
-    void update_trap_force();
+//    void update_trap_force();
 protected:    
     Trapped_ion(const Ion_trap& ion_trap,const Ion_type& type); 
     ~Trapped_ion() {}
@@ -90,10 +89,10 @@ protected:
     virtual void update_ion_type();
 private:
     const Ion_trap* trap;
-    Vector3D trap_omega;
-    double plasma_omega; 
-    double a_trap;
-    double q_trap;
+//    Vector3D trap_omega;
+//    double plasma_omega; 
+//    double a_trap;
+//    double q_trap;
 
     friend class Trapped_ion_cloud;
     friend class Ion_cloud;
@@ -126,6 +125,8 @@ private:
     friend class Ion_cloud;
 };
 
+/// Ion pointer type.
+typedef boost::shared_ptr<Ion> ion_ptr;
 
 #endif
 
