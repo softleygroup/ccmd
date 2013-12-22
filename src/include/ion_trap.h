@@ -13,7 +13,6 @@
 
 class Trap_params;
 
-// Base class to provide interface for ion trap types
 class Ion_trap {
     friend class Trapped_ion;
 public:
@@ -56,9 +55,7 @@ protected:
     static const double u_mass;
 };
 
-//
-// Linear Paul ion with sinusoidal RF voltages
-//
+
 class Cosine_trap : public Ion_trap {
 public:
     Cosine_trap(const Trap_params& params);
@@ -66,7 +63,6 @@ public:
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
 
-//    friend class Trapped_ion;
 private:
     double phase;
     double cos_phase;
@@ -74,23 +70,20 @@ private:
     double q_unit_mass;
 };
 
-//
-// Linear Paul ion with pulsed/square-wave RF voltages
-//
-class Pulsed_trap : public Ion_trap {
-public:
-    Pulsed_trap(const Trap_params& params);
-    
-    Vector3D force_now(const ion_ptr i) const;
-    void evolve(double time);
-    
-    friend class Trapped_ion;
-private:
-    double tau;   
-    double pulse_height;
-    void pulse_shape();
-};
 
-typedef boost::shared_ptr<Ion_trap> ion_trap_ptr;
+//class Pulsed_trap : public Ion_trap {
+//public:
+//    Pulsed_trap(const Trap_params& params);
+//    
+//    Vector3D force_now(const ion_ptr i) const;
+//    void evolve(double time);
+//    
+//private:
+//    double tau;   
+//    double pulse_height;
+//    void pulse_shape();
+//};
+
+typedef boost::shared_ptr<Ion_trap> Ion_trap_ptr;
 
 #endif

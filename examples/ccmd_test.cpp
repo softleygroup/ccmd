@@ -25,6 +25,8 @@
 #include <ctime>
 #include <iomanip>
 
+#include <boost/make_shared.hpp>
+
 double stopWatchTimer();
 double KE;
 void printProgBar( int percent );
@@ -79,7 +81,9 @@ int main (int argc, char * const argv[]) {
         Integration_params integrator_params(info_file);
         
         // Construct trap
-        Cosine_trap trap(trap_params);
+        //Cosine_trap trap(trap_params);
+//        Ion_trap_ptr trap(new(Cosine_trap(trap_params));
+        Ion_trap_ptr trap = boost::make_shared<Cosine_trap>(trap_params);
 //        Pulsed_trap trap(trap_params);
         
         // Construct ion cloud
@@ -136,7 +140,7 @@ int main (int argc, char * const argv[]) {
         
         cout << "total kinetic energy = " << KE << endl;
         ionImages.writeFiles(path);
-        cloud.saveStats(path, trap.get_length_scale(), trap.get_time_scale());
+        cloud.saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
     } catch (std::exception& e) {
         cerr << "Error: " << e.what() << endl;

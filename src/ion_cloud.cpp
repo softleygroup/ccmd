@@ -11,6 +11,7 @@
 #include "IonHistogram.h"
 #include "Stats.h"
 #include "DataWriter.h"
+#include "ion_trap.h"
 
 #include <functional>
 #include <algorithm>
@@ -63,8 +64,8 @@ struct position_ions {
  * @param params    A reference to the cloud parameters object.
  *
  */
-Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
-    :  trap(&ion_trap), cloud_params(&params)  
+Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
+    :  trap(ion_trap), cloud_params(&params)
 {
     // loop over ion types to initialise ion cloud
     for (std::list<Ion_type>::const_iterator it=cloud_params->ionTypeList.begin();
@@ -74,9 +75,9 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
         try {
             for (int i=0; i<it->number; ++i) {
                 if (it->is_laser_cooled) {
-                    add_ion(new Lasercooled_ion(*trap, *it));
+                    add_ion(new Lasercooled_ion(trap, *it));
                 } else {
-                    add_ion(new Trapped_ion(*trap, *it));
+                    add_ion(new Trapped_ion(trap, *it));
                 }
             }
         } catch (bad_alloc& ba) {
@@ -104,18 +105,6 @@ Ion_cloud::Ion_cloud(const Ion_trap& ion_trap, const Cloud_params& params)
     }
 }
 
-//void Ion_cloud::update_params()
-//{
-//    // update types for ions
-//    for_each(ion_vec.begin(),
-//             ion_vec.end(), 
-//             mem_fun(&Ion::update_ion_type));
-//    
-//    // update trap parameters used by ions
-////   for_each(ion_vec.begin(),
-////            ion_vec.end(),
-////            mem_fun(&Ion::update_trap_force));
-//}
 
 Ion_cloud::~Ion_cloud()
 {
@@ -589,39 +578,39 @@ private:
 
 // changes one ion from one type to another, returns true if successful
 // throws runtime_error if unable to assign new ion
-bool Ion_cloud::change_ion(const Ion_type& type_in, const Ion_type& type_out) {
-    
-    Ion_ptr_vector::iterator ion_to_change;
-    ion_to_change = find_if(ion_vec.begin(), ion_vec.end(), isIon_type(type_in) );
-    
-    if ( ion_to_change == ion_vec.end() ) {
-        return false;
-    }
-    
-    Ion* new_ion = 0;
-    try {
-        // allocates new ion according to new type
-        if (type_out.is_laser_cooled)
-            new_ion = new Lasercooled_ion(*trap, type_out);
-        else
-            new_ion = new Trapped_ion(*trap, type_out);
-        
-    } catch (bad_alloc& ba) {
-        ostringstream error_msg;
-        error_msg << "bad_alloc in Ion_cloud::change_ion: " << ba.what();
-        throw runtime_error( error_msg.str() );
-    }    
-    
-    // keep original position and velocity
-    new_ion->set_position( (*ion_to_change)->get_pos() );
-    new_ion->set_velocity( (*ion_to_change)->get_vel() );
-    
-    // delete old ion and change pointer to new ion
-    delete *ion_to_change;
-    *ion_to_change = new_ion;
-    
-    return true;
-}
+//bool Ion_cloud::change_ion(const Ion_type& type_in, const Ion_type& type_out) {
+//    
+//    Ion_ptr_vector::iterator ion_to_change;
+//    ion_to_change = find_if(ion_vec.begin(), ion_vec.end(), isIon_type(type_in) );
+//    
+//    if ( ion_to_change == ion_vec.end() ) {
+//        return false;
+//    }
+//    
+//    Ion* new_ion = 0;
+//    try {
+//        // allocates new ion according to new type
+//        if (type_out.is_laser_cooled)
+//            new_ion = new Lasercooled_ion(*trap, type_out);
+//        else
+//            new_ion = new Trapped_ion(*trap, type_out);
+//        
+//    } catch (bad_alloc& ba) {
+//        ostringstream error_msg;
+//        error_msg << "bad_alloc in Ion_cloud::change_ion: " << ba.what();
+//        throw runtime_error( error_msg.str() );
+//    }    
+//    
+//    // keep original position and velocity
+//    new_ion->set_position( (*ion_to_change)->get_pos() );
+//    new_ion->set_velocity( (*ion_to_change)->get_vel() );
+//    
+//    // delete old ion and change pointer to new ion
+//    delete *ion_to_change;
+//    *ion_to_change = new_ion;
+//    
+//    return true;
+//}
 
 
 

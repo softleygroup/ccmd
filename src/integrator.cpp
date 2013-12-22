@@ -10,9 +10,9 @@
 #include "ion_trap.h"
 #include "ccmd_sim.h"
 
-Integrator::Integrator(Ion_trap& it, Ion_cloud& ic, 
+Integrator::Integrator(const Ion_trap_ptr& it, Ion_cloud& ic,
                        const Integration_params& params)
-    : trap(&it), ions(&ic), f_coulomb(ic) 
+    : trap(it), ions(&ic), f_coulomb(ic)
 {
     // get Coulomb forces on construction
     f_coulomb.update();

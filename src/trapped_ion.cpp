@@ -14,13 +14,13 @@
  *  @param ion_trap A pointer to the ion trap.
  *  @param type     A pointer to ion parameters.
  */
-Trapped_ion::Trapped_ion(const Ion_trap& ion_trap, const Ion_type& type) 
-    : trap(&ion_trap), Ion(type)   
+Trapped_ion::Trapped_ion(const Ion_trap_ptr& ion_trap, const Ion_type& type)
+    : trap(ion_trap), Ion(type)
 {
 }
 
 /** 
- *  @brief Kick the trapped ion with the trapping force.
+ *  @brief Change the ion velocity due to the trapping force.
  *  The force at this ion's position is determined from trap object, which 
  *  returns the force calculated from the Matthieu equations, but missing a
  *  factor of charge. This is multipled by the force, before calling the 

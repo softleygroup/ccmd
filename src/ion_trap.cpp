@@ -1,6 +1,8 @@
-//
-//  Ion_trap.cpp
-//
+/**
+ *  @class Ion_trap
+ *  @brief Base class defining a quadrupole ion trap.
+ *  This base class stores the trap parameters.
+ */
 
 #include "ion_trap.h"
 
@@ -14,6 +16,9 @@ const double Ion_trap::epsilon_0 = 8.85418781762e-12;
 const double Ion_trap::electron_charge = 1.60217733e-19;
 const double Ion_trap::u_mass = 1.6605402e-27;
 
+/**
+ * @brief Create a new ion trap and determine some derived quantities.
+ */
 Ion_trap::Ion_trap(const Trap_params& params) 
     : trap_params(&params)
 { 

@@ -1,17 +1,19 @@
 #ifndef CCMD_ion_h
 #define CCMD_ion_h
 
-#include <boost/shared_ptr.hpp>
-
+#include "ion_trap.h"
 #include "stochastic_heat.h"
 #include "Stats.h"
 #include "ccmd_sim.h"
 
+#include <boost/shared_ptr.hpp>
+
 class Vector3D;
-class Ion_trap;
 class IonHistogram;
 template <class T> class Stats;
 
+class Ion_trap;
+typedef boost::shared_ptr<Ion_trap> Ion_trap_ptr;
 
 class Ion {
 public:
@@ -59,42 +61,30 @@ protected:
     Stats<Vector3D> posStats;
     Stats<Vector3D> velStats;
     
-//    friend class Ion_cloud;
 };
 
 
 class Trapped_ion : public Ion {
 public:
+    Trapped_ion(const Ion_trap_ptr& ion_trap,const Ion_type& type);
+    ~Trapped_ion() {}
+
     virtual void kick(double dt);
     virtual void velocity_scale(double dt) {}
-//    void update_trap_force();
-protected:    
-    Trapped_ion(const Ion_trap& ion_trap,const Ion_type& type); 
-    ~Trapped_ion() {}
-private:
-    const Ion_trap* trap;
-//    Vector3D trap_omega;
-//    double plasma_omega; 
-//    double a_trap;
-//    double q_trap;
 
-    friend class Trapped_ion_cloud;
-    friend class Ion_cloud;
+private:
+    const Ion_trap_ptr trap;
 };
 
-//
-// Laser-cooled ion class. Heating term arising from photon
-// recoil is implemented as a Langevin process with a Gaussian
-// momentum distribution.
-//
 class Lasercooled_ion : public Trapped_ion {
 public:
+    Lasercooled_ion(const Ion_trap_ptr& ion_trap,const Ion_type& type);
+    ~Lasercooled_ion() {}
+    
     void kick(double dt);
     void velocity_scale(double dt);
     void heat(double dt);
-protected:
-    Lasercooled_ion(const Ion_trap& ion_trap,const Ion_type& type); 
-    ~Lasercooled_ion() {}
+
 private:
     double beta;
     
@@ -102,9 +92,6 @@ private:
     Stochastic_heat heater;
 
     Vector3D get_friction() const;
-
-    friend class Lasercooled_ion_cloud;
-    friend class Ion_cloud;
 };
 
 /// Ion pointer type.
