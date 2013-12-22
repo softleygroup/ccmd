@@ -23,6 +23,7 @@
 #include <vector>
 #include <list>
 #include <boost/make_shared.hpp>
+#include <boost/foreach.hpp>
 
 // To do:   fix aspect ratio
 //#include "eigs.h"
@@ -136,8 +137,9 @@ Vector3D Ion_cloud::get_cloud_centre(const Ion_cloud& ) const
 	Vector3D centre;
     double n_ions = ion_vec.size();
     
-	for (int i=0; i<n_ions; ++i)
-		centre += ion_vec[i]->get_pos();
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        centre += ion->get_pos();
+    }
     
 	centre /= n_ions;
 	return centre;
@@ -146,9 +148,9 @@ Vector3D Ion_cloud::get_cloud_centre(const Ion_cloud& ) const
 void Ion_cloud::move_centre(const Vector3D& v)
 {
 	// move the whole ion cloud
-	for (int i=0; i<ion_vec.size(); ++i) {
-		ion_vec[i]->move( v );
-	}
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->move(v);
+    }
 }
 
 //std::ostream& operator<<(std::ostream& os, const Ion_cloud& ic)
@@ -190,52 +192,56 @@ void Ion_cloud::move_centre(const Vector3D& v)
 //}
 
 
-void Ion_cloud::drift(double t)
+void Ion_cloud::drift(double dt)
+{
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->drift(dt);
+    }
+}
+
+//struct Kicker_t {
+//    Kicker_t(double t) : t(t) {}
+//    void operator()(const Ion_ptr& ion_to_kick) {
+//        ion_to_kick->kick(t);
+//    }
+//private:
+//    double t;
+//};
+
+void Ion_cloud::kick(double dt)
+{
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->kick(dt);
+    }
+}
+
+void Ion_cloud::kick(double dt, const std::vector<Vector3D>& f)
 {
     for (int i=0; i<ion_vec.size(); ++i) {
-        ion_vec[i]->drift(t);
+        ion_vec[i]->kick(dt, f[i] );
     }
 }
 
-struct Kicker_t {
-    Kicker_t(double t) : t(t) {}
-    void operator()(const Ion_ptr& ion_to_kick) {
-        ion_to_kick->kick(t);
-    }
-private:
-    double t;
-};
-
-void Ion_cloud::kick(double t)
-{
-    for_each(ion_vec.begin(), ion_vec.end(), Kicker_t(t) );
-}
-
-void Ion_cloud::kick(double t, const std::vector<Vector3D>& f)
-{
-    for (int i=0; i<ion_vec.size(); ++i) {
-        ion_vec[i]->kick(t, f[i] );
-    }
-}
-
-struct Velocity_scaler {
-    Velocity_scaler(double dt) : dt(dt) {}
-    void operator()(const Ion_ptr& ion_to_scale) {
-        ion_to_scale->velocity_scale(dt);
-    }
-private:
-    double dt;
-};
+//struct Velocity_scaler {
+//    Velocity_scaler(double dt) : dt(dt) {}
+//    void operator()(const Ion_ptr& ion_to_scale) {
+//        ion_to_scale->velocity_scale(dt);
+//    }
+//private:
+//    double dt;
+//};
 
 void Ion_cloud::velocity_scale(double dt)
 {
-    for_each(ion_vec.begin(),ion_vec.end(), Velocity_scaler(dt));
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->velocity_scale(dt);
+    }
 }
 
-void Ion_cloud::heat(double t)
+void Ion_cloud::heat(double dt)
 {
-    for (int i=0; i<ion_vec.size(); ++i) {
-        ion_vec[i]->heat(t);;
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->heat(dt);
     }
 }
 
@@ -243,9 +249,9 @@ double Ion_cloud::kinetic_energy() const
 {
     double e = 0;
     double m;
-    for (int i=0; i<ion_vec.size(); ++i) {
-        m = ion_vec[i]->get_mass();
-        e += 0.5*m*( ion_vec[i]->get_vel().norm_sq() );
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        m = ion->get_mass();
+        e += 0.5*m*( ion->get_vel().norm_sq() );
     }
     return e;
 }
@@ -278,10 +284,8 @@ double Ion_cloud::coulomb_energy() const
 
 void Ion_cloud::updateStats()
 {
-    typedef Ion_ptr_vector::const_iterator ion_itr;
-    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
-    {
-        (*ion)->updateStats();
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->updateStats();
     }
 }
 
@@ -296,24 +300,25 @@ void Ion_cloud::saveStats(const std::string basePath,
     double sqrt2 = 1.414213562;
     DataWriter writer(",");
     typedef Ion_ptr_vector::const_iterator ion_itr;
-    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    
+    BOOST_FOREACH(Ion_ptr ion, ion_vec)
     {
-    	std::string name = (*ion)->name() + posFileEnding;
+    	std::string name = ion->name() + posFileEnding;
     	std::list<double> rowdata;
         // Scale reduced units to real=world units and rotate to align to
         // axes between rods (calculation has axes crossing rods.)
-        x = ((*ion)->get_pos())[0] * length_scale;
-        y = ((*ion)->get_pos())[1] * length_scale;
-        z = ((*ion)->get_pos())[2] * length_scale;
+        x = (ion->get_pos())[0] * length_scale;
+        y = (ion->get_pos())[1] * length_scale;
+        z = (ion->get_pos())[2] * length_scale;
         rotated_x = (x+y)/sqrt2;
         rotated_y = (x-y)/sqrt2;
         rowdata.push_back(rotated_x);
         rowdata.push_back(rotated_y);
         rowdata.push_back(z);
         
-        x = ((*ion)->get_vel())[0] * vel_scale;
-        y = ((*ion)->get_vel())[1] * vel_scale;
-        z = ((*ion)->get_vel())[2] * vel_scale;
+        x = (ion->get_vel())[0] * vel_scale;
+        y = (ion->get_vel())[1] * vel_scale;
+        z = (ion->get_vel())[2] * vel_scale;
         rotated_x = (x+y)/sqrt2;
         rotated_y = (x-y)/sqrt2;
         rowdata.push_back(rotated_x);
@@ -384,10 +389,9 @@ void Ion_cloud::saveStats(const std::string basePath,
 
 void Ion_cloud::update_energy_histogram(IonHistogram& h) const
 {
-    typedef Ion_ptr_vector::const_iterator ion_itr;
-    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    BOOST_FOREACH(Ion_ptr ion, ion_vec )
     {
-        (*ion)->recordKE(h);
+        ion->recordKE(h);
     }
 }
 
@@ -396,13 +400,13 @@ void Ion_cloud::update_position_histogram(ImageCollection& h) const
     Vector3D posn;
     Vector3D rotated_pos;
     typedef Ion_ptr_vector::const_iterator ion_itr;
-    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
+    BOOST_FOREACH(Ion_ptr ion, ion_vec )
     {
-        posn = (*ion)->get_pos();
+        posn = ion->get_pos();
         rotated_pos.x = (posn.x+posn.y)/sqrt(2.0);
         rotated_pos.y = (posn.x-posn.y)/sqrt(2.0);
         rotated_pos.z = posn.z;
-        h.addIon((*ion)->name(), rotated_pos);
+        h.addIon(ion->name(), rotated_pos);
     }
 }
 
