@@ -95,7 +95,7 @@ private:
 };
 
 /// Ion pointer type.
-typedef boost::shared_ptr<Ion> ion_ptr;
+typedef boost::shared_ptr<Ion> Ion_ptr;
 
 #endif
 

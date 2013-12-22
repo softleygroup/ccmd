@@ -10,6 +10,7 @@
 #define CCMD_ion_cloud_h
 
 #include "ion_trap.h"
+#include "ion.h"
 #include <vector>
 
 class Ion;
@@ -84,12 +85,12 @@ private:
     const Cloud_params* cloud_params;
     friend class Coulomb_force;
     
-    typedef std::vector<Ion*> Ion_ptr_vector;
+    typedef std::vector<Ion_ptr> Ion_ptr_vector;
     Ion_ptr_vector ion_vec;
     
     bool runStats;
     
-    void add_ion(Ion* ion_ptr) { ion_vec.push_back(ion_ptr); }
+//    void add_ion(Ion* ion_ptr) { ion_vec.push_back(ion_ptr); }
     
     // changes one ion from one type to another, returns true if successful
     bool change_ion(const Ion_type& type_in, const Ion_type& type_out);
