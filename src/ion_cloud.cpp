@@ -11,7 +11,6 @@
 #include "IonHistogram.h"
 #include "Stats.h"
 #include "DataWriter.h"
-#include "ion_trap.h"
 
 #include <functional>
 #include <algorithm>
@@ -67,7 +66,7 @@ struct position_ions {
  *
  */
 Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
-    :  trap(ion_trap), cloud_params(&params)
+    : cloud_params(&params)
 {
     // loop over ion types to initialise ion cloud
     for (std::list<Ion_type>::const_iterator it=cloud_params->ionTypeList.begin();
@@ -78,12 +77,12 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
             if (it->is_laser_cooled) {
                 //add_ion(new Lasercooled_ion(trap, *it));
                 ion_vec.push_back(
-                                  boost::make_shared<Lasercooled_ion>(trap, *it));
+                                  boost::make_shared<Lasercooled_ion>(ion_trap, *it));
             } else {
                 
                 //add_ion(new Trapped_ion(trap, *it));
                 ion_vec.push_back(
-                                  boost::make_shared<Trapped_ion>(trap, *it));
+                                  boost::make_shared<Trapped_ion>(ion_trap, *it));
             }
         }
         

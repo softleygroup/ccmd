@@ -9,7 +9,6 @@
 #ifndef CCMD_ion_cloud_h
 #define CCMD_ion_cloud_h
 
-#include "ion_trap.h"
 #include "ion.h"
 #include <vector>
 
@@ -53,7 +52,6 @@ public:
     void saveStats(const std::string basePath, const double length_scale,
                    const double time_scale) const;
 private:
-    const Ion_trap_ptr trap;
     const Cloud_params* cloud_params;
     friend class Coulomb_force;
     
