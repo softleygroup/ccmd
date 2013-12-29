@@ -99,7 +99,7 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
                   position_ions() );
         
         // move cloud centre to the origin
-        Vector3D to_origin = -get_cloud_centre( *this );
+        Vector3D to_origin = -get_cloud_centre();
         move_centre(to_origin);
         
         runStats = false;
@@ -116,82 +116,12 @@ Ion_cloud::~Ion_cloud()
     ion_vec.clear();
 }
 
-int get_nearest_cube(int n)
-{
-    // returns integer which when cubed is closest to n 
-	int min_cube = 1;
-	int max_cube = 1;
-	int i = 1;
-	while (max_cube <=n) {
-		min_cube = max_cube;
-		++i;
-		max_cube = i*i*i;
-	}
-    return (n-min_cube) < (max_cube-n) ? i-1 : i;
 
-}
-
-Vector3D Ion_cloud::get_cloud_centre(const Ion_cloud& ) const
-{
-    // 	unweighted geometric centre of ion cloud
-	Vector3D centre;
-    double n_ions = ion_vec.size();
-    
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
-        centre += ion->get_pos();
-    }
-    
-	centre /= n_ions;
-	return centre;
-}
-
-void Ion_cloud::move_centre(const Vector3D& v)
-{
-	// move the whole ion cloud
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
-        ion->move(v);
-    }
-}
-
-//std::ostream& operator<<(std::ostream& os, const Ion_cloud& ic)
-//{
-//    // outputs ion positions as 
-//    // --------------------------------
-//    //  Ion         x       y       z
-//    // --------------------------------
-//    //
-//    static bool first_call = true;
-//    
-//    if (first_call) {
-//        std::string header_space(7,' ');
-//        std::string header_line(33,'-');
-//        std::string header = " Ion         x       y       z";
-//    
-//        os << header_space << header << std::endl;
-//        os << header_space << header_line << std::endl;
-//    
-//        first_call = false;
-//    }
-//    
-//	os.setf(std::ios::fixed);
-//	os.precision(6);
-//	os << setiosflags( std::ios::right );
-//    
-//	enum XYZ{x,y,z};
-//	for (int i=0; i<ic.ion_vec.size(); ++i) {
-//		os << std::setw(10) << i+1 << '\t';
-//        
-//		os << std::setw(7) << ic.ion_vec[i]->r(x) << ' '
-//            << std::setw(7) << ic.ion_vec[i]->r(y) << ' '
-//            << std::setw(7) << ic.ion_vec[i]->r(z) << std::endl;
-//	}
-//    
-//	os << std::endl;
-//    
-//	return os;
-//}
-
-
+/**
+ *  @brief Call the Ion::drift function on each ion.
+ *
+ *  @param dt   Time step.
+ */
 void Ion_cloud::drift(double dt)
 {
     BOOST_FOREACH(Ion_ptr ion, ion_vec) {
@@ -199,15 +129,12 @@ void Ion_cloud::drift(double dt)
     }
 }
 
-//struct Kicker_t {
-//    Kicker_t(double t) : t(t) {}
-//    void operator()(const Ion_ptr& ion_to_kick) {
-//        ion_to_kick->kick(t);
-//    }
-//private:
-//    double t;
-//};
 
+/**
+ *  @brief Call the Ion::kick function on each ion.
+ *
+ *  @param dt   Time step.
+ */
 void Ion_cloud::kick(double dt)
 {
     BOOST_FOREACH(Ion_ptr ion, ion_vec) {
@@ -215,6 +142,13 @@ void Ion_cloud::kick(double dt)
     }
 }
 
+
+/**
+ *  @brief Call the Ion::kick function on each ion with a specific force.
+ *
+ *  @param dt   Time step.
+ *  @param f    Force vector.
+ */
 void Ion_cloud::kick(double dt, const std::vector<Vector3D>& f)
 {
     for (int i=0; i<ion_vec.size(); ++i) {
@@ -222,15 +156,17 @@ void Ion_cloud::kick(double dt, const std::vector<Vector3D>& f)
     }
 }
 
-//struct Velocity_scaler {
-//    Velocity_scaler(double dt) : dt(dt) {}
-//    void operator()(const Ion_ptr& ion_to_scale) {
-//        ion_to_scale->velocity_scale(dt);
-//    }
-//private:
-//    double dt;
-//};
 
+/**
+ *  @brief Call the Ion::velocity_scale function on each ion.
+ *
+ *  This function provides the rescaling of the velocity to correct for friction
+ *  forces in Velocity Verlet based integrators.
+ *
+ *  See: Tuckerman and Berne, J. Chem. Phys. 95, 4389 (1991), Eqn. 3.7
+ *
+ *  @param dt   Time step.
+ */
 void Ion_cloud::velocity_scale(double dt)
 {
     BOOST_FOREACH(Ion_ptr ion, ion_vec) {
@@ -238,6 +174,12 @@ void Ion_cloud::velocity_scale(double dt)
     }
 }
 
+
+/**
+ *  @brief Call the Ion::heat function on each ion.
+ *
+ *  @param dt   Time step.
+ */
 void Ion_cloud::heat(double dt)
 {
     BOOST_FOREACH(Ion_ptr ion, ion_vec) {
@@ -245,6 +187,14 @@ void Ion_cloud::heat(double dt)
     }
 }
 
+
+/**
+ *  @brief Determine the total kinetic energy the ion cloud.
+ *
+ *  The function sums the kinetic energy of each ion.
+ *
+ *  @return The total kinetic energy.
+ */
 double Ion_cloud::kinetic_energy() const
 {
     double e = 0;
@@ -256,6 +206,14 @@ double Ion_cloud::kinetic_energy() const
     return e;
 }
 
+
+/**
+ *  @brief Determine the total Coulomb energy the ion cloud.
+ *
+ *  The function sums the Coulomb energy contribution of each ion.
+ *
+ *  @return The total Coulomb energy.
+ */
 double Ion_cloud::coulomb_energy() const
 {
     Vector3D r1,r2;
@@ -282,6 +240,26 @@ double Ion_cloud::coulomb_energy() const
     return e;
 }
 
+
+/**
+ *  @brief Determine the total energy the ion cloud.
+ *
+ *  The function sums the Coulomb and kinetic energy contribution of each ion 
+ *  by calling the Ion_cloud::coulomb_energy() and Ion_cloud::kinetic_energy()
+ *  functions.
+ *
+ *  @return The total energy.
+ */
+double Ion_cloud::total_energy() const
+{
+    return kinetic_energy() + coulomb_energy();
+}
+
+/**
+ *  @brief Call the Ion::updateStats function on each ion.
+ *
+ *  @param dt   Time step.
+ */
 void Ion_cloud::updateStats()
 {
     BOOST_FOREACH(Ion_ptr ion, ion_vec) {
@@ -289,6 +267,22 @@ void Ion_cloud::updateStats()
     }
 }
 
+
+/**
+ *  @brief Save the position and velocity statistics of each ion to a file.
+ *
+ *  This function should be called at the end of a simulation. It saves the 
+ *  average velocity and position to the rows of a comma-delimited file; one 
+ *  file for each ion type, with the ion name in the file name. The function 
+ *  also writes the last position and velocity vector to another file.
+ *
+ *  Position and velocity need to be scaled from the simulation units into S.I.
+ *  units, by multiplying by the given factors.
+ *
+ *  @param basePath     Directory in which to save files.
+ *  @param length_scale Factor to convert distance to S.I. units.
+ *  @param time_scale   Factor to convert time to S.I. units.
+ */
 void Ion_cloud::saveStats(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
@@ -387,6 +381,14 @@ void Ion_cloud::saveStats(const std::string basePath,
     */
 }
 
+/**
+ *  @brief Collect the kinetic energy of all ions into a histogram.
+ *
+ *  Call the function for each ion that calculates instantaneous kinetic energy
+ *  and appends it to an `IonHistogram` object.
+ *
+ *  @param h    The histogram object in which to record energies.
+ */
 void Ion_cloud::update_energy_histogram(IonHistogram& h) const
 {
     BOOST_FOREACH(Ion_ptr ion, ion_vec )
@@ -395,6 +397,14 @@ void Ion_cloud::update_energy_histogram(IonHistogram& h) const
     }
 }
 
+/**
+ *  @brief Add the current position of each ion to a 3D histogram.
+ *
+ *  The position of each ion is added to an `ImageCollection`, tagged by the
+ *  name of the ion.
+ *
+ *  @param h    The `ImageCollection` object that holds the histogram.
+ */
 void Ion_cloud::update_position_histogram(ImageCollection& h) const
 {
     Vector3D posn;
@@ -410,38 +420,16 @@ void Ion_cloud::update_position_histogram(ImageCollection& h) const
     }
 }
 
-//void Ion_cloud::scale(double scale_factor)
-//{
-//    for (int i=0; i<ion_vec.size(); ++i) {
-//        ion_vec[i]->pos() = ion_vec[i]->pos()*scale_factor;
-//    }
-//}
 
-std::vector<Vector3D> get_lattice(size_t n)
-{
-    int side = int(ceil( pow(n,1.0/3.0) ));
-    std::vector<Vector3D> lattice;
-
-	Vector3D grid_pos;
-    double scale = 2.0;
-    
-    Vector3D to_centre = Vector3D(0.5,0.5,0.5)*side*scale;
-	// Move ions to cubic lattice sites 
-	for (int i=0; i<pow(side,3.0); ++i) {
-		grid_pos.x =               i%side;
-		grid_pos.y =        (i/side)%side;
-		grid_pos.z = (i/(side*side))%side;
-        
-        grid_pos *= scale;
-        grid_pos -= to_centre;
-        lattice.push_back(grid_pos);
-    }
-    std::sort(lattice.begin(), lattice.end());
-    lattice.resize(n);
-    
-    return lattice;
-}
-
+/**
+ *  @brief Determine the aspect ratio of the ion cloud.
+ *
+ *  Treating the ion cloud as a cylinder, calculate and return the aspect ratio.
+ *  The aspect ratio is the ratio of the largest z coordinate to the largest of
+ *  the \c x or \c y coordinates.
+ *
+ *  @return The aspect ratio.
+ */
 double Ion_cloud::aspect_ratio() const
 {
     // aspect ratio defined by maxmimum extent of ions
@@ -492,131 +480,105 @@ double Ion_cloud::aspect_ratio() const
 */
 }
 
-Vector3D Ion_cloud::ion_position(size_t ion_index) const
-{
-    if (ion_index < ion_vec.size())
-        return ion_vec[ion_index]->get_pos();
-    else
-        throw;
-}
+// Utility functions for generating initial positions
 
-Vector3D Ion_cloud::ion_velocity(size_t ion_index) const
+/**
+ *  @brief Determine the coordinates of an \c n item lattice.
+ *
+ *  Utility function for initial position. The ions are initially positioned on
+ *  a three-dimensional lattice to avoid problems arising from random positions.
+ *  
+ *  @param n    Number of ions to generate lattice positions for.
+ *
+ *  @return     A list of coordinates, one for each ion.
+ */
+std::vector<Vector3D> Ion_cloud::get_lattice(size_t n)
 {
-    if (ion_index < ion_vec.size())
-        return ion_vec[ion_index]->get_vel();
-    else
-        throw;
-}
-
-int Ion_cloud::ion_charge(size_t ion_index) const
-{
-    return ion_vec[ion_index]->get_charge();
-}
-
-double Ion_cloud::ion_mass(size_t ion_index) const
-{
-    return ion_vec[ion_index]->get_mass();
-}
-
-std::string Ion_cloud::ion_name(size_t ion_index) const
-{
-    return ion_vec[ion_index]->name();
-}
-
-std::string Ion_cloud::ion_formula(size_t ion_index) const
-{
-    return ion_vec[ion_index]->formula();
-}
-
-void Ion_cloud::set_ion_position(size_t ion_index, const Vector3D& r)
-{
-    // throws runtime_error if invalid ion_index used
-    if (ion_index < ion_vec.size()) {
-        ion_vec[ion_index]->set_position(r);
-        return;
-    }
-    else {
-        ostringstream error_msg;
-        error_msg << "Error in Ion_cloud::set_ion_position: invalid ion_index: " 
-                  << ion_index;
+    int side = int(ceil( pow(n,1.0/3.0) ));
+    std::vector<Vector3D> lattice;
+    
+	Vector3D grid_pos;
+    double scale = 2.0;
+    
+    Vector3D to_centre = Vector3D(0.5,0.5,0.5)*side*scale;
+	// Move ions to cubic lattice sites
+	for (int i=0; i<pow(side,3.0); ++i) {
+		grid_pos.x =               i%side;
+		grid_pos.y =        (i/side)%side;
+		grid_pos.z = (i/(side*side))%side;
         
-        throw runtime_error( error_msg.str() );
+        grid_pos *= scale;
+        grid_pos -= to_centre;
+        lattice.push_back(grid_pos);
     }
+    std::sort(lattice.begin(), lattice.end());
+    lattice.resize(n);
+    
+    return lattice;
 }
 
-void Ion_cloud::set_ion_velocity(size_t ion_index, const Vector3D& v)
+
+/**
+ *  @brief Find the integer that is closest to \c n when cubed.
+ *
+ *  Utility function for initial position. The ions are initially positioned on
+ *  a three-dimensional lattice to avoid problems arising from random positions.
+ *  
+ *  @param n    The number of ions.
+ *
+ *  @return     An integer close to \n^3
+ */
+
+int Ion_cloud::get_nearest_cube(int n)
 {
-    // throws runtime_error if invalid ion_index used
-    if (ion_index < ion_vec.size()) {
-        ion_vec[ion_index]->set_velocity(v);
-        return;
-    }
-    else {
-        ostringstream error_msg;
-        error_msg << "Error in Ion_cloud::set_ion_velocity: invalid ion_index: "
-                  << ion_index;
-        throw runtime_error( error_msg.str() );
-    }
+    // returns integer which when cubed is closest to n
+	int min_cube = 1;
+	int max_cube = 1;
+	int i = 1;
+	while (max_cube <=n) {
+		min_cube = max_cube;
+		++i;
+		max_cube = i*i*i;
+	}
+    return (n-min_cube) < (max_cube-n) ? i-1 : i;
+    
 }
 
-//struct isIon_type {
-//    isIon_type(const Ion_type& type_in) : type_(type_in) {}
-//    bool operator()(Ion* ion) const {
-//        return &(ion->get_type()) == &type_;
-//    }
-//private:
-//    const Ion_type& type_; 
-//};
 
-// changes one ion from one type to another, returns true if successful
-//bool Ion_cloud::change_ion(const std::string& name_in, const std::string& name_out) {
-//    try {
-//        const Ion_type& type_in = cloud_params->get_Ion_type_by_name(name_in);
-//        const Ion_type& type_out = cloud_params->get_Ion_type_by_name(name_out);
-//        return this->change_ion(type_in, type_out);
-//    } catch (std::exception& e) {
-//        std::cerr << e.what();
-//        return false;
-//    }
-//}
-
-// changes one ion from one type to another, returns true if successful
-// throws runtime_error if unable to assign new ion
-//bool Ion_cloud::change_ion(const Ion_type& type_in, const Ion_type& type_out) {
-//    
-//    Ion_ptr_vector::iterator ion_to_change;
-//    ion_to_change = find_if(ion_vec.begin(), ion_vec.end(), isIon_type(type_in) );
-//    
-//    if ( ion_to_change == ion_vec.end() ) {
-//        return false;
-//    }
-//    
-//    Ion* new_ion = 0;
-//    try {
-//        // allocates new ion according to new type
-//        if (type_out.is_laser_cooled)
-//            new_ion = new Lasercooled_ion(*trap, type_out);
-//        else
-//            new_ion = new Trapped_ion(*trap, type_out);
-//        
-//    } catch (bad_alloc& ba) {
-//        ostringstream error_msg;
-//        error_msg << "bad_alloc in Ion_cloud::change_ion: " << ba.what();
-//        throw runtime_error( error_msg.str() );
-//    }    
-//    
-//    // keep original position and velocity
-//    new_ion->set_position( (*ion_to_change)->get_pos() );
-//    new_ion->set_velocity( (*ion_to_change)->get_vel() );
-//    
-//    // delete old ion and change pointer to new ion
-//    delete *ion_to_change;
-//    *ion_to_change = new_ion;
-//    
-//    return true;
-//}
+/**
+ *  @brief Determine the geometric centre of the cloud of ions.
+ *
+ *  Used during construction of a new ion cloud to centre in the trap geometry.
+ *
+ *  @return Cloud centre as a vector.
+ */
+Vector3D Ion_cloud::get_cloud_centre() const
+{
+    // 	unweighted geometric centre of ion cloud
+	Vector3D centre;
+    double n_ions = ion_vec.size();
+    
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        centre += ion->get_pos();
+    }
+    
+	centre /= n_ions;
+	return centre;
+}
 
 
-
-
+/**
+ *  @brief Move all ions to re-centre the cloud.
+ *
+ *  This function is used while constructing a new ion cloud to centre it
+ *  within the trap geometry.
+ *
+ *  @param v    Vector to move all ions by.
+ */
+void Ion_cloud::move_centre(const Vector3D& v)
+{
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->move(v);
+    }
+}
 
