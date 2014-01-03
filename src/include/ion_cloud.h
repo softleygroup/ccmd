@@ -12,8 +12,6 @@
 #include "ion.h"
 #include <vector>
 
-class Ion;
-
 class ImageCollection;
 class IonHistogram;
 class Cloud_params;
@@ -32,8 +30,8 @@ public:
     void kick(double t, const std::vector<Vector3D>& fc);
     void heat(double t);
     void velocity_scale(double dt);
+    void updateStats();
     
-    // direct calculation of Coulomb sum
     double coulomb_energy() const;
     double kinetic_energy() const;
     double total_energy() const;
@@ -45,26 +43,22 @@ public:
     void update_position_histogram(ImageCollection&) const;
     void update_energy_histogram(IonHistogram&) const;
     
-    
-    void startStats() {runStats = true;}
-    void stopStats() {runStats = false;}
-    void updateStats();
     void saveStats(const std::string basePath, const double length_scale,
                    const double time_scale) const;
 private:
+    /** @brief Keep a pointer to the parameters. */
     const Cloud_params* cloud_params;
-    friend class Coulomb_force;
-    
     typedef std::vector<Ion_ptr> Ion_ptr_vector;
+    /** A list of pointers to the ion objects. */
     Ion_ptr_vector ion_vec;
-    
-    bool runStats;
     
     Vector3D get_cloud_centre() const;
     void move_centre(const Vector3D& v);
-
     static std::vector<Vector3D> get_lattice(size_t n);
     static int get_nearest_cube(int n);
+    
+    /** @brief Coulomb_force needs direct access to the list of ions. */
+    friend class Coulomb_force;
 };
 
 #endif

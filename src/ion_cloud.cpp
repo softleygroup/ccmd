@@ -4,7 +4,6 @@
  */
 #include "ion_cloud.h"
 
-#include "ccmd_sim.h"
 #include "ion.h"
 #include "vector3D.h"
 #include "ImageCollection.h"
@@ -14,13 +13,6 @@
 
 #include <functional>
 #include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <map>
-#include <vector>
-#include <list>
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
 
@@ -57,9 +49,7 @@ struct position_ions {
  * specific types, `lasercooled_ions` and `trapped_ions`.
  *
  * Generate a set of lattice points for the initial ion positions, then centre
- * the ion cloud.
- *
- * Statistics are off by default.
+ * the ion cloud within the trap.
  *
  * @param ion_trap  A pointer to the ion trap object;
  * @param params    A reference to the cloud parameters object.
@@ -100,18 +90,12 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
         // move cloud centre to the origin
         Vector3D to_origin = -get_cloud_centre();
         move_centre(to_origin);
-        
-        runStats = false;
     }
 }
 
 
 Ion_cloud::~Ion_cloud()
 {
-//    typedef std::vector<Ion*>::iterator ion_itr;
-//    for (ion_itr ion=ion_vec.begin(); ion<ion_vec.end(); ++ion) {
-//        delete *ion;
-//    }
     ion_vec.clear();
 }
 
@@ -293,11 +277,18 @@ void Ion_cloud::saveStats(const std::string basePath,
     double sqrt2 = 1.414213562;
     DataWriter writer(",");
     typedef Ion_ptr_vector::const_iterator ion_itr;
+    std::list<double> rowdata;
+    std::string name;
+    
+//    // Write the header for each file
+//      std::string header="#<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)\n";
+//    name = ion->name() + posFileEnding;
     
     BOOST_FOREACH(Ion_ptr ion, ion_vec)
     {
-    	std::string name = ion->name() + posFileEnding;
-    	std::list<double> rowdata;
+        // Write the final position and velocity for each ion.
+    	name = ion->name() + posFileEnding;
+    	rowdata.clear();
         // Scale reduced units to real=world units and rotate to align to
         // axes between rods (calculation has axes crossing rods.)
         x = (ion->get_pos())[0] * length_scale;
@@ -319,65 +310,34 @@ void Ion_cloud::saveStats(const std::string basePath,
         rowdata.push_back(z);
         
         writer.writeRow(name, rowdata);
-    }
-    /*
-    std::string fileName;
-    std::string filerow;
-    Stats<Vector3D> energy;
-    Stats<Vector3D> pos;
-    Vector3D avg_energy, var_energy, avg_pos, var_pos;
-    double mon2;
-    std::ostringstream strs;
-    
-    typedef std::map <std::string, std::string> FileText;
-    FileText fileContents;
-    
-    typedef std::vector<Ion*>::const_iterator ion_itr;
-    for (ion_itr ion=ion_vec.begin(); ion!=ion_vec.end(); ++ion)
-    {
-        /*
-        energy = (*ion)->velStats;
-        pos = (*ion)->posStats;
-        mon2 = ((*ion)->mass)/2;
-        avg_energy = energy.average();
-        var_energy = energy.variance();
-        avg_pos = pos.average();
-        var_pos = pos.variance();
         
-        // Make and store line of output file
-        strs.clear();
-        strs << avg_energy[0]*mon2 << "\t" << var_energy[0]*mon2 << "\t";
-        strs << avg_energy[1]*mon2 << "\t" << var_energy[1]*mon2 << "\t";
-        strs << avg_energy[2]*mon2 << "\t" << var_energy[2]*mon2 << "\t";
-        strs << avg_pos[0] << "\t" << var_pos[0] << "\t";
-        strs << avg_pos[1] << "\t" << var_pos[1] << "\t";
-        strs << avg_pos[2] << "\t" << var_pos[2] << "\n";
-        filerow = strs.str();
-        fileContents[((*ion)->name()) + statsfileEnding] += filerow;
-        */
-        // Make and store line of position and velocity file
-    /*
-        strs.clear();
-        strs << ((*ion)->pos)[0] << "\t" << ((*ion)->pos)[1] << "\t" << ((*ion)->pos)[2] << "\t";
-        strs << ((*ion)->vel)[0] << "\t" << ((*ion)->vel)[1] << "\t" << ((*ion)->vel)[2] << "\n";
-        filerow = strs.str();
-        fileContents[((*ion)->name()) + posFileEnding] += filerow;
-     
+        // Write the average data for each ion.
+        name = ion->name() + statsfileEnding;
+        rowdata.clear();
+        
+        Stats<Vector3D> energy = ion->get_velStats();
+        Stats<Vector3D> pos = ion->get_posStats();
+        double mon2 = (ion->get_mass())/2;
+        Vector3D avg_energy = energy.average();
+        Vector3D var_energy = energy.variance();
+        Vector3D avg_pos = pos.average();
+        Vector3D var_pos = pos.variance();
+        
+        rowdata.push_back(avg_energy[0]*mon2);
+        rowdata.push_back(var_energy[0]*mon2);
+        rowdata.push_back(avg_energy[1]*mon2);
+        rowdata.push_back(var_energy[1]*mon2);
+        rowdata.push_back(avg_energy[2]*mon2);
+        rowdata.push_back(var_energy[2]*mon2);
+        rowdata.push_back(avg_pos[0]);
+        rowdata.push_back(var_pos[0]);
+        rowdata.push_back(avg_pos[1]);
+        rowdata.push_back(var_pos[1]);
+        rowdata.push_back(avg_pos[2]);
+        rowdata.push_back(var_pos[2]);
+        
+        writer.writeRow(name, rowdata);
     }
-    
-    std::string header="#<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)\n";
-    for (FileText::iterator file=fileContents.begin(); file!=fileContents.end(); ++file)
-    {
-        fileName = file->first;
-        std::ofstream fileStream(fileName.c_str());
-        //fileStream << header;
-        fileStream << file->second;
-        fileStream.close();
-    }
-    
-    // Save ion final position and velocity
-    
-    */
 }
 
 /**

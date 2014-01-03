@@ -83,7 +83,14 @@ int main (int argc, char * const argv[]) {
         // Construct trap
         //Cosine_trap trap(trap_params);
 //        Ion_trap_ptr trap(new(Cosine_trap(trap_params));
-        Ion_trap_ptr trap = boost::make_shared<Cosine_trap>(trap_params);
+        Ion_trap_ptr trap;
+        switch (trap_params.wave) {
+            case trap_params.cosine:
+                trap = boost::make_shared<Cosine_trap>(trap_params);
+            case trap_params.digital:
+                trap = boost::make_shared<Pulsed_trap>(trap_params);
+        }
+        
 //        Pulsed_trap trap(trap_params);
         
         // Construct ion cloud

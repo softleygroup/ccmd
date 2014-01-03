@@ -14,7 +14,6 @@
 class Trap_params;
 
 class Ion_trap {
-    friend class Trapped_ion;
 public:
     Ion_trap();
     Ion_trap(const Trap_params& params);
@@ -31,23 +30,23 @@ public:
     double get_time_scale() const { return time_scale; }
  
 protected:
+    /** @brief Pointer to trap parameters object. */
     const Trap_params* trap_params;
     
-    double v_end;
-    double eta;
-    double r0;
-    double z0;
-    double freq;
+    double v_end;           /// End-cap voltage.
+    double v_rf;            /// RF amplitude.
+    double eta;             /// Trap geometric parameter.
+    double r0;              /// Centre-to-centre trap rod radius.
+    double z0;              /// Length of trap RF electrodes.
+    double freq;            /// RF driving frequency.
     
-    double a_unit_mass;
-    double q_unit_mass;
-    double length_scale;
-    double time_scale;
+    double a_unit_mass;     /// Mathieu \c a parameter.
+    double q_unit_mass;     /// Matheiu \c q parameter.
+    double length_scale;    /// Derived simulation length scale.
+    double time_scale;      /// Derived simulation time scale.
     
-    double omega;
-    double time_now;
-    double phi0;
-    double v_rf;
+    double omega;           /// Trap voltage angular frequency.
+    double time_now;        /// Current time in simulation units.
 
     static const double pi;
     static const double epsilon_0;
@@ -64,25 +63,21 @@ public:
     void evolve(double time);
 
 private:
-    double phase;
-    double cos_phase;
-    double a_unit_mass;
-    double q_unit_mass;
+    double cos_phase;       /// Magnitude of the cosine function at current time.
 };
 
 
-//class Pulsed_trap : public Ion_trap {
-//public:
-//    Pulsed_trap(const Trap_params& params);
-//    
-//    Vector3D force_now(const ion_ptr i) const;
-//    void evolve(double time);
-//    
-//private:
-//    double tau;   
-//    double pulse_height;
-//    void pulse_shape();
-//};
+class Pulsed_trap : public Ion_trap {
+public:
+    Pulsed_trap(const Trap_params& params);
+    
+    Vector3D force_now(const Vector3D& r) const;
+    void evolve(double time);
+    
+private:
+    double tau;   
+    double pulse_height;
+};
 
 typedef boost::shared_ptr<Ion_trap> Ion_trap_ptr;
 

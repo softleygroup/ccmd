@@ -12,6 +12,7 @@
 /**
  *  @class Ion
  *  @brief Base class for all ion types.
+ *
  *  The ion base class stores position and velocity, and provides functions to 
  *  update the position due to free-flight, and acceleration due to a force.
  *  This class also stores ion information: mass, charge, name and formula.
@@ -29,6 +30,7 @@ Ion::Ion(const Ion_type& type)
 
 /**
  *  @brief Update position after free flight.
+ *
  *  Moves the ion at a constant velocity for a time `dt`.
  *
  *  @param dt Time step.
@@ -51,6 +53,7 @@ inline void Ion::kick(const double dt, const Vector3D& f)
 
 /**
  *  @brief Add the kinetic energy of this ion to a histogram.
+ *
  *  Calculate the total kinetic energy and kinetic energy directed along each
  *  axis, then give this to an `IonHistogram` object, with the name of this ion
  *  as a label.
@@ -77,6 +80,7 @@ void Ion::recordKE(IonHistogram& ionHistogram) const
 
 /** 
  *  @brief Update the statistics stored by this ion.
+ *
  *  Appends the current kinetic energy (velocity^2, so this needs to be 
  *  multiplied by mass/2 before output) and position to the `Stats` objects.
  */

@@ -46,9 +46,10 @@ public:
     const Vector3D& get_vel() const {return vel;}
     const double get_mass() const {return mass;}
     const double get_charge() const {return charge;}
+    const Stats<Vector3D> get_posStats() const {return posStats;}
+    const Stats<Vector3D> get_velStats() const {return velStats;}
     
     void updateStats();
-    void resetStats();
 protected:
     const Ion_type* ion_type;
     Vector3D pos;
