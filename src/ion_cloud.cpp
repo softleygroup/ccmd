@@ -1,7 +1,4 @@
-/**
- *  @file ion_cloud.cpp
- *  @brief Class to hold a collection of ions and perform actions on each.
- */
+
 #include "ion_cloud.h"
 
 #include "ion.h"
@@ -41,6 +38,11 @@ struct position_ions {
 };
 
 /**
+ *  @class ion_cloud.cpp
+ *  @brief Class to hold a collection of ions and perform actions on each.
+ */
+
+/**
  * @brief Build a cloud of ions from the given parameters.
  *
  * Build a new ion cloud from the parameters held in the `params` object. The
@@ -56,16 +58,15 @@ struct position_ions {
  *
  */
 Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
-    : cloud_params(&params)
+: cloud_params(&params)
 {
     // loop over ion types to initialise ion cloud
     for (std::list<Ion_type>::const_iterator it=cloud_params->ionTypeList.begin();
          it!=cloud_params->ionTypeList.end(); ++it) {
-        // loop over ions numeber for type, construct ions using *trap to ensure 
+        // loop over ions numeber for type, construct ions using *trap to ensure
         // that changes to ion trap parameters are felt by the ions
         for (int i=0; i<it->number; ++i) {
             if (it->is_laser_cooled) {
-                //add_ion(new Lasercooled_ion(trap, *it));
                 ion_vec.push_back(
                                   boost::make_shared<Lasercooled_ion>(ion_trap, *it));
             } else {
@@ -75,21 +76,22 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
                                   boost::make_shared<Trapped_ion>(ion_trap, *it));
             }
         }
-        
-        // sort ions by mass
-        sort(ion_vec.begin(),ion_vec.end(), compare_ions_by_mass() );
-        
-        // generate initial positions
-        vector<Vector3D> lattice = get_lattice( number_of_ions() );
-        
-        // move ions into position
-        std::transform(ion_vec.begin(), ion_vec.end(),
-                  lattice.begin(), ion_vec.begin(),
-                  position_ions() );
-        
-        // move cloud centre to the origin
-        Vector3D to_origin = -get_cloud_centre();
-        move_centre(to_origin);
+    }
+    // sort ions by mass
+    sort(ion_vec.begin(),ion_vec.end(), compare_ions_by_mass() );
+    
+    // generate initial positions
+    vector<Vector3D> lattice = get_lattice( number_of_ions() );
+    
+    // move ions into position
+    std::transform(ion_vec.begin(), ion_vec.end(),
+                   lattice.begin(), ion_vec.begin(),
+                   position_ions() );
+    
+    // move cloud centre to the origin
+    Vector3D to_origin = -get_cloud_centre();
+    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+        ion->move(to_origin);
     }
 }
 
@@ -523,21 +525,5 @@ Vector3D Ion_cloud::get_cloud_centre() const
     
 	centre /= n_ions;
 	return centre;
-}
-
-
-/**
- *  @brief Move all ions to re-centre the cloud.
- *
- *  This function is used while constructing a new ion cloud to centre it
- *  within the trap geometry.
- *
- *  @param v    Vector to move all ions by.
- */
-void Ion_cloud::move_centre(const Vector3D& v)
-{
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
-        ion->move(v);
-    }
 }
 

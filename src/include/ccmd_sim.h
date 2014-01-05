@@ -17,6 +17,7 @@
 #include <vector>
 #include <map>
 #include <list>
+#include <string>
 
 #include <stdexcept>
 
@@ -28,21 +29,22 @@ public:
     // Radiofrequency parameters
     
     /// Enumeration of avaliable trap types.
-    enum Waveform {cosine, digital };
-    Waveform wave;      /// Type of RF waveform applied to trap
-    double freq;        /// Trap RF frequency            (Hz)
+    enum Waveform {cosine, digital, waveform};
+    Waveform wave;              /// Type of RF waveform applied to trap
+    double freq;                /// Trap RF frequency            (Hz)
     
     // Trap voltage parameters
-    double v_rf;        /// Amplitude of RF voltage      (V)
-    double v_end;       /// Endcap electrode voltage     (V)
+    double v_rf;                /// Amplitude of RF voltage      (V)
+    double v_end;               /// Endcap electrode voltage     (V)
     
     // Trap geometry parameters
-    double eta;         /// Trap geometry parameter
-    double r0;          /// Electrode radius             (m)
-    double z0;          /// Central electrode length     (m)
+    double eta;                 /// Trap geometry parameter
+    double r0;                  /// Electrode radius             (m)
+    double z0;                  /// Central electrode length     (m)
     
     
-    double tau;         /// Waveform duty cycle.
+    double tau;                 /// Waveform duty cycle.
+    std::string waveformFile;   /// File containing waveform data.
 };
 
 
