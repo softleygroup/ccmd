@@ -69,10 +69,10 @@ int main (int argc, char * const argv[]) {
 
     // Parameter file paths
     string info_file = path + "trap.info";
-    string trap_param_file = path + "trap_config.txt";
-    string ion_types_file = path + "ion_types.txt";
-    string cloud_param_file = path + "ion_numbers.txt";
-    string integrator_param_file = path + "integrator.txt";
+//    string trap_param_file = path + "trap_config.txt";
+//    string ion_types_file = path + "ion_types.txt";
+//    string cloud_param_file = path + "ion_numbers.txt";
+//    string integrator_param_file = path + "integrator.txt";
     
     try {
         // Get simulation parameters from files
@@ -87,8 +87,13 @@ int main (int argc, char * const argv[]) {
         switch (trap_params.wave) {
             case trap_params.cosine:
                 trap = boost::make_shared<Cosine_trap>(trap_params);
+                break;
             case trap_params.digital:
                 trap = boost::make_shared<Pulsed_trap>(trap_params);
+                break;
+            case trap_params.waveform:
+                trap = boost::make_shared<Waveform_trap>(trap_params);
+                break;
         }
         
 //        Pulsed_trap trap(trap_params);

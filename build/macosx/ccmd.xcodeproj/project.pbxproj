@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A61078151871BFFE0024C9F7 /* pulsed_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EA180C21770088DC00 /* pulsed_trap.cpp */; };
+		A6107818187862DB0024C9F7 /* Waveform_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6107816187862DB0024C9F7 /* Waveform_trap.cpp */; };
 		A61EB9EF180C21770088DC00 /* ccmd_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DC180C21770088DC00 /* ccmd_image.cpp */; };
 		A61EB9F0180C21770088DC00 /* ccmd_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */; };
 		A61EB9F1180C21770088DC00 /* cosine_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DE180C21770088DC00 /* cosine_trap.cpp */; };
@@ -45,6 +46,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A6107816187862DB0024C9F7 /* Waveform_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Waveform_trap.cpp; path = ../../src/Waveform_trap.cpp; sourceTree = "<group>"; };
+		A6107819187862F30024C9F7 /* Waveform_trap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Waveform_trap.h; path = ../../src/include/Waveform_trap.h; sourceTree = "<group>"; };
 		A61EB9DC180C21770088DC00 /* ccmd_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_image.cpp; path = ../../src/ccmd_image.cpp; sourceTree = "<group>"; };
 		A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_sim.cpp; path = ../../src/ccmd_sim.cpp; sourceTree = "<group>"; };
 		A61EB9DE180C21770088DC00 /* cosine_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cosine_trap.cpp; path = ../../src/cosine_trap.cpp; sourceTree = "<group>"; };
@@ -120,6 +123,7 @@
 				A6785BCA186042E000B83CBA /* DataWriter.h */,
 				A61EBA02180C21B80088DC00 /* ccmd_image.h */,
 				A61EBA03180C21B80088DC00 /* ccmd_sim.h */,
+				A6107819187862F30024C9F7 /* Waveform_trap.h */,
 				A61EBA04180C21B80088DC00 /* coulomb_force.h */,
 				A61EBA05180C21B80088DC00 /* cuda_integrator.h */,
 				A61EBA06180C21B80088DC00 /* Hist1D.h */,
@@ -144,6 +148,7 @@
 				A61EB9DC180C21770088DC00 /* ccmd_image.cpp */,
 				A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */,
 				A61EB9DE180C21770088DC00 /* cosine_trap.cpp */,
+				A6107816187862DB0024C9F7 /* Waveform_trap.cpp */,
 				A61EB9DF180C21770088DC00 /* coulomb_force.cpp */,
 				A61EB9E0180C21770088DC00 /* hist1D.cpp */,
 				A61EB9E1180C21770088DC00 /* hist3D.cpp */,
@@ -217,6 +222,7 @@
 				A61EB9EF180C21770088DC00 /* ccmd_image.cpp in Sources */,
 				A61EB9F0180C21770088DC00 /* ccmd_sim.cpp in Sources */,
 				A61EB9F1180C21770088DC00 /* cosine_trap.cpp in Sources */,
+				A6107818187862DB0024C9F7 /* Waveform_trap.cpp in Sources */,
 				A61EB9F2180C21770088DC00 /* coulomb_force.cpp in Sources */,
 				A61EB9F3180C21770088DC00 /* hist1D.cpp in Sources */,
 				A61EB9F4180C21770088DC00 /* hist3D.cpp in Sources */,

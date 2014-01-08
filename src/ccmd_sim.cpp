@@ -173,7 +173,14 @@ Trap_params::Trap_params(const std::string& file_name)
                 cout << "Warning: Tau="<< tau << " out of range. Limiting to 1.0";
                 tau = 1.0;
             }
-        } else {
+        } else if (typeString == "waveform") {
+            cout << "Making a waveform trap.\n";
+            wave = waveform;
+            // The waveform file is in the same directory as the trap parameters
+            size_t found;
+            found=file_name.find_last_of("/\\");
+            waveformFile = file_name.substr(0,found) + "/waveform.dat";
+        }else {
             cout << "Unrecognised trap type " << typeString << "\n";
             throw runtime_error("unrecognised trap");
         }
@@ -303,7 +310,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
         
         cout << "Loaded " << ionType.number;
         if (ionType.is_laser_cooled) cout << " laser cooled";
-        cout << ionType.name << " ions" << endl;
+        cout << " " << ionType.name << " ions" << endl;
     }
 }
 
@@ -367,6 +374,6 @@ Integration_params::Integration_params(const std::string& file_name)
     cout << '\n' << "Integrator parameters:\n";
     cout << "\tTime step: " << time_step << endl;
     cout << "\tRESPA steps: " << respa_steps << endl;
-    cout << "\tWill take " << cool_steps << "to allow ions to equilibrate," << endl;
-    cout << "\t then " << hist_steps << "while collecting data" << endl;
+    cout << "\tWill take " << cool_steps << " steps to allow ions to equilibrate," << endl;
+    cout << "\t then " << hist_steps << " steps while collecting data" << endl;
 }
