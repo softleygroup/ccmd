@@ -36,7 +36,7 @@ void Coulomb_force::update()
     // fast force calculation. Create a local copy of the ion positions so we can
     // work on them without them changing
     for (int i=0; i<ionsCopy.size(); i++) {
-        ionsCopy[i] = ionCloud->ion_vec[i]->r();
+        ionsCopy[i] = ionCloud->ion_vec[i]->get_pos();
     }
     m_Thread = boost::thread(&Coulomb_force::direct_force, this);
     return;
@@ -57,10 +57,10 @@ void Coulomb_force::direct_force()
     // sum Coulomb force over all particles
     for (int i=0; i<ionsCopy.size(); ++i) {
         r1 = ionsCopy[i];
-        q1 = ionCloud->ion_vec[i]->q();
+        q1 = ionCloud->ion_vec[i]->get_charge();
         for (int j=i+1; j<ionsCopy.size(); ++j) {
             r2 = ionsCopy[j];
-            q2 = ionCloud->ion_vec[j]->q();
+            q2 = ionCloud->ion_vec[j]->get_charge();
     
             // range checking disabled in release to improve performance
             assert ( r1 != r2 );

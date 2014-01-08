@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A61078151871BFFE0024C9F7 /* pulsed_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EA180C21770088DC00 /* pulsed_trap.cpp */; };
 		A61EB9EF180C21770088DC00 /* ccmd_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DC180C21770088DC00 /* ccmd_image.cpp */; };
 		A61EB9F0180C21770088DC00 /* ccmd_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */; };
 		A61EB9F1180C21770088DC00 /* cosine_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DE180C21770088DC00 /* cosine_trap.cpp */; };
@@ -21,7 +22,6 @@
 		A61EB9FA180C21770088DC00 /* IonHistogram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E7180C21770088DC00 /* IonHistogram.cpp */; };
 		A61EB9FB180C21770088DC00 /* lasercooled_ion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E8180C21770088DC00 /* lasercooled_ion.cpp */; };
 		A61EB9FC180C21770088DC00 /* microscope_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E9180C21770088DC00 /* microscope_image.cpp */; };
-		A61EB9FD180C21770088DC00 /* pulsed_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EA180C21770088DC00 /* pulsed_trap.cpp */; };
 		A61EB9FE180C21770088DC00 /* respa_integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EB180C21770088DC00 /* respa_integrator.cpp */; };
 		A61EB9FF180C21770088DC00 /* stochastic_heat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9EC180C21770088DC00 /* stochastic_heat.cpp */; };
 		A61EBA00180C21770088DC00 /* trapped_ion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9ED180C21770088DC00 /* trapped_ion.cpp */; };
@@ -221,6 +221,7 @@
 				A61EB9F3180C21770088DC00 /* hist1D.cpp in Sources */,
 				A61EB9F4180C21770088DC00 /* hist3D.cpp in Sources */,
 				A61EB9F5180C21770088DC00 /* ImageCollection.cpp in Sources */,
+				A61078151871BFFE0024C9F7 /* pulsed_trap.cpp in Sources */,
 				A61EB9F6180C21770088DC00 /* integrator.cpp in Sources */,
 				A61EB9F7180C21770088DC00 /* ion_cloud.cpp in Sources */,
 				A61EB9F8180C21770088DC00 /* ion_trap.cpp in Sources */,
@@ -228,7 +229,6 @@
 				A61EB9FA180C21770088DC00 /* IonHistogram.cpp in Sources */,
 				A61EB9FB180C21770088DC00 /* lasercooled_ion.cpp in Sources */,
 				A61EB9FC180C21770088DC00 /* microscope_image.cpp in Sources */,
-				A61EB9FD180C21770088DC00 /* pulsed_trap.cpp in Sources */,
 				A61EB9FE180C21770088DC00 /* respa_integrator.cpp in Sources */,
 				A6785BC91851C24D00B83CBA /* DataWriter.cpp in Sources */,
 				A61EB9FF180C21770088DC00 /* stochastic_heat.cpp in Sources */,

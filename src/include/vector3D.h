@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <boost/shared_ptr.hpp>
 
 class Vector3D {
 public:
@@ -155,5 +156,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Vector3D& r); 
 
 };
+
+typedef boost::shared_ptr<Vector3D> Vector3d_ptr;
+typedef boost::shared_ptr<const Vector3D> Vector3d_const_ptr;
 
 #endif

@@ -7,8 +7,8 @@
 
 #include "ion_cloud.h" 
 #include "coulomb_force.h" 
+#include "ion_trap.h"
 
-class Ion_trap;
 class Vector3D;
 class Integration_params;
 
@@ -16,12 +16,12 @@ class Integration_params;
 class Integrator {
     friend class Coulomb_force;
 public:
-    Integrator(Ion_trap& it, Ion_cloud& ic, const Integration_params& params);
+    Integrator(const Ion_trap_ptr& it, Ion_cloud& ic, const Integration_params& params);
     virtual ~Integrator();
     virtual void evolve(double dt)=0;
 protected:
     Ion_cloud* ions;
-    Ion_trap* trap;
+    Ion_trap_ptr trap;
     Coulomb_force f_coulomb;  
 private:
     // prevent copying Integrator to avoid ambiguous evolution
@@ -38,7 +38,7 @@ private:
 //
 class RESPA_integrator : public Integrator {
 public:
-    RESPA_integrator(Ion_trap& it, Ion_cloud& ic, const Integration_params& params);
+    RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic, const Integration_params& params);
  
     void set_fast_steps(int steps) { respa_steps = steps; }
     void evolve(double dt=default_timestep);

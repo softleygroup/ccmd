@@ -5,6 +5,10 @@ trap {
     r0      3.5e-3
     z0      2.75e-3
     freq    3.85e6
+    type    {
+        name    digital
+        tau     0.1
+    }
 }
 integrator {
     timestep    0.1

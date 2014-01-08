@@ -16,7 +16,7 @@
 
 double RESPA_integrator::default_timestep = 0.1;
 
-RESPA_integrator::RESPA_integrator(Ion_trap& it, Ion_cloud& ic, 
+RESPA_integrator::RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic,
                                    const Integration_params& params)
     : Integrator(it,ic,params)
 {
