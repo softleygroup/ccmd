@@ -7,23 +7,43 @@
 #include "ion_trap.h"
 #include "ion_cloud.h"
 
-//
-// Numerical integration using the RESPA algorithm
-//
-// See: M. Tuckerman, B. J. Berne and G. J. Martyna
-//      J. Chem. Phys. 92, 1990 (1992)
-//
+/**
+ *  @class RESPA_integrator
+ *  @brief Numerical integration using the RESPA algorithm.
+ *
+ *  The integrator only updates the Coulomb force every \c respa_steps steps.
+ *  This force is used in each 
+ *
+ *  See: M. Tuckerman, B. J. Berne and G. J. Martyna,
+ *  J. Chem. Phys. 92, 1990 (1992)
+ */
 
-double RESPA_integrator::default_timestep = 0.1;
 
-RESPA_integrator::RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic,
+/**
+ *  @brief Create a new RESPA integrator.
+ *
+ *  @param it       Pointer to ion trap object.
+ *  @param ic       Pointer to ion cloud object.
+ *  @param params   Pointer to integrator parameters.
+ */
+RESPA_integrator::RESPA_integrator(const Ion_trap_ptr &it, Ion_cloud_ptr &ic,
                                    const Integration_params& params)
     : Integrator(it,ic,params)
 {
     respa_steps = params.respa_steps;
-    default_timestep = params.time_step;
 }
 
+
+/**
+ *  @brief Increment by one set of respa time steps.
+ *
+ *  This function moves the ions and updates the trap by 2*\c dt. The ions are
+ *  updated using the old Coulomb force, and the new force calculated. Then
+ *  a set of respa sub-steps are taken in which only the laser and trap forces
+ *  are used. Finally, a second half-step of Coulomb force and ion heating is applied.
+ *
+ *  @param dt   Time step.
+ */
 void RESPA_integrator::evolve(double dt)
 {    
     double half_dt = dt/2.0;

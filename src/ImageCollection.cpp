@@ -15,6 +15,9 @@
 #include <list>
 
 
+/**
+ */
+
 ImageCollection::ImageCollection(const double binSize) : collection()
 {
     this->binSize = binSize;
@@ -43,7 +46,7 @@ void ImageCollection::addIon(const std::string &name, const Vector3D &r)
     pIonHist->update(r);
 }
 
-const void ImageCollection::writeFiles(std::string const& basePath)
+void ImageCollection::writeFiles(std::string const& basePath) const
 {
     typedef std::list<ImageWorker*> ThreadList;
     ThreadList threadList;

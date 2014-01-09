@@ -13,7 +13,6 @@
 		A61EB9F0180C21770088DC00 /* ccmd_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */; };
 		A61EB9F1180C21770088DC00 /* cosine_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DE180C21770088DC00 /* cosine_trap.cpp */; };
 		A61EB9F2180C21770088DC00 /* coulomb_force.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9DF180C21770088DC00 /* coulomb_force.cpp */; };
-		A61EB9F3180C21770088DC00 /* hist1D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E0180C21770088DC00 /* hist1D.cpp */; };
 		A61EB9F4180C21770088DC00 /* hist3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E1180C21770088DC00 /* hist3D.cpp */; };
 		A61EB9F5180C21770088DC00 /* ImageCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E2180C21770088DC00 /* ImageCollection.cpp */; };
 		A61EB9F6180C21770088DC00 /* integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61EB9E3180C21770088DC00 /* integrator.cpp */; };
@@ -52,7 +51,6 @@
 		A61EB9DD180C21770088DC00 /* ccmd_sim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_sim.cpp; path = ../../src/ccmd_sim.cpp; sourceTree = "<group>"; };
 		A61EB9DE180C21770088DC00 /* cosine_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cosine_trap.cpp; path = ../../src/cosine_trap.cpp; sourceTree = "<group>"; };
 		A61EB9DF180C21770088DC00 /* coulomb_force.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = coulomb_force.cpp; path = ../../src/coulomb_force.cpp; sourceTree = "<group>"; };
-		A61EB9E0180C21770088DC00 /* hist1D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hist1D.cpp; path = ../../src/hist1D.cpp; sourceTree = "<group>"; };
 		A61EB9E1180C21770088DC00 /* hist3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hist3D.cpp; path = ../../src/hist3D.cpp; sourceTree = "<group>"; };
 		A61EB9E2180C21770088DC00 /* ImageCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageCollection.cpp; path = ../../src/ImageCollection.cpp; sourceTree = "<group>"; };
 		A61EB9E3180C21770088DC00 /* integrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = integrator.cpp; path = ../../src/integrator.cpp; sourceTree = "<group>"; };
@@ -71,7 +69,6 @@
 		A61EBA03180C21B80088DC00 /* ccmd_sim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ccmd_sim.h; path = ../../src/include/ccmd_sim.h; sourceTree = "<group>"; };
 		A61EBA04180C21B80088DC00 /* coulomb_force.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = coulomb_force.h; path = ../../src/include/coulomb_force.h; sourceTree = "<group>"; };
 		A61EBA05180C21B80088DC00 /* cuda_integrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cuda_integrator.h; path = ../../src/include/cuda_integrator.h; sourceTree = "<group>"; };
-		A61EBA06180C21B80088DC00 /* Hist1D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Hist1D.h; path = ../../src/include/Hist1D.h; sourceTree = "<group>"; };
 		A61EBA07180C21B80088DC00 /* hist3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = hist3D.h; path = ../../src/include/hist3D.h; sourceTree = "<group>"; };
 		A61EBA08180C21B80088DC00 /* ImageCollection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ImageCollection.h; path = ../../src/include/ImageCollection.h; sourceTree = "<group>"; };
 		A61EBA09180C21B80088DC00 /* integrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = integrator.h; path = ../../src/include/integrator.h; sourceTree = "<group>"; };
@@ -126,7 +123,6 @@
 				A6107819187862F30024C9F7 /* Waveform_trap.h */,
 				A61EBA04180C21B80088DC00 /* coulomb_force.h */,
 				A61EBA05180C21B80088DC00 /* cuda_integrator.h */,
-				A61EBA06180C21B80088DC00 /* Hist1D.h */,
 				A61EBA07180C21B80088DC00 /* hist3D.h */,
 				A61EBA08180C21B80088DC00 /* ImageCollection.h */,
 				A61EBA09180C21B80088DC00 /* integrator.h */,
@@ -150,7 +146,6 @@
 				A61EB9DE180C21770088DC00 /* cosine_trap.cpp */,
 				A6107816187862DB0024C9F7 /* Waveform_trap.cpp */,
 				A61EB9DF180C21770088DC00 /* coulomb_force.cpp */,
-				A61EB9E0180C21770088DC00 /* hist1D.cpp */,
 				A61EB9E1180C21770088DC00 /* hist3D.cpp */,
 				A61EB9E2180C21770088DC00 /* ImageCollection.cpp */,
 				A61EB9E3180C21770088DC00 /* integrator.cpp */,
@@ -224,7 +219,6 @@
 				A61EB9F1180C21770088DC00 /* cosine_trap.cpp in Sources */,
 				A6107818187862DB0024C9F7 /* Waveform_trap.cpp in Sources */,
 				A61EB9F2180C21770088DC00 /* coulomb_force.cpp in Sources */,
-				A61EB9F3180C21770088DC00 /* hist1D.cpp in Sources */,
 				A61EB9F4180C21770088DC00 /* hist3D.cpp in Sources */,
 				A61EB9F5180C21770088DC00 /* ImageCollection.cpp in Sources */,
 				A61078151871BFFE0024C9F7 /* pulsed_trap.cpp in Sources */,
@@ -255,6 +249,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -271,8 +266,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -301,6 +298,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -311,8 +309,10 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;

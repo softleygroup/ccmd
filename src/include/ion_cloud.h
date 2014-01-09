@@ -11,6 +11,7 @@
 
 #include "ion.h"
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 class ImageCollection;
 class IonHistogram;
@@ -60,6 +61,8 @@ private:
     /** @brief Coulomb_force needs direct access to the list of ions. */
     friend class Coulomb_force;
 };
+
+typedef boost::shared_ptr<Ion_cloud> Ion_cloud_ptr;
 
 #endif
 

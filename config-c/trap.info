@@ -6,7 +6,7 @@ trap {
     z0      2.75e-3
     freq    3.85e6
     type    {
-        name    waveform
+        name    cosine
     }
 }
 integrator {

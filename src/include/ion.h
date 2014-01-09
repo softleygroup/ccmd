@@ -44,8 +44,8 @@ public:
     std::string formula() const {return ion_type->formula;}
     const Vector3D& get_pos() const {return pos;}
     const Vector3D& get_vel() const {return vel;}
-    const double get_mass() const {return mass;}
-    const double get_charge() const {return charge;}
+    double get_mass() const {return mass;}
+    double get_charge() const {return charge;}
     const Stats<Vector3D> get_posStats() const {return posStats;}
     const Stats<Vector3D> get_velStats() const {return velStats;}
     

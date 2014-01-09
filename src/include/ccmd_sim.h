@@ -20,6 +20,7 @@
 #include <string>
 
 #include <stdexcept>
+#include <boost/shared_ptr.hpp>
 
 
 class Trap_params {
@@ -30,21 +31,21 @@ public:
     
     /// Enumeration of avaliable trap types.
     enum Waveform {cosine, digital, waveform};
-    Waveform wave;              /// Type of RF waveform applied to trap
-    double freq;                /// Trap RF frequency            (Hz)
+    Waveform wave;              ///< Type of RF waveform applied to trap
+    double freq;                ///< Trap RF frequency            (Hz)
     
     // Trap voltage parameters
-    double v_rf;                /// Amplitude of RF voltage      (V)
-    double v_end;               /// Endcap electrode voltage     (V)
+    double v_rf;                ///< Amplitude of RF voltage      (V)
+    double v_end;               ///< Endcap electrode voltage     (V)
     
     // Trap geometry parameters
-    double eta;                 /// Trap geometry parameter
-    double r0;                  /// Electrode radius             (m)
-    double z0;                  /// Central electrode length     (m)
+    double eta;                 ///< Trap geometry parameter
+    double r0;                  ///< Electrode radius             (m)
+    double z0;                  ///< Central electrode length     (m)
     
     
-    double tau;                 /// Waveform duty cycle.
-    std::string waveformFile;   /// File containing waveform data.
+    double tau;                 ///< Waveform duty cycle.
+    std::string waveformFile;   ///< File containing waveform data.
 };
 
 
@@ -52,7 +53,7 @@ class Integration_params {
 public:
     Integration_params(const std::string& file_name);
     
-    double time_step;       /// Time interval, Units are 2/Omega = 1/(pi*f))
+    double time_step;           ///< Time interval, Units are 2/Omega = 1/(pi*f))
     
     // respa_steps == RESPA algorithm inner loop number 
     //
@@ -65,27 +66,29 @@ public:
 
     /// Number of RESPA inner loop steps between Coulomb force updates
     int respa_steps;
-    double cool_steps;     /// Number of timesteps for cooling stage.
-    double hist_steps;     /// Number of steps to collect statistics.
+    double cool_steps;          ///< Number of timesteps for cooling stage.
+    double hist_steps;          ///< Number of steps to collect statistics.
 };
 
 
 class Ion_type {
     public:
-    int number;             /// Number of these in the trap.
-    std::string name;       /// Name to call ion
-    std::string formula;    /// Chemical formula
+    int number;                 ///< Number of these in the trap.
+    std::string name;           ///< Name to call ion
+    std::string formula;        ///< Chemical formula
     
     // Ion physical properties
-    double mass;            /// Mass of ion in atomic mass units
-    int charge;             /// Charge of ion in electron charge units
-    double beta;            /// Velocity damping coefficient for laser cooling
-    double recoil;          /// Magnitude of stochastic heating
-    double direction;       /// Ratio of left-to-right cooling intensity
+    double mass;                ///< Mass of ion in atomic mass units
+    int charge;                 ///< Charge of ion in electron charge units
+    double beta;                ///< Velocity damping coefficient for laser cooling
+    double recoil;              ///< Magnitude of stochastic heating
+    double direction;           ///< Ratio of left-to-right cooling intensity
     
     bool is_laser_cooled;
     bool is_heated;
 };
+
+typedef boost::shared_ptr<Ion_type> Ion_type_ptr;
 
 
 class Cloud_params {

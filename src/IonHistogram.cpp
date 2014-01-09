@@ -9,7 +9,22 @@
 #include "IonHistogram.h"
 #include <cmath>
 #include <fstream>
+#include <boost/make_shared.hpp>
+#include <boost/foreach.hpp>
 
+/**
+ *  @class IonHistogram
+ *  @brief Stores a histogram of kinetic energies, separated by ion type.
+ *
+ *  A new energy is added and indexed by a name. Saving the histogram to a file
+ *  uses this name in the file name.
+ */
+
+/**
+ *  @brief Initialise a histogram with the given bin width.
+ *
+ *  @param width Bin width.
+ */
 IonHistogram::IonHistogram(const double width) : histMap()
 {
     this->binWidth = width;
@@ -17,21 +32,27 @@ IonHistogram::IonHistogram(const double width) : histMap()
 
 IonHistogram::~IonHistogram()
 {
-    for (HistMap::iterator it=histMap.begin(); it!=histMap.end(); ++it)
-    {
-        delete it->second;
-        histMap.erase(it);
-    }
+    histMap.clear();
 }
 
+
+/**
+ *  @brief Append a new value to this histogram.
+ *  
+ *  Find the histogram with a matching name, convert the energy to a bin number
+ *  and increment the value in this bin.
+ *
+ *  @param name     Name of the histogram to append.
+ *  @param energy   Value to append to histogram.
+ */
 void IonHistogram::addIon(const std::string& name, const double& energy)
 {
-    Histogram* pTheHist;
+    Hist_ptr pTheHist;
     if (histMap.count(name))
     {
         pTheHist = histMap[name];
     } else {
-        pTheHist = new Histogram;
+        pTheHist = boost::make_shared<Histogram>();
         histMap[name] = pTheHist;
     }
     
@@ -39,20 +60,28 @@ void IonHistogram::addIon(const std::string& name, const double& energy)
     ++(*pTheHist)[bin_num];
 }
 
+
+/**
+ *  @brief Write all histograms to separate files in the given path.
+ *
+ *  Each file is named with the string used to identify the ion type, followed
+ *  by the string "_hist.dat". Files are saved in the given path.
+ *
+ *  @param basePath Directory in which to save files.
+ */
 void IonHistogram::writeFiles (const std::string& basePath)
 {
     std::string fileEnding = "_hist.dat";
     std::string fileName;
     double binCount;
-    Histogram* pTheHist;
+    Hist_ptr pTheHist;
     int cumulate;
     int maxBin;
-    
-    for (HistMap::iterator it=histMap.begin(); it!=histMap.end(); ++it)
-    {
-        fileName = basePath + it->first + fileEnding;
+
+    BOOST_FOREACH(HistMap::value_type &it, histMap) {
+        fileName = basePath + it.first + fileEnding;
         std::ofstream fileStream(fileName.c_str());
-        pTheHist = it->second;
+        pTheHist = it.second;
         
         cumulate = 0;
         maxBin = 0;

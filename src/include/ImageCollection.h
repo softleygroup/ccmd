@@ -25,7 +25,7 @@ public:
     ~ImageCollection();
     
     void addIon(const std::string& name, const Vector3D& r);
-    const void writeFiles(std::string const& basePath);
+    void writeFiles(std::string const& basePath) const;
 private:
     typedef std::map<std::string, Hist3D*> Collection;
     Collection collection;
