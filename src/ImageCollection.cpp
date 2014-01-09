@@ -15,6 +15,9 @@
 #include <list>
 
 
+/**
+ */
+
 ImageCollection::ImageCollection(const double binSize) : collection()
 {
     this->binSize = binSize;

@@ -63,7 +63,7 @@ void Waveform_trap::evolve(double dt)
 {
     time_now += dt;
     // Get the fractional part of the time
-    double timeFrac = fmod(time_now/2, 1);
+    double timeFrac = fmod(time_now/pi, 1);
     // Fractional position in the array
     double arrPos = timeFrac * npts;
     // Get the voltage at the points either side of this, looping back to the
@@ -79,7 +79,7 @@ void Waveform_trap::evolve(double dt)
         double v1 = amplitudes[i1];
         double v2 = amplitudes[i2];
         // Perform a linear interpolation between these voltages
-        potential = v1 + (v2-v1) * (arrPos - floor(arrPos)) * npts;
+        potential = v1 + (v2-v1) * (arrPos - floor(arrPos));
     }
 }
 
