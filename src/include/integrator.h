@@ -41,11 +41,10 @@ public:
     RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic, const Integration_params& params);
  
     void set_fast_steps(int steps) { respa_steps = steps; }
-    void evolve(double dt=default_timestep);
+    void evolve(double dt);
 
 protected:
     int respa_steps;
-    static double default_timestep;
 };
 
 #endif

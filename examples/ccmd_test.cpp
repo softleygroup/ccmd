@@ -80,23 +80,18 @@ int main (int argc, char * const argv[]) {
         Cloud_params cloud_params(info_file);
         Integration_params integrator_params(info_file);
         
-        // Construct trap
-        //Cosine_trap trap(trap_params);
-//        Ion_trap_ptr trap(new(Cosine_trap(trap_params));
+        // Construct trap based on parameters
         Ion_trap_ptr trap;
-        switch (trap_params.wave) {
-            case trap_params.cosine:
+        if (trap_params.wave == trap_params.cosine) {
                 trap = boost::make_shared<Cosine_trap>(trap_params);
-                break;
-            case trap_params.digital:
+        } else if (trap_params.wave == trap_params.digital) {
                 trap = boost::make_shared<Pulsed_trap>(trap_params);
-                break;
-            case trap_params.waveform:
+        } else if (trap_params.wave == trap_params.waveform) {
                 trap = boost::make_shared<Waveform_trap>(trap_params);
-                break;
+        } else {
+            cout << "Unrecognised trap type";
+            throw runtime_error("Unrecognised trap type");
         }
-        
-//        Pulsed_trap trap(trap_params);
         
         // Construct ion cloud
         Ion_cloud cloud(trap, cloud_params);

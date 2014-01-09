@@ -10,6 +10,7 @@
 #define __ccmd__IonHistogram__
 
 #include <map>
+#include <boost/shared_ptr.hpp>
 
 class IonHistogram {
 public:
@@ -18,12 +19,15 @@ public:
     void addIon(const std::string& name, const double& energy);
     void writeFiles (const std::string& basePath);
 private:
+    /// A histogram with bin index number and bin count.
     typedef std::map<int, int> Histogram;
-    typedef std::map<std::string, Histogram*> HistMap;
-    typedef std::pair<std::string, Histogram*> HistPair;
+    /// Pointer to a histogram
+    typedef boost::shared_ptr<Histogram> Hist_ptr;
+    /// Map holding histograms indexed by a name string.
+    typedef std::map<std::string, Hist_ptr> HistMap;
     
-    double binWidth;
-    HistMap histMap;
+    double binWidth;    ///< Width of each bin.
+    HistMap histMap;    ///< The histogram map.
 };
 
 #endif /* defined(__ccmd__IonHistogram__) */
