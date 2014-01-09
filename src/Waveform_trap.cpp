@@ -34,7 +34,7 @@ Waveform_trap::Waveform_trap(const Trap_params& params)
     : Ion_trap(params)
 {
     std::cout << "Initialising a waveform trap..." << std::endl;
-    std::ifstream wfFile ( params.waveformFile, std::ifstream::in );
+    std::ifstream wfFile ( params.waveformFile.c_str(), std::ifstream::in );
     double val;
     while (wfFile.good()) {
         wfFile >> val;
