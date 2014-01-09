@@ -230,6 +230,8 @@ Trap_params::Trap_params(const std::string& file_name)
  *  \c direction   |   Weighting of laser cooling from left and right (0-1) (**optional**)
  *  \c beta        |   Laser cooling parameter  (**optional**)
  *  \c heating     |   Is the ion heated by photon recoil? (true/false) (**optional**)
+ *  \c seed        |   Seed for random number generator, use -1 to generate 
+ *                 |   automatically, or an integer to remove all randomness.
  *  \c recoil      |   Heating recoil factor (**optional**)
  *
  *
@@ -254,6 +256,7 @@ Trap_params::Trap_params(const std::string& file_name)
  *              lasercooled true
  *              beta        0.6
  *              heating     true
+ *              seed        1
  *              recoil      0.01
  *              direction   0.5
  *          }
@@ -291,6 +294,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionType.charge = ionTypeTree.get<int>("charge");
         ionType.is_laser_cooled = ionTypeTree.get<bool>("lasercooled", false);
         ionType.is_heated = ionTypeTree.get<bool>("heated", false);
+        ionType.seed = ionTypeTree.get<int>("seed", 0);
         ionType.beta = ionTypeTree.get<double>("beta", 0.0);
         ionType.recoil = ionTypeTree.get<bool>("recoil", 0.0);
         ionType.direction = ionTypeTree.get<bool>("direction", 0.5);

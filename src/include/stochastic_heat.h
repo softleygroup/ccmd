@@ -23,8 +23,13 @@ class Stochastic_heat {
     
     double kick_size;
 public:
-    Stochastic_heat() : normal(generator, norm_dist), flat_dist(0,1), flat(generator, flat_dist), kick_size(0.01) {
-    //generator.seed(static_cast<unsigned int>(std::time(0)));
+    Stochastic_heat(int seed) : normal(generator, norm_dist), flat_dist(0,1), flat(generator, flat_dist), kick_size(0.01) {
+        if (seed<0) {
+            generator.seed(static_cast<unsigned int>(std::time(0)));
+        } else {
+            generator.seed(static_cast<unsigned int>(seed));
+        }
+            
     }
     Vector3D random_kick() 
        { return Vector3D( normal(), normal(), normal())*kick_size; }

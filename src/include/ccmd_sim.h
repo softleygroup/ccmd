@@ -74,15 +74,16 @@ public:
 class Ion_type {
     public:
     int number;                 ///< Number of these in the trap.
-    std::string name;           ///< Name to call ion
-    std::string formula;        ///< Chemical formula
+    std::string name;           ///< Name to call ion.
+    std::string formula;        ///< Chemical formula.
     
     // Ion physical properties
-    double mass;                ///< Mass of ion in atomic mass units
-    int charge;                 ///< Charge of ion in electron charge units
-    double beta;                ///< Velocity damping coefficient for laser cooling
-    double recoil;              ///< Magnitude of stochastic heating
-    double direction;           ///< Ratio of left-to-right cooling intensity
+    double mass;                ///< Mass of ion in atomic mass units.
+    int charge;                 ///< Charge of ion in electron charge units.
+    double beta;                ///< Velocity damping coefficient for laser cooling.
+    double recoil;              ///< Magnitude of stochastic heating.
+    int seed                    ///< Seed for heating random number generator.
+    double direction;           ///< Ratio of left-to-right cooling intensity.
     
     bool is_laser_cooled;
     bool is_heated;
