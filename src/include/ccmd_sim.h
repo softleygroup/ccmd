@@ -20,6 +20,7 @@
 #include <string>
 
 #include <stdexcept>
+#include <boost/shared_ptr.hpp>
 
 
 class Trap_params {
@@ -86,6 +87,8 @@ class Ion_type {
     bool is_laser_cooled;
     bool is_heated;
 };
+
+typedef boost::shared_ptr<Ion_type> Ion_type_ptr;
 
 
 class Cloud_params {
