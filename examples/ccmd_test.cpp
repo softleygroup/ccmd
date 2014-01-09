@@ -94,7 +94,7 @@ int main (int argc, char * const argv[]) {
         }
         
         // Construct ion cloud
-        Ion_cloud cloud(trap, cloud_params);
+        Ion_cloud_ptr cloud = boost::make_shared<Ion_cloud>(trap, cloud_params);
         
         // Construct integrator
         RESPA_integrator integrator(trap, cloud, integrator_params);
@@ -108,8 +108,9 @@ int main (int argc, char * const argv[]) {
         // Cool down ion cloud
         cout << flush << "Running cool down" << endl;
         int nt_cool = integrator_params.cool_steps;
+        double dt = integrator_params.time_step;
         for (int t=0; t<nt_cool; ++t) {    
-            integrator.evolve();
+            integrator.evolve(dt);
             
             // Track progress
             int percent = static_cast<int>( (t*100)/nt_cool );
@@ -129,9 +130,9 @@ int main (int argc, char * const argv[]) {
         stopWatchTimer();
         KE = 0;
         for (int t=0; t<nt; ++t) {    
-            integrator.evolve();
-            cloud.update_position_histogram(ionImages);
-            cloud.updateStats();
+            integrator.evolve(dt);
+            cloud->update_position_histogram(ionImages);
+            cloud->updateStats();
             
             // Track progress
             int percent = static_cast<int>( (t*100)/nt );
@@ -139,7 +140,7 @@ int main (int argc, char * const argv[]) {
                 printProgBar(percent);
                 cout << setw(4) << stopWatchTimer() << "s";
             }
-            KE += cloud.kinetic_energy();
+            KE += cloud->kinetic_energy();
         }
         KE /= nt;
         printProgBar(100);
@@ -147,7 +148,7 @@ int main (int argc, char * const argv[]) {
         
         cout << "total kinetic energy = " << KE << endl;
         ionImages.writeFiles(path);
-        cloud.saveStats(path, trap->get_length_scale(), trap->get_time_scale());
+        cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
     } catch (std::exception& e) {
         cerr << "Error: " << e.what() << endl;

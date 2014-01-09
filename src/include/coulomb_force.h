@@ -7,6 +7,7 @@
 #define CCMD_Coulomb_force_h
 
 #include "vector3D.h"
+#include "ion_cloud.h"
 #include <vector>
 #include <boost/thread.hpp>
 
@@ -17,7 +18,7 @@ class Ion_cloud;
 
 class Coulomb_force {
 public:
-    Coulomb_force(const Ion_cloud& ic);  
+    Coulomb_force(const Ion_cloud_ptr &ic);
     const std::vector<Vector3D>& get_force();
     
     // return Coulomb force on a particular ion
@@ -26,7 +27,7 @@ public:
     // recalculate forces
     void update();
 private:
-    const Ion_cloud* ionCloud;
+    const Ion_cloud_ptr ionCloud;
     std::vector<Vector3D> ionsCopy;
     std::vector<Vector3D> force;
     void direct_force();

@@ -21,11 +21,11 @@
 
 // To do: remove loops using std::transform
 
-Coulomb_force::Coulomb_force(const Ion_cloud& ic)
-    : ionCloud(&ic)
+Coulomb_force::Coulomb_force(const Ion_cloud_ptr &ic)
+    : ionCloud(ic)
 {
-    force = std::vector<Vector3D>( ic.number_of_ions() );
-    ionsCopy = std::vector<Vector3D>(ic.number_of_ions());
+    force = std::vector<Vector3D>( ionCloud->number_of_ions() );
+    ionsCopy = std::vector<Vector3D>(ionCloud->number_of_ions());
 }
 
 

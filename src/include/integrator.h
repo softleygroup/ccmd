@@ -16,11 +16,11 @@ class Integration_params;
 class Integrator {
     friend class Coulomb_force;
 public:
-    Integrator(const Ion_trap_ptr& it, Ion_cloud& ic, const Integration_params& params);
+    Integrator(const Ion_trap_ptr& it, Ion_cloud_ptr& ic, const Integration_params& params);
     virtual ~Integrator();
     virtual void evolve(double dt)=0;
 protected:
-    Ion_cloud* ions;
+    Ion_cloud_ptr ions;
     Ion_trap_ptr trap;
     Coulomb_force f_coulomb;  
 private:
@@ -38,7 +38,7 @@ private:
 //
 class RESPA_integrator : public Integrator {
 public:
-    RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic, const Integration_params& params);
+    RESPA_integrator(const Ion_trap_ptr &it, Ion_cloud_ptr& ic, const Integration_params& params);
  
     void set_fast_steps(int steps) { respa_steps = steps; }
     void evolve(double dt);
