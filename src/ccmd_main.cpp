@@ -7,6 +7,33 @@
 //  
 //
 
+/**
+ *  @mainpage Coulomb Crystal Molecular Dynamics simulation
+ *
+ *  #Introduction
+ *  
+ *  This program integrates the equations of motion for a collection of ions 
+ *  contained in a quadrupole radio-frequency trap. The ions can have arbitrary
+ *  mass and charge, and optionally be laser cooled or subject to randomised 
+ *  heating.
+ *
+ *  #Usage
+ *
+ *  The program is designed to be run with the path to a directory that contains
+ *  any input files with standard names, and output files are written to the 
+ *  same directory. The puropse of this is to keep generated data together with
+ *  the input file that generated it, somewhat documenting the parameters used
+ *  in a particular simulation. The input file format is documented in 
+ *  ccmd_sim.h; the format is divided into sections for each set of related 
+ *  parameters, and these are documented in Trap_params, Cloud_params and 
+ *  Integration_params.
+ *
+ *  Call the program from the command line as:
+ *  @code
+ *  <path to ccmd>/ccmd <path to input/output directory>
+ *  @endcode.
+ */
+
 #include <iostream>
 #include <fstream>
 

@@ -17,14 +17,35 @@
 #include <boost/gil/typedefs.hpp>
 #include <boost/gil/extension/io/png_dynamic_io.hpp>
 
+\**
+ *  @class CCMD_image
+ *  @brief Generates an image from the data in Hist3D.
+ *
+ *  Transforms the 3d histogram of ion positions into a microscope image by
+ *  taking each layer of the histogram, blurring it based on the perpendicular 
+ *  distance between the layer and focal point, then accumulating the blurred
+ *  layers into a final image. The intermediate image is stored as an array of 
+ *  pixel values, then converted to a png for saving.
+*\
 
+
+\**
+ *  @brief Construct a new image of the given size.
+ *
+ *  @param num_rows Number of pixel rows in image.
+ *  @param num_cols Number of pixel columns in image.
+ *  @param hist The Hist3D object that will provide data for this image.
+ *\
 CCMD_image::CCMD_image(int num_rows, int num_cols, const Hist3D& hist) 
     : rows(num_rows), cols(num_cols) 
 { 
     allocate_image();
 }
 
-
+/**
+ *  @brief Return the pixel value at the given coordinates, zero if out of range.
+ *  @return Double precision pixel value.
+ */
 double CCMD_image::get_pixel(int x, int y) const
 {
     // returns zero if pixel coordinates out of range
@@ -32,6 +53,10 @@ double CCMD_image::get_pixel(int x, int y) const
     return pixels[x-1][y-1];
 }
 
+
+/**
+ *  @brief Set the pixel value at the given coordinates, do nothing if out of range.
+ */
 void CCMD_image::set_pixel(int x, int y, double pixel_val) 
 {
     // no change if pixel coordinates out of range

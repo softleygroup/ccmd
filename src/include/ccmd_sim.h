@@ -43,6 +43,8 @@ public:
     double r0;                  ///< Electrode radius             (m)
     double z0;                  ///< Central electrode length     (m)
     
+    int     seed;
+    
     
     double tau;                 ///< Waveform duty cycle.
     std::string waveformFile;   ///< File containing waveform data.
@@ -82,7 +84,7 @@ class Ion_type {
     int charge;                 ///< Charge of ion in electron charge units.
     double beta;                ///< Velocity damping coefficient for laser cooling.
     double recoil;              ///< Magnitude of stochastic heating.
-    int seed                    ///< Seed for heating random number generator.
+    int seed;                    ///< Seed for heating random number generator.
     double direction;           ///< Ratio of left-to-right cooling intensity.
     
     bool is_laser_cooled;

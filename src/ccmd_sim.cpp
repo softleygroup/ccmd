@@ -156,6 +156,7 @@ Trap_params::Trap_params(const std::string& file_name)
         r0      = pt.get<double>("trap.r0");
         z0      = pt.get<double>("trap.z0");
         freq    = pt.get<double>("trap.freq");
+
         
         std::string typeString = pt.get<std::string>("trap.type.name");
         ostringstream error_msg;
@@ -294,7 +295,6 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionType.charge = ionTypeTree.get<int>("charge");
         ionType.is_laser_cooled = ionTypeTree.get<bool>("lasercooled", false);
         ionType.is_heated = ionTypeTree.get<bool>("heated", false);
-        ionType.seed = ionTypeTree.get<int>("seed", 0);
         ionType.beta = ionTypeTree.get<double>("beta", 0.0);
         ionType.recoil = ionTypeTree.get<bool>("recoil", 0.0);
         ionType.direction = ionTypeTree.get<bool>("direction", 0.5);

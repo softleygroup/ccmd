@@ -14,13 +14,13 @@
 #include "ccmd_sim.h"
 
 /**
- *  Construct a new laser cooled ion. The trap parameters are passed up to the
+ *  Construct a new laser cooled ion. The trap  are passed up to the
  *  `Trapped_ion` parent class, and laser cooling parameters are stored.
  *  @param ion_trap A pointer to the ion trap.
  *  @param type     A pointer to ion parameters.
  */
 Lasercooled_ion::Lasercooled_ion(const Ion_trap_ptr& ion_trap, const Ion_type& type)
-    : Trapped_ion(ion_trap,type)   
+    : Trapped_ion(ion_trap,type)  , heater(-1)
 {
     assert(ion_type->is_laser_cooled==true);
     beta = ion_type->beta;

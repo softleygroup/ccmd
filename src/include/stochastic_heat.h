@@ -11,7 +11,7 @@
 using namespace boost;
 
 class Stochastic_heat {
-    // create a Mersenne twister random number generator
+     // create a Mersenne twister random number generator
     static mt19937 generator;
     // select Gaussian probability distribution
     normal_distribution<double> norm_dist;
@@ -23,12 +23,15 @@ class Stochastic_heat {
     
     double kick_size;
 public:
-    Stochastic_heat(int seed) : normal(generator, norm_dist), flat_dist(0,1), flat(generator, flat_dist), kick_size(0.01) {
-        if (seed<0) {
-            generator.seed(static_cast<unsigned int>(std::time(0)));
-        } else {
-            generator.seed(static_cast<unsigned int>(seed));
-        }
+    Stochastic_heat(int seed)
+    : normal(generator, norm_dist), flat_dist(0,1),
+    flat(generator, flat_dist), kick_size(0.01) {
+//        if (seed<0) {
+//            generator.seed(static_cast<unsigned int>(std::time(0)));
+//        } else {
+//            generator.seed(static_cast<unsigned int>(seed));
+//        }
+        generator.seed(42u);
             
     }
     Vector3D random_kick() 
