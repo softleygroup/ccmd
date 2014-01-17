@@ -16,15 +16,26 @@ class Trap_params;
 
 class Ion_trap {
 public:
-    Ion_trap();
     Ion_trap(const Trap_params& params);
-    virtual ~Ion_trap();
     
-    // returns the force at a particular position in the trap
+    /** @brief returns the force at a particular position in the trap.
+     *
+     *  Subclasses need to provide their own force calculation.
+     *
+     *  @param r Position vector at which to calculate force.
+     *
+     *  @return The force as a vector.
+     */
     virtual Vector3D force_now(const Vector3D& r) const = 0;
     
-    // evolves trap through a timestep
-    virtual void evolve(double time) = 0;
+    /** @brief evolves trap through a timestep.
+     *
+     * Subclasses use this function to update the time-dependent voltage on the
+     * trap electrodes.
+     *
+     * @param dt Time step size
+     */
+    virtual void evolve(double dt) = 0;
         
     // the ion trap parameters sets real length scale
     double get_length_scale() const { return length_scale; }

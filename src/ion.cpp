@@ -17,8 +17,19 @@
  *  update the position due to free-flight, and acceleration due to a force.
  *  This class also stores ion information: mass, charge, name and formula.
  *
+ *  Two member variables posStats and velStats are used to calculate the mean 
+ *  and standard deviation of position and velocity. The function updateStats
+ *  should be called once per time step to update these.
+ *
+ *  Subclasses Trapped_ion and Lasercooled_ion provide the correct functionality
+ *  for the Ion::kick function. The Trapped_ion determines the trapping force 
+ *  and uses this to update the velocity, and the Lasercooled_ion uses both this 
+ *  and laser forces.
+ *
  *  The position and velocity vectors are hidden as private variables; they
  *  can be read-out, but only modified correctly by a force or free flight.
+ *
+ *  @see Trapped_ion, Lasercooled_ion
  */
 
 Ion::Ion(const Ion_type& type)

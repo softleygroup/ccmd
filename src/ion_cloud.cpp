@@ -38,20 +38,50 @@ struct position_ions {
 };
 
 /**
- *  @class ion_cloud.cpp
+ *  @class Ion_cloud
  *  @brief Class to hold a collection of ions and perform actions on each.
+ *
+ *  # Simulation functions  
+ *
+ *  This is the primary way of interacting with the ions in the simulation. This 
+ *  class holds a list of the Ion base class, and the functions Ion::kick, 
+ *  Ion::drift and 
+ *  Ion::heat iterate through this list calling the same function for each ion. 
+ *  The individual ion classes then do the right thing based on their specific     
+ *  type.
+ *
+ *  # Information functions
+ *
+ *  The class will also calculate the total potential and kinetic energy of 
+ *  all ions in the cloud. During the data-gathering part of the simulation, 
+ *  update_position_histogram, update_energy_histogram and updateStats should be 
+ *  called once per time step to generate the statistics required to build the 
+ *  ion image, and mean energies.
+ *
+ *  At the end of a simulation, calling saveStats will store all statistics to     
+ *  a text file. Generating an image, however, is handled by the ImageCollection 
+ *  class.
+ *
+ *  # Initialisation
+ *
+ *  The cloud is generated from the parameters in 
+ *  Cloud_params. Each ion is initialised as either a Trapped_ion or 
+ *  Lasercooled_ion, and a pointer stored in a list. The initial 
+ *  position of each ion is arranged on a cubic lattice, and the initial 
+ *  velocity is zero.
+ *
+ *  @see Ion, Trapped_ion, Lasercooled_ion
  */
 
 /**
- * @brief Build a cloud of ions from the given parameters.
+ *  @brief Build a cloud of ions from the given parameters.
  *
- * Build a new ion cloud from the parameters held in the `params` object. The
- * trapped ions will be given a pointer to the `ion_trap`. A pointer to each ion
- * object is put into the list of all ions, `all_ions`, and a list of the
- * specific types, `lasercooled_ions` and `trapped_ions`.
+ *  Build a new ion cloud from the parameters held in A Cloud_params object. The
+ *  trapped ions will be given a pointer to the Ion_trap. A pointer to each ion
+ *  object is put into the list of all ions, `all_ions`.
  *
- * Generate a set of lattice points for the initial ion positions, then centre
- * the ion cloud within the trap.
+ *  Generate a set of lattice points for the initial ion positions, then centre
+ *  the ion cloud within the trap.
  *
  * @param ion_trap  A pointer to the ion trap object;
  * @param params    A reference to the cloud parameters object.
@@ -96,6 +126,8 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
 }
 
 
+/** @brief Clears the list of pointers to ions.
+ */
 Ion_cloud::~Ion_cloud()
 {
     ion_vec.clear();
@@ -261,8 +293,9 @@ void Ion_cloud::updateStats()
  *  file for each ion type, with the ion name in the file name. The function 
  *  also writes the last position and velocity vector to another file.
  *
- *  Position and velocity need to be scaled from the simulation units into S.I.
- *  units, by multiplying by the given factors.
+ *  Scaling values need to be provided here to transform from simulation units
+ *  to S.I. units. Currently these are stored in Ion_trap::length_scale, and
+ *  Ion_trap::time_scale.
  *
  *  @param basePath     Directory in which to save files.
  *  @param length_scale Factor to convert distance to S.I. units.
@@ -271,7 +304,7 @@ void Ion_cloud::updateStats()
 void Ion_cloud::saveStats(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
-    std::string statsfileEnding = "_stats.csv";
+    std::string statsFileEnding = "_stats.csv";
     std::string posFileEnding = "_pos.csv";
     
     double vel_scale = length_scale/time_scale;
@@ -282,9 +315,16 @@ void Ion_cloud::saveStats(const std::string basePath,
     std::list<double> rowdata;
     std::string name;
     
-//    // Write the header for each file
-//      std::string header="#<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)\n";
-//    name = ion->name() + posFileEnding;
+    // Write the header for each file
+      std::string statsHeader="<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)";
+      std::string posHeader="x\ty\tz\tvx\tvy\tvz";
+    BOOST_FOREACH(Ion_type type, cloud_params->ionTypeList)
+    {
+      name = type.name + statsFileEnding;
+      writer.writeComment(name, statsHeader);
+      name = type.name + posFileEnding;
+      writer.writeComment(name, posHeader);
+    }
     
     BOOST_FOREACH(Ion_ptr ion, ion_vec)
     {
@@ -314,7 +354,7 @@ void Ion_cloud::saveStats(const std::string basePath,
         writer.writeRow(name, rowdata);
         
         // Write the average data for each ion.
-        name = ion->name() + statsfileEnding;
+        name = ion->name() + statsFileEnding;
         rowdata.clear();
         
         Stats<Vector3D> energy = ion->get_velStats();

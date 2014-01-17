@@ -1,7 +1,10 @@
-/**
- *  @class Ion_trap
- *  @brief Base class defining a quadrupole ion trap.
- *  This base class stores the trap parameters.
+/** @class Ion_trap @brief Base class defining a quadrupole ion trap.
+ *
+ *  This base class stores the trap parameters and calculates the parameters
+ *  for the Mathieu equation: \c a and \c q. Sub-classes inheriting this class
+ *  implement their own time-dependent voltage, and force calculation.
+ *
+ *  @see Cosine_trap @see Pulsed_trap @see Waveform_trap
  */
 
 #include "ion_trap.h"
@@ -55,6 +58,5 @@ Ion_trap::Ion_trap(const Trap_params& params)
     time_scale = 1/(pi * freq);
 }
 
-Ion_trap::~Ion_trap() {
-} 
+
 

@@ -23,6 +23,7 @@ public:
 	DataWriter(const std::string &delim);
 	~DataWriter();
 	void writeRow(const std::string& fileName, const std::list<double>& rowData);
+	void writeComment(const std::string& fileName, const std::string& commentText);
 private:
     /// A pointer to a file stream.
     typedef boost::shared_ptr<std::ofstream> fStreamPt;
@@ -32,6 +33,10 @@ private:
     StreamList fileStreams;
     /// The delimeter string that will be inserted between each number.
     std::string delim;
+    /// A string inserted at the beginning of a comment line
+    std::string commentLeader;
+    
+    fStreamPt getStream (const std::string& fileName);
 };
 
 #endif /* defined(__ccmd__DataWriter__) */
