@@ -320,16 +320,16 @@ void Ion_cloud::saveStats(const std::string basePath,
       std::string posHeader="x\ty\tz\tvx\tvy\tvz";
     BOOST_FOREACH(Ion_type type, cloud_params->ionTypeList)
     {
-      name = type.name + statsFileEnding;
+      name = basePath + type.name + statsFileEnding;
       writer.writeComment(name, statsHeader);
-      name = type.name + posFileEnding;
+      name = basePath + type.name + posFileEnding;
       writer.writeComment(name, posHeader);
     }
     
     BOOST_FOREACH(Ion_ptr ion, ion_vec)
     {
         // Write the final position and velocity for each ion.
-    	name = ion->name() + posFileEnding;
+    	name = basePath + ion->name() + posFileEnding;
     	rowdata.clear();
         // Scale reduced units to real=world units and rotate to align to
         // axes between rods (calculation has axes crossing rods.)
@@ -354,7 +354,7 @@ void Ion_cloud::saveStats(const std::string basePath,
         writer.writeRow(name, rowdata);
         
         // Write the average data for each ion.
-        name = ion->name() + statsFileEnding;
+        name = basePath + ion->name() + statsFileEnding;
         rowdata.clear();
         
         Stats<Vector3D> energy = ion->get_velStats();

@@ -147,7 +147,7 @@ int main (int argc, char * const argv[]) {
         int nt_cool = integrator_params.cool_steps;
         double dt = integrator_params.time_step;
         DataWriter writer(",");
-        writer.writeComment("totalEnergy.csv", "t\tE_tot");
+        writer.writeComment(path + "totalEnergy.csv", "t\tE_tot");
         for (int t=0; t<nt_cool; ++t) {    
             integrator.evolve(dt);
             
@@ -172,6 +172,7 @@ int main (int argc, char * const argv[]) {
 	    // Start timer
         stopWatchTimer();
         KE = 0;
+        double etot = 0;
         for (int t=0; t<nt; ++t) {    
             integrator.evolve(dt);
             cloud->update_position_histogram(ionImages);
@@ -184,12 +185,14 @@ int main (int argc, char * const argv[]) {
                 cout << setw(4) << stopWatchTimer() << "s";
             }
             KE += cloud->kinetic_energy();
+            etot += cloud->total_energy();
         }
         KE /= nt;
         printProgBar(100);
         std::cout << endl;
         
         cout << "total kinetic energy = " << KE << endl;
+        cout << "Total energy = " << etot << endl;
         ionImages.writeFiles(path);
         cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
