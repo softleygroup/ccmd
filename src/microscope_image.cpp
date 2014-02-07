@@ -6,24 +6,27 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#include <iostream>
+
 #include "ccmd_image.h"
+#include "ccmd_sim.h"
 #include "hist3D.h"
 
-Microscope_params::Microscope_params() 
-{
-    pixels_to_distance = 1;
-    w0 = 5.0*pixels_to_distance;
-    z0 = 50.0/pixels_to_distance;
-    zmin = 0;
-    zmax = 0;
-}
+#include <iostream>
 
-Microscope_image::Microscope_image(int num_rows, int num_cols, const Hist3D& hist)
-    : CCMD_image(num_rows,num_cols), hist_ptr(&hist)
+//Microscope_params::Microscope_params() 
+//{
+//    pixels_to_distance = 1;
+//    w0 = 5.0*pixels_to_distance;
+//    z0 = 50.0/pixels_to_distance;
+//    zmin = 0;
+//    zmax = 0;
+//}
+
+Microscope_image::Microscope_image(const Hist3D& hist, const Microscope_params& p)
+    : CCMD_image(p.nx,p.nz), hist_ptr(&hist), zmin(0), zmax(0), params(p)
 {
-    hist.minmax(Hist3D::x, params.zmin, params.zmax);
-    plane_now = params.zmin;
+    hist.minmax(Hist3D::x, zmin, zmax);
+    plane_now = zmin;
 }
 
 void Microscope_image::draw()
@@ -60,9 +63,9 @@ void Microscope_image::draw()
 }
 
 bool Microscope_image::is_finished() {
-    return plane_now == params.zmax;
+    return plane_now == zmax;
 }
 
 float Microscope_image::get_progress() {
-    return (plane_now-params.zmin)*100.0/(params.zmax-params.zmin+1);
+    return (plane_now-zmin)*100.0/(zmax-zmin+1);
 }

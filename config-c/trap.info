@@ -15,9 +15,13 @@ integrator {
     coolsteps   20000
     histsteps   20000
 }
+image {
+    scale       1       ; Image scaling in pixels per micron
+    blur        5.0     ; Blur radius in microns
+    dof         50.0    ; Depth of field in microns
+}
 ionnumbers {
     Ca      100
-    CaF     50
 }
 iontype {
     CaF {
@@ -31,7 +35,7 @@ iontype {
         charge      1
         lasercooled true
         beta        0.6
-        heating     true
+        heated      true
         recoil      0.01
         direction   0.5
     }

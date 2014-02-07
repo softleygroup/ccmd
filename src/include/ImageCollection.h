@@ -9,15 +9,19 @@
 #ifndef __ccmd__ImageCollection__
 #define __ccmd__ImageCollection__
 
-#include <map>
-#include <string>
+#include "ccmd_sim.h"
+
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <map>
+#include <string>
+
 #include <boost/thread.hpp>
 
 class Hist3D;
 class Vector3D;
+
 
 class ImageCollection {
 public:
@@ -25,7 +29,7 @@ public:
     ~ImageCollection();
     
     void addIon(const std::string& name, const Vector3D& r);
-    void writeFiles(std::string const& basePath) const;
+    void writeFiles(std::string const& basePath, Microscope_params& p) const;
 private:
     typedef std::map<std::string, Hist3D*> Collection;
     Collection collection;
@@ -37,7 +41,8 @@ private:
 class ImageWorker
 {
 public:
-    ImageWorker(std::string const& basePath, ImageCollection::Collection::const_iterator const& it);
+    ImageWorker(std::string const& basePath, ImageCollection::Collection::const_iterator const& it,
+                Microscope_params& p);
     void join();
     
 private:
@@ -47,6 +52,7 @@ private:
     boost::thread m_Thread;
     std::string fileName;
     Hist3D* pIonHist;
+    Microscope_params params;
     
     void generateAndSave();
     

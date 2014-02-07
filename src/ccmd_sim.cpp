@@ -296,8 +296,8 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionType.is_laser_cooled = ionTypeTree.get<bool>("lasercooled", false);
         ionType.is_heated = ionTypeTree.get<bool>("heated", false);
         ionType.beta = ionTypeTree.get<double>("beta", 0.0);
-        ionType.recoil = ionTypeTree.get<bool>("recoil", 0.0);
-        ionType.direction = ionTypeTree.get<bool>("direction", 0.5);
+        ionType.recoil = ionTypeTree.get<double>("recoil", 0.0);
+        ionType.direction = ionTypeTree.get<double>("direction", 0.5);
         if (ionType.direction<0.0) {
             cout << "Warning: direction="<< ionType.direction;
             cout << " out of range. Limiting to 0.0";
@@ -381,3 +381,31 @@ Integration_params::Integration_params(const std::string& file_name)
     cout << "\tWill take " << cool_steps << " steps to allow ions to equilibrate," << endl;
     cout << "\t then " << hist_steps << " steps while collecting data" << endl;
 }
+
+
+/**
+ *  @class Microscope_params
+ *  @brief Stores microscope model parameters
+ *
+ *  see: A. D. Gingell, D.Phil thesis, University of Oxford
+ *  Chapter 3
+ */
+Microscope_params::Microscope_params(const std::string& file_name)
+{
+    using boost::property_tree::iptree;
+    iptree pt;
+    read_info(file_name, pt);
+    
+    try {
+        pixels_to_distance   = pt.get<double>("image.scale");
+        w0   = pt.get<double>("image.blur");
+        z0   = pt.get<double>("image.dof");
+        nz = pt.get<int>("image.nz");
+        nx = pt.get<int>("image.nx");
+    } catch(const boost::property_tree::ptree_error &e) {
+        ostringstream error_msg;
+        cout << e.what() << endl;
+        throw runtime_error("Error reading microscope params.");
+    }
+}
+

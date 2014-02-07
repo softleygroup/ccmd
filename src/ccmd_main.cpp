@@ -116,6 +116,7 @@ int main (int argc, char * const argv[]) {
         Trap_params trap_params(info_file);
         Cloud_params cloud_params(info_file);
         Integration_params integrator_params(info_file);
+        Microscope_params microscope_params(info_file);
         
         // Construct trap based on parameters
         Ion_trap_ptr trap;
@@ -193,7 +194,7 @@ int main (int argc, char * const argv[]) {
         
         cout << "total kinetic energy = " << KE << endl;
         cout << "Total energy = " << etot << endl;
-        ionImages.writeFiles(path);
+        ionImages.writeFiles(path, microscope_params);
         cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
     } catch (std::exception& e) {
