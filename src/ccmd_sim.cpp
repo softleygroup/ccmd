@@ -296,8 +296,8 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionType.is_laser_cooled = ionTypeTree.get<bool>("lasercooled", false);
         ionType.is_heated = ionTypeTree.get<bool>("heated", false);
         ionType.beta = ionTypeTree.get<double>("beta", 0.0);
-        ionType.recoil = ionTypeTree.get<bool>("recoil", 0.0);
-        ionType.direction = ionTypeTree.get<bool>("direction", 0.5);
+        ionType.recoil = ionTypeTree.get<double>("recoil", 0.0);
+        ionType.direction = ionTypeTree.get<double>("direction", 0.5);
         if (ionType.direction<0.0) {
             cout << "Warning: direction="<< ionType.direction;
             cout << " out of range. Limiting to 0.0";

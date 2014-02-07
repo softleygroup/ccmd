@@ -17,7 +17,6 @@ integrator {
 }
 ionnumbers {
     Ca      100
-    CaF     50
 }
 iontype {
     CaF {
@@ -31,7 +30,7 @@ iontype {
         charge      1
         lasercooled true
         beta        0.6
-        heating     true
+        heated      true
         recoil      0.01
         direction   0.5
     }
