@@ -101,6 +101,21 @@ public:
     /// List to hold an Ion_type for each ion type used.
     std::list<Ion_type> ionTypeList;
 };
+
+
+class Microscope_params {
+public:
+    Microscope_params(const std::string& file_name);
+    
+    double pixels_to_distance;      // conversion from microns to pixels
+    double w0;                      // blur size
+    double z0;                      // depth of field
+    int nz;                      // Number of pixels in z direction
+    int nx;                      // Number of pixels in x direction
+//    int zmin;                       // start plane
+//    int zmax;                       // end plane
+};
+
         
 
 #endif

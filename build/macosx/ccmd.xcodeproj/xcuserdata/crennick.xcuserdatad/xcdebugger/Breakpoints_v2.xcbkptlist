@@ -9,14 +9,58 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../src/include/stochastic_heat.h"
-            timestampString = "413456012.589129"
+            filePath = "../../src/microscope_image.cpp"
+            timestampString = "413459146.502528"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
-            landmarkName = "kick_direction (const double p)"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "Microscope_image::draw()"
             landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Microscope_image::draw()"
+                  moduleName = "ccmd"
+                  urlString = "file:///Users/crennick/Documents/Oxford/IonTrap/ccmd/src/microscope_image.cpp"
+                  timestampString = "413459148.763164"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "393">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Microscope_image::draw()"
+                  moduleName = "ccmd"
+                  urlString = "file:///Users/crennick/Documents/Oxford/IonTrap/ccmd/src/microscope_image.cpp"
+                  timestampString = "413459148.763586"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "439">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Microscope_image::draw()"
+                  moduleName = "ccmd"
+                  urlString = "file:///Users/crennick/Documents/Oxford/IonTrap/ccmd/src/microscope_image.cpp"
+                  timestampString = "413459148.763911"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "810">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

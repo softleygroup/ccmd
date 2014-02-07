@@ -7,6 +7,7 @@
 //
 
 #include "IonHistogram.h"
+
 #include <cmath>
 #include <fstream>
 #include <boost/make_shared.hpp>

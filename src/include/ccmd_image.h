@@ -10,6 +10,8 @@
 #ifndef ccmd_image_ccmd_image_h
 #define ccmd_image_ccmd_image_h
 
+#include "ccmd_sim.h"
+
 #include <iostream>
 #include <vector>
 
@@ -121,21 +123,21 @@ private:
     double gaussian(double x, double mu, double sigma);
 };
 
-//
-// Stores microscope model parameters
-//
-// see: A. D. Gingell, D.Phil thesis, University of Oxford
-//      Chapter 3
-//
-struct Microscope_params {
-    Microscope_params();
-    
-    double pixels_to_distance;      // conversion from microns to pixels
-    double w0;                      // blur size
-    double z0;                      // depth of field
-    int zmin;                       // start plane
-    int zmax;                       // end plane 
-};
+////
+//// Stores microscope model parameters
+////
+//// see: A. D. Gingell, D.Phil thesis, University of Oxford
+////      Chapter 3
+////
+//struct Microscope_params {
+//    Microscope_params();
+//    
+//    double pixels_to_distance;      // conversion from microns to pixels
+//    double w0;                      // blur size
+//    double z0;                      // depth of field
+//    int zmin;                       // start plane
+//    int zmax;                       // end plane 
+//};
 
 
 //
@@ -145,7 +147,7 @@ struct Microscope_params {
 //
 class Microscope_image : public CCMD_image {
 public:
-    Microscope_image(int num_rows, int num_cols, const Hist3D& hist);
+    Microscope_image(const Hist3D& hist, const Microscope_params& p);
 
     // generates image by adding successive blurred planes 
     // using microscope model
@@ -157,15 +159,12 @@ public:
     // percentage progress in image calculation
     float get_progress();
     
-    Microscope_params get_params() const { return params; }
-    void set_params(const Microscope_params& params_in) {
-        params = params_in;
-    }
-    
 private:
     const Hist3D* hist_ptr;
     Microscope_params params;    
     int plane_now;
+    int zmin;
+    int zmax;
 };
 
 

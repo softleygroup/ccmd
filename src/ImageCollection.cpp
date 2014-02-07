@@ -7,13 +7,15 @@
 //
 
 #include "ImageCollection.h"
+
+#include "ccmd_image.h"
+#include "ccmd_sim.h"
 #include "hist3D.h"
 #include "vector3D.h"
-#include "ccmd_image.h"
 
-#include <boost/thread.hpp>
 #include <list>
 
+#include <boost/thread.hpp>
 
 /**
  */
@@ -46,7 +48,7 @@ void ImageCollection::addIon(const std::string &name, const Vector3D &r)
     pIonHist->update(r);
 }
 
-void ImageCollection::writeFiles(std::string const& basePath) const
+void ImageCollection::writeFiles(std::string const& basePath, Microscope_params& p) const
 {
     typedef std::list<ImageWorker*> ThreadList;
     ThreadList threadList;
@@ -54,7 +56,7 @@ void ImageCollection::writeFiles(std::string const& basePath) const
     for (Collection::const_iterator it=collection.begin();
          it!=collection.end(); ++it)
     {
-        ImageWorker *w = new ImageWorker(basePath, it);
+        ImageWorker *w = new ImageWorker(basePath, it, p);
         threadList.push_back(w);
     }
     
@@ -66,8 +68,9 @@ void ImageCollection::writeFiles(std::string const& basePath) const
 
 ImageWorker::ImageWorker(
                          std::string const& basePath,
-                         ImageCollection::Collection::const_iterator const& it)
-:basePath(basePath), fileName(it->first), pIonHist(it->second)
+                         ImageCollection::Collection::const_iterator const& it,
+                         Microscope_params& p)
+:basePath(basePath), fileName(it->first), pIonHist(it->second), params(p)
 {
     m_Thread = boost::thread(&ImageWorker::generateAndSave, this);
 }
@@ -82,7 +85,7 @@ void ImageWorker::generateAndSave() {
     Microscope_image* image;
     
     std::cout << "Generating image: " << fileName << std::endl;
-    image = new Microscope_image(640, 640, (*pIonHist));
+    image = new Microscope_image((*pIonHist), params);
     while (!image->is_finished())
     {
         image->draw();
