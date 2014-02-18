@@ -37,8 +37,8 @@ void Microscope_image::draw()
         
     // scales and moves pixels to image centre
     for (int i=0; i<pixels.size(); ++i) {
-        pixels[i].x *= int(params.pixels_to_distance);
-        pixels[i].y *= int(params.pixels_to_distance);
+//        pixels[i].x *= params.pixels_to_distance * hist_ptr->bin_size;
+//        pixels[i].y *= params.pixels_to_distance * hist_ptr->bin_size;
         pixels[i].x += rows/2;
         pixels[i].y += cols/2;
     }

@@ -16,12 +16,14 @@ integrator {
     histsteps   20000
 }
 image {
-    scale       1       ; Image scaling in pixels per micron
+    scale       2.5     ; Image scaling in pixels per micron
     blur        5.0     ; Blur radius in microns
     dof         50.0    ; Depth of field in microns
+    nz          640     ; Number of pixels in z axis
+    nx          480     ; Number of pixels in x axis
 }
 ionnumbers {
-    Ca      100
+    Ca      5
 }
 iontype {
     CaF {

@@ -294,7 +294,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionType.mass = ionTypeTree.get<double>("mass");
         ionType.charge = ionTypeTree.get<int>("charge");
         ionType.is_laser_cooled = ionTypeTree.get<bool>("lasercooled", false);
-        ionType.is_heated = ionTypeTree.get<bool>("heated", false);
+        ionType.is_heated = ionTypeTree.get<bool>("heating", false);
         ionType.beta = ionTypeTree.get<double>("beta", 0.0);
         ionType.recoil = ionTypeTree.get<double>("recoil", 0.0);
         ionType.direction = ionTypeTree.get<double>("direction", 0.5);
@@ -398,8 +398,8 @@ Microscope_params::Microscope_params(const std::string& file_name)
     
     try {
         pixels_to_distance   = pt.get<double>("image.scale");
-        w0   = pt.get<double>("image.blur");
-        z0   = pt.get<double>("image.dof");
+        w0   = pt.get<double>("image.blur") * pixels_to_distance;
+        z0   = pt.get<double>("image.dof") / pixels_to_distance;
         nz = pt.get<int>("image.nz");
         nx = pt.get<int>("image.nx");
     } catch(const boost::property_tree::ptree_error &e) {

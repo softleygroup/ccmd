@@ -141,7 +141,8 @@ int main (int argc, char * const argv[]) {
         //CUDA_integrator integrator(trap, cloud, integrator_params);
         
         // 3D histogram for image creation
-        ImageCollection ionImages(0.1);
+//        ImageCollection ionImages(1.0);
+        ImageCollection ionImages(1.0/(10.0*microscope_params.pixels_to_distance));
         
         // Cool down ion cloud
         cout << flush << "Running cool down" << endl;

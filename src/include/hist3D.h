@@ -49,10 +49,11 @@ public:
     
     // clears histrogram data
     void reset();
-    
+
+    static double bin_size;
 private:
     std::map<std::vector<int>,double> hist;
-    static double bin_size;
+
     
     void bin(const std::vector<int>& v) { ++hist[v]; }
     static Vector3D bin_to_Vector3D(const std::vector<int>);

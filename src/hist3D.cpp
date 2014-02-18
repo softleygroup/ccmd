@@ -49,7 +49,8 @@ std::vector<int> Hist3D::Vector3D_to_bin(const Vector3D& v)
 {
     std::vector<int> bin_vec(3,0);
     for (int i=0; i<3; ++i)
-        bin_vec[i] = int(std::floor(v[i]/bin_size + 0.5));
+//        bin_vec[i] = int(std::floor(v[i]/bin_size + 0.5));
+            bin_vec[i] = int(std::floor(v[i]/bin_size));
     return bin_vec;
 }
 

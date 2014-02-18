@@ -25,12 +25,12 @@
                   symbolName = "Microscope_image::draw()"
                   moduleName = "ccmd"
                   urlString = "file:///Users/crennick/Documents/Oxford/IonTrap/ccmd/src/microscope_image.cpp"
-                  timestampString = "413459148.763164"
+                  timestampString = "414322006.137645"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "40"
                   endingLineNumber = "40"
-                  offsetFromSymbolStart = "393">
+                  offsetFromSymbolStart = "462">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -39,28 +39,30 @@
                   symbolName = "Microscope_image::draw()"
                   moduleName = "ccmd"
                   urlString = "file:///Users/crennick/Documents/Oxford/IonTrap/ccmd/src/microscope_image.cpp"
-                  timestampString = "413459148.763586"
+                  timestampString = "414322006.137955"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "40"
                   endingLineNumber = "40"
-                  offsetFromSymbolStart = "439">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Microscope_image::draw()"
-                  moduleName = "ccmd"
-                  urlString = "file:///Users/crennick/Documents/Oxford/IonTrap/ccmd/src/microscope_image.cpp"
-                  timestampString = "413459148.763911"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40"
-                  offsetFromSymbolStart = "810">
+                  offsetFromSymbolStart = "540">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../src/hist3D.cpp"
+            timestampString = "414321832.500268"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "Hist3D::set_bin_size(double size)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
