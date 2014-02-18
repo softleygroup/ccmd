@@ -399,7 +399,7 @@ Microscope_params::Microscope_params(const std::string& file_name)
     try {
         pixels_to_distance   = pt.get<double>("image.scale");
         w0   = pt.get<double>("image.blur") * pixels_to_distance;
-        z0   = pt.get<double>("image.dof") / pixels_to_distance;
+        z0   = pt.get<double>("image.dof") ;
         nz = pt.get<int>("image.nz");
         nx = pt.get<int>("image.nx");
     } catch(const boost::property_tree::ptree_error &e) {

@@ -51,6 +51,7 @@ void Microscope_image::draw()
     int dz = abs(plane_now);
     
     double blur_radius = params.w0/sqrt(2.0)*(1.0 + dz/params.z0);
+//    double blur_radius = params.w0*(1.0 + dz/params.z0);
     int blur_pixels = 10*blur_radius + 10;
     Gauss_kernel blur_plane(blur_pixels,blur_radius);
     image_plane.gaussian_blur( blur_plane );

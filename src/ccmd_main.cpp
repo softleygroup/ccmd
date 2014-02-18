@@ -142,7 +142,7 @@ int main (int argc, char * const argv[]) {
         
         // 3D histogram for image creation
 //        ImageCollection ionImages(1.0);
-        ImageCollection ionImages(1.0/(10.0*microscope_params.pixels_to_distance));
+        ImageCollection ionImages(2.0/(10.0*microscope_params.pixels_to_distance));
         
         // Cool down ion cloud
         cout << flush << "Running cool down" << endl;
