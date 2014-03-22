@@ -13,6 +13,8 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/exceptions.hpp>
 
+#include <cmath> // only for M_PI
+
 using namespace std;
 
 /**
@@ -365,20 +367,27 @@ Cloud_params::Cloud_params(const std::string& file_name)
  */
 Integration_params::Integration_params(const std::string& file_name)
 {
+    int stepsPerPeriod;
+    double coolperiods;
+    double histperiods;
+    
     using boost::property_tree::iptree;
     iptree pt;
     read_info(file_name, pt);
     try {
-        time_step   = pt.get<double>("integrator.timestep");
+        stepsPerPeriod   = pt.get<double>("integrator.stepsPerPeriod");
         respa_steps = pt.get<double>("integrator.respasteps");
-        cool_steps   = pt.get<int>("integrator.coolsteps");
-        hist_steps   = pt.get<int>("integrator.histsteps");
+        coolperiods   = pt.get<int>("integrator.coolperiods");
+        histperiods   = pt.get<int>("integrator.histperiods");
     } catch(const boost::property_tree::ptree_error &e) {
         ostringstream error_msg;
         cout << e.what() << endl;
         throw runtime_error("Error reading integration params.");
     }
-
+    
+    time_step = M_PI/stepsPerPeriod;
+    cool_steps = int(coolperiods*stepsPerPeriod);
+    hist_steps = int(histperiods*stepsPerPeriod);
     
     cout << '\n' << "Integrator parameters:\n";
     cout << "\tTime step: " << time_step << endl;
