@@ -181,6 +181,11 @@ Trap_params::Trap_params(const std::string& file_name)
             size_t found;
             found=file_name.find_last_of("/\\");
             waveformFile = file_name.substr(0,found) + "/waveform.dat";
+        } else if (typeString == "cosine_decay") {
+            cout << "Making a decaying cosine trap.\n";
+            wave = cosine_decay;
+            tau = pt.get<double>("trap.type.tau");
+            deltaT = pt.get<double>("trap.type.deltaT");
         }else {
             cout << "Unrecognised trap type " << typeString << "\n";
             throw runtime_error("unrecognised trap");

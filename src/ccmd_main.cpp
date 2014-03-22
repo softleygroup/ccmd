@@ -126,6 +126,8 @@ int main (int argc, char * const argv[]) {
                 trap = boost::make_shared<Pulsed_trap>(trap_params);
         } else if (trap_params.wave == trap_params.waveform) {
                 trap = boost::make_shared<Waveform_trap>(trap_params);
+        } else if (trap_params.wave == trap_params.cosine_decay) {
+                trap = boost::make_shared<Cosine_decay_trap>(trap_params);
         } else {
             cout << "Unrecognised trap type";
             throw runtime_error("Unrecognised trap type");
