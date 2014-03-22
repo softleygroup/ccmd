@@ -14,6 +14,8 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/exceptions.hpp>
 
+#include <cmath> // only for M_PI
+
 using namespace std;
 
 /**
@@ -396,21 +398,28 @@ Cloud_params::Cloud_params(const std::string& file_name)
  */
 Integration_params::Integration_params(const std::string& file_name)
 {
+    int stepsPerPeriod;
+    double coolperiods;
+    double histperiods;
+    
     using boost::property_tree::iptree;
     iptree pt;
     Logger& log = Logger::getInstance();
     read_info(file_name, pt);
     try {
-        time_step   = pt.get<double>("integrator.timestep");
+        stepsPerPeriod   = pt.get<double>("integrator.stepsPerPeriod");
         respa_steps = pt.get<double>("integrator.respasteps");
-        cool_steps   = pt.get<int>("integrator.coolsteps");
-        hist_steps   = pt.get<int>("integrator.histsteps");
+        coolperiods   = pt.get<int>("integrator.coolperiods");
+        histperiods   = pt.get<int>("integrator.histperiods");
     } catch(const boost::property_tree::ptree_error &e) {
         log.log(Logger::error, "Error reading integration params.");
         log.log(Logger::error, e.what());
         throw runtime_error("Error reading integration params.");
     }
-
+    
+    time_step = M_PI/stepsPerPeriod;
+    cool_steps = int(coolperiods*stepsPerPeriod);
+    hist_steps = int(histperiods*stepsPerPeriod);
     
     log.log(Logger::info, "Integrator parameters:");
     log.log(Logger::info, "\tTime step: " + std::to_string(time_step));
