@@ -397,6 +397,7 @@ Microscope_params::Microscope_params(const std::string& file_name)
     read_info(file_name, pt);
     
     try {
+        makeimage = pt.get<bool>("image.makeimage");
         pixels_to_distance   = pt.get<double>("image.scale");
         w0   = pt.get<double>("image.blur") * pixels_to_distance;
         z0   = pt.get<double>("image.dof") ;

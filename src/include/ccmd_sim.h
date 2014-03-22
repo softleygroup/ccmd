@@ -107,6 +107,7 @@ class Microscope_params {
 public:
     Microscope_params(const std::string& file_name);
     
+    bool makeimage;                 // whether to run image creation or not
     double pixels_to_distance;      // conversion from microns to pixels
     double w0;                      // blur size
     double z0;                      // depth of field

@@ -194,7 +194,10 @@ int main (int argc, char * const argv[]) {
         
         cout << "total kinetic energy = " << KE << endl;
         cout << "Total energy = " << etot << endl;
-        ionImages.writeFiles(path, microscope_params);
+        if (microscope_params.makeimage)
+        {
+            ionImages.writeFiles(path, microscope_params);
+        }
         cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
     } catch (std::exception& e) {
