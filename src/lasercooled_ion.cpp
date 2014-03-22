@@ -103,7 +103,7 @@ void Lasercooled_ion::velocity_scale(double dt)
 void Lasercooled_ion::heat(double dt)
 {
     Vector3D heating = this->heater.random_kick();
-    this->Ion::kick( sqrt(dt) , heating);
+    this->Ion::kick( dt , heating);
 }
 
 
