@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <boost/shared_ptr.hpp>
 
+class Logger;
 
 class Trap_params {
 public:

@@ -3,6 +3,7 @@
 //
 
 #include "ccmd_sim.h"
+#include "logger.h"
 
 #include <iostream>
 #include <fstream>
@@ -145,11 +146,12 @@ using namespace std;
  */
 Trap_params::Trap_params(const std::string& file_name)
 {
-    
+    Logger& log = Logger::getInstance();
     using boost::property_tree::iptree;
     iptree pt;
     read_info(file_name, pt);
     try {
+        log.log(Logger::debug, "Loading trap parameters.");
         v_rf    = pt.get<double>("trap.vrf");
         v_end   = pt.get<double>("trap.vend");
         eta     = pt.get<double>("trap.eta");
@@ -161,21 +163,25 @@ Trap_params::Trap_params(const std::string& file_name)
         std::string typeString = pt.get<std::string>("trap.type.name");
         ostringstream error_msg;
         if (typeString == "cosine") {
-            cout << "Making a cosine trap\n";
+            log.log(Logger::info, "Making a cosine trap.");
             wave = cosine;
         } else if (typeString == "digital") {
-            cout << "Making a digital trap\n";
+            log.log(Logger::info, "Making a digital trap.");
             wave = digital;
             tau = pt.get<double>("trap.type.tau");
             if (tau<0.0) {
-                cout << "Warning: Tau="<< tau << " out of range. Limiting to 0.0";
+                std::stringstream ss;
+                ss << "Warning: Tau="<< tau << " out of range. Limiting to 0.0";
+                log.log(Logger::warn, ss.str());
                 tau = 0.0;
             } else if (tau>1.0) {
-                cout << "Warning: Tau="<< tau << " out of range. Limiting to 1.0";
+                std::stringstream ss;
+                ss << "Warning: Tau="<< tau << " out of range. Limiting to 1.0";
+                log.log(Logger::warn, ss.str());
                 tau = 1.0;
             }
         } else if (typeString == "waveform") {
-            cout << "Making a waveform trap.\n";
+            log.log(Logger::info, "Making a waveform trap.");
             wave = waveform;
             // The waveform file is in the same directory as the trap parameters
             size_t found;
@@ -187,14 +193,23 @@ Trap_params::Trap_params(const std::string& file_name)
             tau = pt.get<double>("trap.type.tau");
             deltaT = pt.get<double>("trap.type.deltaT");
         }else {
-            cout << "Unrecognised trap type " << typeString << "\n";
+            std::stringstream ss;
+            ss << "Unrecognised trap type " << typeString;
+            log.log(Logger::error, ss.str());
             throw runtime_error("unrecognised trap");
         }
     } catch(boost::property_tree::ptree_error& e) {
-        ostringstream error_msg;
-        error_msg << e.what();
-        throw runtime_error(error_msg.str());
+        log.log(Logger::error, e.what());
+        throw runtime_error(e.what());
     }
+    log.log(Logger::info, "Trap parameters:");
+    log.log(Logger::info, "\tVrf: " + std::to_string(v_rf));
+    log.log(Logger::info, "\tEnd cap: " + std::to_string(v_end));
+    log.log(Logger::info, "\teta: " + std::to_string(eta));
+    log.log(Logger::info, "\tr0: " + std::to_string(r0));
+    log.log(Logger::info, "\tz0: " + std::to_string(z0));
+    log.log(Logger::info, "\tfreq: " + std::to_string(freq));
+                                                                  
 }
 
 
@@ -284,6 +299,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
 {
     using boost::property_tree::iptree;
     iptree pt;
+    Logger& log = Logger::getInstance();
     read_info(file_name, pt);
     iptree numbers_node = pt.get_child("ionnumbers");
     
@@ -304,12 +320,16 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionType.recoil = ionTypeTree.get<double>("recoil", 0.0);
         ionType.direction = ionTypeTree.get<double>("direction", 0.5);
         if (ionType.direction<0.0) {
-            cout << "Warning: direction="<< ionType.direction;
-            cout << " out of range. Limiting to 0.0";
+            std::stringstream ss;
+            ss << "Warning: direction="<< ionType.direction;
+            ss << " out of range. Limiting to 0.0";
+            log.log(Logger::warn, ss.str());
             ionType.direction = 0.0;
         } else if (ionType.direction>1.0) {
-            cout << "Warning: direction="<< ionType.direction;
-            cout << " out of range. Limiting to 1.0";
+            std::stringstream ss;
+            ss << "Warning: direction="<< ionType.direction;
+            ss << " out of range. Limiting to 1.0";
+            log.log(Logger::warn, ss.str());
             ionType.direction = 1.0;
         }
 
@@ -317,9 +337,15 @@ Cloud_params::Cloud_params(const std::string& file_name)
         // Append this to the list
         ionTypeList.push_back(ionType);
         
-        cout << "Loaded " << ionType.number;
-        if (ionType.is_laser_cooled) cout << " laser cooled";
-        cout << " " << ionType.name << " ions" << endl;
+        log.log(Logger::info, ionType.name + " ions:");
+        log.log(Logger::info, "\tMass: " + std::to_string(ionType.mass));
+        log.log(Logger::info, "\tCharge: " + std::to_string(ionType.mass));
+        if (ionType.is_laser_cooled) {
+            log.log(Logger::info, "\tLaser Cooled.");
+            log.log(Logger::info, "\tbeta: " + std::to_string(ionType.beta));
+            log.log(Logger::info, "\trecoil: " + std::to_string(ionType.recoil));
+            log.log(Logger::info, "\tdirection: " + std::to_string(ionType.direction));
+        }
     }
 }
 
@@ -367,6 +393,7 @@ Integration_params::Integration_params(const std::string& file_name)
 {
     using boost::property_tree::iptree;
     iptree pt;
+    Logger& log = Logger::getInstance();
     read_info(file_name, pt);
     try {
         time_step   = pt.get<double>("integrator.timestep");
@@ -374,17 +401,19 @@ Integration_params::Integration_params(const std::string& file_name)
         cool_steps   = pt.get<int>("integrator.coolsteps");
         hist_steps   = pt.get<int>("integrator.histsteps");
     } catch(const boost::property_tree::ptree_error &e) {
-        ostringstream error_msg;
-        cout << e.what() << endl;
+        log.log(Logger::error, "Error reading integration params.");
+        log.log(Logger::error, e.what());
         throw runtime_error("Error reading integration params.");
     }
 
     
-    cout << '\n' << "Integrator parameters:\n";
-    cout << "\tTime step: " << time_step << endl;
-    cout << "\tRESPA steps: " << respa_steps << endl;
-    cout << "\tWill take " << cool_steps << " steps to allow ions to equilibrate," << endl;
-    cout << "\t then " << hist_steps << " steps while collecting data" << endl;
+    log.log(Logger::info, "Integrator parameters:");
+    log.log(Logger::info, "\tTime step: " + std::to_string(time_step));
+    log.log(Logger::info, "\tRESPA steps: " + std::to_string(respa_steps));
+    log.log(Logger::info, "\tWill take " + std::to_string(cool_steps) +
+            " steps to allow ions to equilibrate,");
+    log.log(Logger::info, "\t then " + std::to_string(hist_steps) +
+            " steps while collecting data");
 }
 
 

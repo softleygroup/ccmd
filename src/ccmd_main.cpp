@@ -47,26 +47,22 @@
  *
  */
 
-#include <iostream>
-#include <fstream>
-
+#include "ccmd_image.h"
 #include "ccmd_sim.h"
+#include "DataWriter.h"
 #include "ion_trap.h"
 #include "ion_cloud.h"
-
-#include "integrator.h"
-// #include "cuda_integrator.h"
-
-#include "ImageCollection.h"
 #include "IonHistogram.h"
-#include "ccmd_image.h"
-#include "DataWriter.h"
-
-#include <sstream>
-#include <ctime>
-#include <iomanip>
+#include "ImageCollection.h"
+#include "integrator.h"
+#include "logger.h"
 
 #include <boost/make_shared.hpp>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 double stopWatchTimer();
 double KE;
@@ -97,19 +93,26 @@ void printProgBar( int percent ){
 
 using namespace std;
 
+
 int main (int argc, char * const argv[]) {
+    Logger& log = Logger::getInstance();
+    
     if (argc != 2) {
 	std::cout << "usage: " << argv[0] << " [working directory]" << std::endl;
 	std::exit(1);
     }
 
-
     std::string path = std::string(argv[1]);
     if (path[path.length()-1] != '/') 
 	    path += "/";
 
+    log.initialise(Logger::info, path + "log.txt");
+    log.log(Logger::info, "CCMD - Coulomb crystal molecular dynamics");
+    log.log(Logger::info, "Version 1.0.0");
+    
     // Parameter file paths
     string info_file = path + "trap.info";
+    log.log(Logger::info, "Loading input file " + info_file);
     
     try {
         // Get simulation parameters from files
@@ -129,7 +132,7 @@ int main (int argc, char * const argv[]) {
         } else if (trap_params.wave == trap_params.cosine_decay) {
                 trap = boost::make_shared<Cosine_decay_trap>(trap_params);
         } else {
-            cout << "Unrecognised trap type";
+            log.log(Logger::error, "Unrecognised trap type");
             throw runtime_error("Unrecognised trap type");
         }
         
@@ -147,6 +150,7 @@ int main (int argc, char * const argv[]) {
         
         // Cool down ion cloud
         cout << flush << "Running cool down" << endl;
+        log.log(Logger::info, "Running cool down.");
         int nt_cool = integrator_params.cool_steps;
         double dt = integrator_params.time_step;
         DataWriter writer(",");
@@ -170,7 +174,8 @@ int main (int argc, char * const argv[]) {
         // Evolution
         int nt = integrator_params.hist_steps;
         
-        cout << flush << "Accuiring histogram data" << endl;
+        cout << flush << "Acquiring histogram data" << endl;
+        log.log(Logger::info, "Acquiring histogram data");
 
 	    // Start timer
         stopWatchTimer();
@@ -196,6 +201,10 @@ int main (int argc, char * const argv[]) {
         
         cout << "total kinetic energy = " << KE << endl;
         cout << "Total energy = " << etot << endl;
+
+        log.log(Logger::info, "total kinetic energy = " + std::to_string(KE));
+        log.log(Logger::info, "total energy = " + std::to_string(etot));
+        
         if (microscope_params.makeimage)
         {
             ionImages.writeFiles(path, microscope_params);
