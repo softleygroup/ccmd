@@ -1,6 +1,10 @@
-CC = icpc
-# EXECUTABLE:= ../bin/linux/libccmd.a 
 EXECUTABLE:= ../bin/linux/ccmd 
+
+intel: CC = icpc
+intel: LD = icpc
+
+gnu: CC = g++
+gnu: LD = g++
 
 C_SRCS := $(wildcard *.c)
 CXX_SRCS := $(wildcard *.cpp)
@@ -16,18 +20,25 @@ VPATH = ./
 
 BOOST_INCLUDE = /u/tps/crennick/boost_1_55_0
 
-INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
-LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
+
+intel: INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
+gnu: INCLUDE_DIRS :=  ./include
+
+intel: LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
 LIBRARIES := -lboost_system -lboost_thread -lpthread -lrt -lpng -lz
 
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
-# CPPFLAGS += -I$(CUTIL_LIB)
-#CPPFLAGS += -O3 -Wall -fPIC -c
-CPPFLAGS += -O3 -std=gnu++98
+
+intel: CPPFLAGS += -O3 -std=gnu++98
+gnu: CPPFLAGS += -Ofast -std=gnu++98 -march=native -ffast-math -flto
+gnu: LDFLAGS += -Ofast -std=gnu++98 -march=native -ffast-math -flto
 
 LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
 
 .PHONY: all clean distclean
+
+gnu: $(EXECUTABLE)
+intel: $(EXECUTABLE)
 
 all: $(EXECUTABLE)
 
@@ -42,7 +53,8 @@ $(BUILD_DIR)%.o : %.cpp
 # 	$(NVCC_PATH)/nvcc -O3 --include-path $(CUTIL_LIB) -c bodysystemcuda.cu -o $(BUILD_DIR)bodysystemcuda.o 
 
 clean:
-	@- $(RM) $(program_NAME)
-	@- $(RM) $(program_OBJS)
+	@- $(RM) $(EXECUTABLE)
+	@- $(RM) $(OBJS)
+
 
 distclean: clean

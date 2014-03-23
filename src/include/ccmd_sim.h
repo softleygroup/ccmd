@@ -31,7 +31,7 @@ public:
     // Radiofrequency parameters
     
     /// Enumeration of avaliable trap types.
-    enum Waveform {cosine, digital, waveform};
+    enum Waveform {cosine, digital, waveform, cosine_decay};
     Waveform wave;              ///< Type of RF waveform applied to trap
     double freq;                ///< Trap RF frequency            (Hz)
     
@@ -47,7 +47,9 @@ public:
     int     seed;
     
     
-    double tau;                 ///< Waveform duty cycle.
+    double tau;                 ///< Waveform duty cycle. 
+                                ///< reused as time constant for exponential decay cosine trap
+    double deltaT;              ///< wait time until exponential decay for decaying trap
     std::string waveformFile;   ///< File containing waveform data.
 };
 
@@ -108,6 +110,7 @@ class Microscope_params {
 public:
     Microscope_params(const std::string& file_name);
     
+    bool makeimage;                 // whether to run image creation or not
     double pixels_to_distance;      // conversion from microns to pixels
     double w0;                      // blur size
     double z0;                      // depth of field

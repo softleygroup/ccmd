@@ -78,6 +78,18 @@ private:
     double cos_phase;       ///< Magnitude of the cosine function at current time.
 };
 
+class Cosine_decay_trap : public Cosine_trap {
+public:
+    Cosine_decay_trap(const Trap_params& params);
+    Vector3D force_now(const Vector3D& r) const;
+    void evolve(double time);
+
+private:
+    double cos_phase;       ///< Magnitude of the cosine function at current time.
+    double tau;
+    double deltaT;
+    double maxTime;
+};
 
 class Pulsed_trap : public Ion_trap {
 public:

@@ -187,6 +187,11 @@ Trap_params::Trap_params(const std::string& file_name)
             size_t found;
             found=file_name.find_last_of("/\\");
             waveformFile = file_name.substr(0,found) + "/waveform.dat";
+        } else if (typeString == "cosine_decay") {
+            cout << "Making a decaying cosine trap.\n";
+            wave = cosine_decay;
+            tau = pt.get<double>("trap.type.tau");
+            deltaT = pt.get<double>("trap.type.deltaT");
         }else {
             std::stringstream ss;
             ss << "Unrecognised trap type " << typeString;
@@ -426,6 +431,7 @@ Microscope_params::Microscope_params(const std::string& file_name)
     read_info(file_name, pt);
     
     try {
+        makeimage = pt.get<bool>("image.makeimage");
         pixels_to_distance   = pt.get<double>("image.scale");
         w0   = pt.get<double>("image.blur") * pixels_to_distance;
         z0   = pt.get<double>("image.dof") ;

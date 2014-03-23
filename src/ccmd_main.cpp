@@ -129,6 +129,8 @@ int main (int argc, char * const argv[]) {
                 trap = boost::make_shared<Pulsed_trap>(trap_params);
         } else if (trap_params.wave == trap_params.waveform) {
                 trap = boost::make_shared<Waveform_trap>(trap_params);
+        } else if (trap_params.wave == trap_params.cosine_decay) {
+                trap = boost::make_shared<Cosine_decay_trap>(trap_params);
         } else {
             log.log(Logger::error, "Unrecognised trap type");
             throw runtime_error("Unrecognised trap type");
@@ -199,10 +201,14 @@ int main (int argc, char * const argv[]) {
         
         cout << "total kinetic energy = " << KE << endl;
         cout << "Total energy = " << etot << endl;
+
         log.log(Logger::info, "total kinetic energy = " + std::to_string(KE));
         log.log(Logger::info, "total energy = " + std::to_string(etot));
         
-        ionImages.writeFiles(path, microscope_params);
+        if (microscope_params.makeimage)
+        {
+            ionImages.writeFiles(path, microscope_params);
+        }
         cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
     } catch (std::exception& e) {
