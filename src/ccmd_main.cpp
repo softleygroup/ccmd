@@ -130,6 +130,9 @@ int main (int argc, char * const argv[]) {
         } else if (trap_params.wave == trap_params.waveform) {
                 trap = boost::make_shared<Waveform_trap>(trap_params);
         } else if (trap_params.wave == trap_params.cosine_decay) {
+                // have to do some unit conversions here for the decay params
+                trap_params.tau *= M_PI;
+                trap_params.deltaT = (integrator_params.cool_steps + integrator_params.hist_steps)*integrator_params.time_step-trap_params.deltaT*M_PI;
                 trap = boost::make_shared<Cosine_decay_trap>(trap_params);
         } else if (trap_params.wave == trap_params.twofreq) {
             trap = boost::make_shared<TwoFreq_trap>(trap_params);
