@@ -192,6 +192,10 @@ Trap_params::Trap_params(const std::string& file_name)
             wave = cosine_decay;
             tau = pt.get<double>("trap.type.tau");
             deltaT = pt.get<double>("trap.type.deltaT");
+        } else if (typeString == "twofreq") {
+            log.log(Logger::info, "Making a two-frequency trap.");
+            wave = twofreq;
+            freq_mult = pt.get<double>("trap.type.mult");
         }else {
             std::stringstream ss;
             ss << "Unrecognised trap type " << typeString;

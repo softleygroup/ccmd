@@ -31,7 +31,7 @@ public:
     // Radiofrequency parameters
     
     /// Enumeration of avaliable trap types.
-    enum Waveform {cosine, digital, waveform, cosine_decay};
+    enum Waveform {cosine, digital, waveform, cosine_decay, twofreq};
     Waveform wave;              ///< Type of RF waveform applied to trap
     double freq;                ///< Trap RF frequency            (Hz)
     
@@ -51,6 +51,8 @@ public:
                                 ///< reused as time constant for exponential decay cosine trap
     double deltaT;              ///< wait time until exponential decay for decaying trap
     std::string waveformFile;   ///< File containing waveform data.
+
+    double freq_mult;           ///< Multiplier for second waveform
 };
 
 

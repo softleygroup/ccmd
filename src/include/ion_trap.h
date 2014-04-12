@@ -91,6 +91,18 @@ private:
     double maxTime;
 };
 
+class TwoFreq_trap : public Ion_trap {
+public:
+    TwoFreq_trap(const Trap_params& params);
+
+    Vector3D force_now(const Vector3D& r) const;
+    void evolve(double time);
+
+private:
+    double cos_phase;       ///< Magnitude of the cosine function at current time.
+    double freq_mult;       ///< Multiplier for second frequency
+};
+
 class Pulsed_trap : public Ion_trap {
 public:
     Pulsed_trap(const Trap_params& params);
