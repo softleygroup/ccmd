@@ -131,6 +131,8 @@ int main (int argc, char * const argv[]) {
                 trap = boost::make_shared<Waveform_trap>(trap_params);
         } else if (trap_params.wave == trap_params.cosine_decay) {
                 trap = boost::make_shared<Cosine_decay_trap>(trap_params);
+        } else if (trap_params.wave == trap_params.twofreq) {
+            trap = boost::make_shared<TwoFreq_trap>(trap_params);
         } else {
             log.log(Logger::error, "Unrecognised trap type");
             throw runtime_error("Unrecognised trap type");

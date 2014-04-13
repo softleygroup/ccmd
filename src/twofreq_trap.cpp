@@ -20,6 +20,7 @@ TwoFreq_trap::TwoFreq_trap(const Trap_params& params)
     : Ion_trap(params)
 {
     cos_phase = 0.0;//cos(2.0*time_now);
+    freq_mult = params.freq_mult;
 }
 
 

@@ -159,7 +159,15 @@ Trap_params::Trap_params(const std::string& file_name)
         z0      = pt.get<double>("trap.z0");
         freq    = pt.get<double>("trap.freq");
 
+        log.log(Logger::info, "Trap parameters:");
+        log.log(Logger::info, "\tVrf: " + std::to_string(v_rf));
+        log.log(Logger::info, "\tEnd cap: " + std::to_string(v_end));
+        log.log(Logger::info, "\teta: " + std::to_string(eta));
+        log.log(Logger::info, "\tr0: " + std::to_string(r0));
+        log.log(Logger::info, "\tz0: " + std::to_string(z0));
+        log.log(Logger::info, "\tfreq: " + std::to_string(freq));
         
+        // Read trap-specific information.
         std::string typeString = pt.get<std::string>("trap.type.name");
         ostringstream error_msg;
         if (typeString == "cosine") {
@@ -196,6 +204,7 @@ Trap_params::Trap_params(const std::string& file_name)
             log.log(Logger::info, "Making a two-frequency trap.");
             wave = twofreq;
             freq_mult = pt.get<double>("trap.type.mult");
+            log.log(Logger::info, "\tFreq multiple:" + std::to_string(freq_mult));
         }else {
             std::stringstream ss;
             ss << "Unrecognised trap type " << typeString;
@@ -206,14 +215,6 @@ Trap_params::Trap_params(const std::string& file_name)
         log.log(Logger::error, e.what());
         throw runtime_error(e.what());
     }
-    log.log(Logger::info, "Trap parameters:");
-    log.log(Logger::info, "\tVrf: " + std::to_string(v_rf));
-    log.log(Logger::info, "\tEnd cap: " + std::to_string(v_end));
-    log.log(Logger::info, "\teta: " + std::to_string(eta));
-    log.log(Logger::info, "\tr0: " + std::to_string(r0));
-    log.log(Logger::info, "\tz0: " + std::to_string(z0));
-    log.log(Logger::info, "\tfreq: " + std::to_string(freq));
-                                                                  
 }
 
 

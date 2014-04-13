@@ -29,6 +29,9 @@
 		A6785BC91851C24D00B83CBA /* DataWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6785BC71851C24D00B83CBA /* DataWriter.cpp */; };
 		A6A3A5801886809600284035 /* ccmd_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6A3A57F1886809600284035 /* ccmd_main.cpp */; };
 		A6B7E645180C2B30007AA48F /* ccmd in CopyFiles */ = {isa = PBXBuildFile; fileRef = A66F943217FD551500D8E9D6 /* ccmd */; };
+		A6F6A00818F9350900E058DB /* twofreq_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F6A00518F9350900E058DB /* twofreq_trap.cpp */; };
+		A6F6A00918F9350900E058DB /* logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F6A00618F9350900E058DB /* logger.cpp */; };
+		A6F6A00A18F9350900E058DB /* cosine_decay_trap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6F6A00718F9350900E058DB /* cosine_decay_trap.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -83,6 +86,10 @@
 		A6785BC71851C24D00B83CBA /* DataWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DataWriter.cpp; path = ../../src/DataWriter.cpp; sourceTree = "<group>"; };
 		A6785BCA186042E000B83CBA /* DataWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataWriter.h; path = ../../src/include/DataWriter.h; sourceTree = "<group>"; };
 		A6A3A57F1886809600284035 /* ccmd_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ccmd_main.cpp; path = ../../src/ccmd_main.cpp; sourceTree = "<group>"; };
+		A6F6A00518F9350900E058DB /* twofreq_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = twofreq_trap.cpp; path = ../../src/twofreq_trap.cpp; sourceTree = "<group>"; };
+		A6F6A00618F9350900E058DB /* logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = logger.cpp; path = ../../src/logger.cpp; sourceTree = "<group>"; };
+		A6F6A00718F9350900E058DB /* cosine_decay_trap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cosine_decay_trap.cpp; path = ../../src/cosine_decay_trap.cpp; sourceTree = "<group>"; };
+		A6F6A00B18F9354D00E058DB /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logger.h; path = ../../src/include/logger.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +124,7 @@
 		A66F944D17FD56B500D8E9D6 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				A6F6A00B18F9354D00E058DB /* logger.h */,
 				A6785BCA186042E000B83CBA /* DataWriter.h */,
 				A61EBA02180C21B80088DC00 /* ccmd_image.h */,
 				A61EBA03180C21B80088DC00 /* ccmd_sim.h */,
@@ -154,6 +162,9 @@
 				A61EB9E6180C21770088DC00 /* ion.cpp */,
 				A61EB9E7180C21770088DC00 /* IonHistogram.cpp */,
 				A61EB9E8180C21770088DC00 /* lasercooled_ion.cpp */,
+				A6F6A00518F9350900E058DB /* twofreq_trap.cpp */,
+				A6F6A00618F9350900E058DB /* logger.cpp */,
+				A6F6A00718F9350900E058DB /* cosine_decay_trap.cpp */,
 				A61EB9E9180C21770088DC00 /* microscope_image.cpp */,
 				A61EB9EA180C21770088DC00 /* pulsed_trap.cpp */,
 				A61EB9EB180C21770088DC00 /* respa_integrator.cpp */,
@@ -221,8 +232,11 @@
 				A61EB9F2180C21770088DC00 /* coulomb_force.cpp in Sources */,
 				A61EB9F4180C21770088DC00 /* hist3D.cpp in Sources */,
 				A61EB9F5180C21770088DC00 /* ImageCollection.cpp in Sources */,
+				A6F6A00918F9350900E058DB /* logger.cpp in Sources */,
 				A61078151871BFFE0024C9F7 /* pulsed_trap.cpp in Sources */,
 				A61EB9F6180C21770088DC00 /* integrator.cpp in Sources */,
+				A6F6A00A18F9350900E058DB /* cosine_decay_trap.cpp in Sources */,
+				A6F6A00818F9350900E058DB /* twofreq_trap.cpp in Sources */,
 				A61EB9F7180C21770088DC00 /* ion_cloud.cpp in Sources */,
 				A61EB9F8180C21770088DC00 /* ion_trap.cpp in Sources */,
 				A61EB9F9180C21770088DC00 /* ion.cpp in Sources */,
@@ -281,7 +295,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lboost_thread-mt",
 					"-lboost_system-mt",
@@ -324,6 +338,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lboost_thread-mt",
 					"-lboost_system-mt",
