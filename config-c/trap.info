@@ -1,32 +1,31 @@
 trap {
     vrf     150.75
-    vend    4.0
+    vend    1.0
     eta     0.244
     r0      3.5e-3
     z0      2.75e-3
     freq    3.85e6
     type    {
-        name    twofreq
-        mult    1.0
+        name waveform
     }
 }
 integrator {
-    timestep    0.1
-    respasteps  5       ; Respa inner loop steps
-    coolsteps   50000
-    histsteps   200000
+    stepsPerPeriod 20
+    respasteps  500       ; Respa inner loop steps
+    coolperiods 10000
+    histperiods   50
 }
 image {
-    makeimage   true
-    scale       2.5     ; Image scaling in pixels per micron
+    makeimage   false
+    scale       1; 2.5     ; Image scaling in pixels per micron
     blur        5.0     ; Blur radius in microns
     dof         50.0    ; Depth of field in microns
     nz          640     ; Number of pixels in z axis
     nx          480     ; Number of pixels in x axis
 }
 ionnumbers {
-    Ca      100
-    ; Xe      25
+    Ca      200
+     Xe      50
 }
 iontype {
     CaF {
@@ -57,13 +56,7 @@ iontype {
     }
     Xe {
         Name        Xenon
-        Symbol		Xe	
         mass        130.0
         charge  	1	
-        lasercooled No
-        beta    	0.0
-        heating 	No
-        recoil  	0.00
-        cooldirection 0
     }
 }

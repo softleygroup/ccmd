@@ -10,11 +10,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../src/microscope_image.cpp"
-            timestampString = "413459146.502528"
+            timestampString = "419085877.17308"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "Microscope_image::Microscope_image(const Hist3D&amp; hist, const Microscope_params&amp; p)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../src/microscope_image.cpp"
+            timestampString = "419086130.528937"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
             landmarkName = "Microscope_image::draw()"
             landmarkType = "5">
          </BreakpointContent>
@@ -24,30 +40,15 @@
          <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
+            condition = "plane_now&lt;-93"
             continueAfterRunningActions = "No"
-            filePath = "../../src/hist3D.cpp"
-            timestampString = "414321832.500268"
+            filePath = "../../src/microscope_image.cpp"
+            timestampString = "419086275.160004"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "Hist3D::set_bin_size(double size)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../src/twofreq_trap.cpp"
-            timestampString = "419072873.678714"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "TwoFreq_trap::evolve(double dt)"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "Microscope_image::draw()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

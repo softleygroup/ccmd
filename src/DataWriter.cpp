@@ -74,7 +74,7 @@ void DataWriter::writeRow(const std::string& fileName,
 
         (*out) << (*it);
     }
-    (*out) << "\n";
+    (*out) << ",\n";
 }
 
 

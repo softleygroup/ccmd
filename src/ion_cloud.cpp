@@ -5,7 +5,8 @@
 #include "vector3D.h"
 #include "ImageCollection.h"
 #include "IonHistogram.h"
-#include "Stats.h"
+#include "logger.h"
+#include "stats.h"
 #include "DataWriter.h"
 
 #include <functional>
@@ -123,6 +124,8 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
     BOOST_FOREACH(Ion_ptr ion, ion_vec) {
         ion->move(to_origin);
     }
+
+    r02 = ion_trap->trap_params->r0;
 }
 
 
@@ -159,6 +162,30 @@ void Ion_cloud::kick(double dt)
     }
 }
 
+/**
+ *  @brief Delete ions if their radial position is greater than r0.
+ *
+ *  Simulate trap ejection and electrode collision by removing ions. Note the
+ *  radial-only test is not a physical representation of the electrodes.
+ */
+void Ion_cloud::collide()
+{
+    Logger& log = Logger::getInstance();
+    int n=0;
+    for (auto it = ion_vec.begin(); it != ion_vec.end();) {
+        Vector3D p = (*it)->get_pos();
+        double r2 = p.x*p.x + p.y*p.y;
+        if (r2 > r02) {
+            it = ion_vec.erase(it);
+            ++n;
+        } else {
+            ++it;
+        }
+    }
+    std::stringstream ss;
+    ss << "Removed " << n << " ions."<< std::endl;
+    log.log(Logger::info, ss.str());
+}
 
 /**
  *  @brief Call the Ion::kick function on each ion with a specific force.
@@ -377,6 +404,62 @@ void Ion_cloud::saveStats(const std::string basePath,
         rowdata.push_back(var_pos[1]);
         rowdata.push_back(avg_pos[2]);
         rowdata.push_back(var_pos[2]);
+        
+        writer.writeRow(name, rowdata);
+    }
+}
+
+/** @brief Save the current position and velocity of all ions in the cloud.
+ *
+ * Can be called at any time during the simulation to save positions to a
+ * comma-delimited file. No header is added, and each line is terminated with a
+ * comma for Povray compatability.
+ *
+ *  Scaling values need to be provided here to transform from simulation units
+ *  to S.I. units. Currently these are stored in Ion_trap::length_scale, and
+ *  Ion_trap::time_scale.
+ *
+ *  @param basePath     Directory in which to save files.
+ *  @param length_scale Factor to convert distance to S.I. units.
+ *  @param time_scale   Factor to convert time to S.I. units.
+ */
+void Ion_cloud::savePos(const std::string basePath,
+                          const double length_scale,
+                          const double time_scale) const {
+    std::string fileEnding = ".csv";
+    
+    double vel_scale = length_scale/time_scale;
+    double x, y, z, rotated_x, rotated_y;
+    double sqrt2 = 1.414213562;
+    DataWriter writer(",");
+    typedef Ion_ptr_vector::const_iterator ion_itr;
+    std::list<double> rowdata;
+    std::string name;
+
+    BOOST_FOREACH(Ion_ptr ion, ion_vec)
+    {
+        // Write the final position and velocity for each ion.
+    	name = basePath + ion->name() + fileEnding;
+    	rowdata.clear();
+        // Scale reduced units to real=world units and rotate to align to
+        // axes between rods (calculation has axes crossing rods.)
+        x = (ion->get_pos())[0] * length_scale;
+        y = (ion->get_pos())[1] * length_scale;
+        z = (ion->get_pos())[2] * length_scale;
+        rotated_x = (x+y)/sqrt2;
+        rotated_y = (x-y)/sqrt2;
+        rowdata.push_back(rotated_x);
+        rowdata.push_back(rotated_y);
+        rowdata.push_back(z);
+        
+        x = (ion->get_vel())[0] * vel_scale;
+        y = (ion->get_vel())[1] * vel_scale;
+        z = (ion->get_vel())[2] * vel_scale;
+        rotated_x = (x+y)/sqrt2;
+        rotated_y = (x-y)/sqrt2;
+        rowdata.push_back(rotated_x);
+        rowdata.push_back(rotated_y);
+        rowdata.push_back(z);
         
         writer.writeRow(name, rowdata);
     }

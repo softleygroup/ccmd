@@ -3,7 +3,7 @@
 
 #include "ion_trap.h"
 #include "stochastic_heat.h"
-#include "Stats.h"
+#include "stats.h"
 #include "ccmd_sim.h"
 
 #include <boost/shared_ptr.hpp>

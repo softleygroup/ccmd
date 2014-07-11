@@ -346,7 +346,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
         
         log.log(Logger::info, ionType.name + " ions:");
         log.log(Logger::info, "\tMass: " + std::to_string(ionType.mass));
-        log.log(Logger::info, "\tCharge: " + std::to_string(ionType.mass));
+        log.log(Logger::info, "\tCharge: " + std::to_string(ionType.charge));
         if (ionType.is_laser_cooled) {
             log.log(Logger::info, "\tLaser Cooled.");
             log.log(Logger::info, "\tbeta: " + std::to_string(ionType.beta));
@@ -398,17 +398,16 @@ Cloud_params::Cloud_params(const std::string& file_name)
  */
 Integration_params::Integration_params(const std::string& file_name)
 {
-    int stepsPerPeriod;
-    double coolperiods;
-    double histperiods;
+    int coolperiods;
+    int histperiods;
     
     using boost::property_tree::iptree;
     iptree pt;
     Logger& log = Logger::getInstance();
     read_info(file_name, pt);
     try {
-        stepsPerPeriod   = pt.get<double>("integrator.stepsPerPeriod");
-        respa_steps = pt.get<double>("integrator.respasteps");
+        steps_per_period= pt.get<int>("integrator.stepsPerPeriod");
+        respa_steps = pt.get<int>("integrator.respasteps");
         coolperiods   = pt.get<int>("integrator.coolperiods");
         histperiods   = pt.get<int>("integrator.histperiods");
     } catch(const boost::property_tree::ptree_error &e) {
@@ -417,9 +416,9 @@ Integration_params::Integration_params(const std::string& file_name)
         throw runtime_error("Error reading integration params.");
     }
     
-    time_step = M_PI/stepsPerPeriod;
-    cool_steps = int(coolperiods*stepsPerPeriod);
-    hist_steps = int(histperiods*stepsPerPeriod);
+    time_step = M_PI/steps_per_period;
+    cool_steps = int(coolperiods*steps_per_period);
+    hist_steps = int(histperiods*steps_per_period);
     
     log.log(Logger::info, "Integrator parameters:");
     log.log(Logger::info, "\tTime step: " + std::to_string(time_step));

@@ -61,6 +61,7 @@ public:
     Integration_params(const std::string& file_name);
     
     double time_step;           ///< Time interval, Units are 2/Omega = 1/(pi*f))
+    int steps_per_period;       ///<< Number of time steps taken in 1 RF period.
     
     // respa_steps == RESPA algorithm inner loop number 
     //
@@ -73,8 +74,8 @@ public:
 
     /// Number of RESPA inner loop steps between Coulomb force updates
     int respa_steps;
-    double cool_steps;          ///< Number of timesteps for cooling stage.
-    double hist_steps;          ///< Number of steps to collect statistics.
+    int cool_steps;          ///< Number of timesteps for cooling stage.
+    int hist_steps;          ///< Number of steps to collect statistics.
 };
 
 

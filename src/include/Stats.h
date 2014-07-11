@@ -1,5 +1,5 @@
 //
-//  Stats.h
+//  stats.h
 //  templateTest
 //
 //  Created by Chris Rennick on 22/05/2013.
@@ -11,12 +11,10 @@
 
 /**
  *  @class Stats
- *  @brief Accumulate average and variance for any type \c T.
+ *  @brief Accumulate average and variance for double values.
  *
  *  This class uses the Knuth algorithm to calculate the average and variance
- *  cumulatively, avoiding the need to know the total number of items. It will 
- *  work for any type that overloads the operators add, subtract, multiply and
- *  divide between two variables of type \c T and dividing by an integer.
+ *  cumulatively, avoiding the need to know the total number of items. 
  */
  
 template <class T>
@@ -45,7 +43,15 @@ public:
         }
     }
 
-    /**
+    /** @brief Reset the statistics.
+     */
+    void reset () {
+        count=0;
+        m = T();
+        s = T();
+    }
+
+    /**  
      *  @brief Calculate and return the variance.
      *  @return The variance.
      */

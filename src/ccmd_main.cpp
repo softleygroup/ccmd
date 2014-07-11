@@ -56,11 +56,13 @@
 #include "ImageCollection.h"
 #include "integrator.h"
 #include "logger.h"
+#include "stats.h"
 
 #include <boost/make_shared.hpp>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include <fstream>
 #include <sstream>
 
@@ -106,7 +108,7 @@ int main (int argc, char * const argv[]) {
     if (path[path.length()-1] != '/') 
 	    path += "/";
 
-    log.initialise(Logger::info, path + "log.txt");
+    log.initialise(Logger::debug, path + "log.txt");
     log.log(Logger::info, "CCMD - Coulomb crystal molecular dynamics");
     log.log(Logger::info, "Version 1.0.0");
     
@@ -160,13 +162,44 @@ int main (int argc, char * const argv[]) {
         double dt = integrator_params.time_step;
         DataWriter writer(",");
         writer.writeComment(path + "totalEnergy.csv", "t\tE_tot");
-        for (int t=0; t<nt_cool; ++t) {    
-            integrator.evolve(dt);
+
+        //int write_every = std::floor(6.2831/(15*dt));
+        // Write frame once every 2 RF cycles
+        int write_every = (integrator_params.steps_per_period);
+        write_every = std::max(1, write_every);
+        log.log(Logger::debug, "Writing one frame every " + std::to_string(write_every));
+        int frameNumber=0;
+
+        Stats<double> mean_energy;
+        std::string stats_file = path + "energy.csv";
+        int energy_row = 0;
+
+//------------------------------------------------------------------------------
+// Cooling
+//------------------------------------------------------------------------------
+        for (int t=0; t<nt_cool; ++t) {
+//            cloud->collide();
+//            if (cloud->number_of_ions() ==0) {
+//                log.log(Logger::warn, "No ions remaining, stopping.");
+//                break;
+//            }
             
-            std::list<double> line;
-            line.push_back(t*dt);
-            line.push_back(cloud->total_energy());
-            writer.writeRow (path + "totalEnergy.csv", line);
+            integrator.evolve(dt);
+            mean_energy.append(cloud->kinetic_energy());
+            
+            if (t%write_every==0) {
+                std::list<double> rowdata;
+                rowdata.push_back(energy_row++);
+                rowdata.push_back(mean_energy.average());
+                rowdata.push_back(mean_energy.variance());
+                writer.writeRow(stats_file, rowdata);
+                mean_energy.reset();
+
+                //char buffer[50];
+                //std::sprintf(buffer, "%.4i", frameNumber++);
+                //std::string framepath = buffer;
+                //cloud->savePos(framepath, trap->get_length_scale(), trap->get_time_scale());
+            }
             // Track progress
             int percent = static_cast<int>( (t*100)/nt_cool );
             if ( (t*100/5)%nt_cool == 0 ) {
@@ -178,6 +211,10 @@ int main (int argc, char * const argv[]) {
         
         // Evolution
         int nt = integrator_params.hist_steps;
+
+//------------------------------------------------------------------------------
+// Histogram 
+//------------------------------------------------------------------------------
         
         cout << flush << "Acquiring histogram data" << endl;
         log.log(Logger::info, "Acquiring histogram data");
@@ -186,7 +223,13 @@ int main (int argc, char * const argv[]) {
         stopWatchTimer();
         KE = 0;
         double etot = 0;
-        for (int t=0; t<nt; ++t) {    
+        for (int t=0; t<nt; ++t) {
+//            cloud->collide();
+//            if (cloud->number_of_ions() ==0) {
+//                log.log(Logger::warn, "No ions remaining, stopping.");
+//                break;
+//            }
+            
             integrator.evolve(dt);
             cloud->update_position_histogram(ionImages);
             cloud->updateStats();
@@ -199,6 +242,15 @@ int main (int argc, char * const argv[]) {
             }
             KE += cloud->kinetic_energy();
             etot += cloud->total_energy();
+
+
+            //if (t%write_every==0) {
+                //char buffer[50];
+                //std::sprintf(buffer, "%.4i", frameNumber++);
+                //std::string framepath = buffer;
+                //cloud->savePos(framepath, 
+                        //trap->get_length_scale(), trap->get_time_scale());
+            //}
         }
         KE /= nt;
         printProgBar(100);

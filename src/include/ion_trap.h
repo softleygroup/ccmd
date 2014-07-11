@@ -41,9 +41,9 @@ public:
     double get_length_scale() const { return length_scale; }
     double get_time_scale() const { return time_scale; }
  
-protected:
     /** @brief Pointer to trap parameters object. */
     const Trap_params* trap_params;
+protected:
     
     double v_end;           ///< End-cap voltage.
     double v_rf;            ///< RF amplitude.
@@ -73,6 +73,7 @@ public:
 
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+    double phase_now() const {return cos_phase;}
 
 private:
     double cos_phase;       ///< Magnitude of the cosine function at current time.

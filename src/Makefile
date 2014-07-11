@@ -25,7 +25,7 @@ intel: INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
 gnu: INCLUDE_DIRS :=  ./include
 
 intel: LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
-LIBRARIES := -lboost_system -lboost_thread -lpthread -lrt -lpng -lz
+LIBRARIES := -lboost_system-mt -lboost_thread-mt -lpthread -lpng -lz
 
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 
@@ -33,7 +33,7 @@ intel: CPPFLAGS += -O3 -std=c++11
 gnu: CPPFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
 gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
 
-LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
+#LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
 
 .PHONY: all clean distclean
 
@@ -44,7 +44,7 @@ all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJS)
 #	ar rc $@ $^  
-	$(CC) -o $@ $^ -static $(LIBRARY_DIR) $(LIBRARIES)
+	$(CC) -o $@ $^ $(LIBRARY_DIR) $(LIBRARIES)
 
 $(BUILD_DIR)%.o : %.cpp
 	$(CC) -c $< -o $@ $(CPPFLAGS)
