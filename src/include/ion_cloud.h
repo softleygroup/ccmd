@@ -49,6 +49,8 @@ public:
     void savePos (const std::string basePath, const double length_scale,
                    const double time_scale) const;
     void collide ();
+
+    void swap_first(const Ion_type& from, const Ion_type& to);
 private:
     /** @brief Keep a pointer to the parameters. */
     const Cloud_params* cloud_params;

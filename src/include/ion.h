@@ -50,6 +50,8 @@ public:
     const Stats<Vector3D> get_velStats() const {return velStats;}
     
     void updateStats();
+
+    void update_from(const Ion_type& from);
 protected:
     const Ion_type* ion_type;
     Vector3D pos;

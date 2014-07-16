@@ -108,6 +108,14 @@ public:
     std::list<Ion_type> ionTypeList;
 };
 
+class Swap_params {
+    public:
+        Swap_params(const std::string& file_name, const Cloud_params& p);
+        bool do_swap;
+        Ion_type from;
+        Ion_type to;
+        double p;
+};
 
 class Microscope_params {
 public:

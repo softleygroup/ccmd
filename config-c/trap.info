@@ -6,14 +6,14 @@ trap {
     z0      2.75e-3
     freq    3.85e6
     type    {
-        name waveform
+        name cosine
     }
 }
 integrator {
     stepsPerPeriod 20
-    respasteps  500       ; Respa inner loop steps
-    coolperiods 10000
-    histperiods   50
+    respasteps  50       ; Respa inner loop steps
+    coolperiods 1000
+    histperiods   0
 }
 image {
     makeimage   false

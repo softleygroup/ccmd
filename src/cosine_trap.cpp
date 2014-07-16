@@ -48,7 +48,7 @@ void Cosine_trap::evolve(double dt)
 Vector3D Cosine_trap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
-    Vector3D f(r);
+    Vector3D f(r);    
     f.x *= +2*q_unit_mass*cos_phase - a_unit_mass;
     f.y *= -2*q_unit_mass*cos_phase - a_unit_mass;
     f.z *= 2*a_unit_mass;

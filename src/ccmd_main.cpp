@@ -120,6 +120,7 @@ int main (int argc, char * const argv[]) {
         // Get simulation parameters from files
         Trap_params trap_params(info_file);
         Cloud_params cloud_params(info_file);
+        Swap_params swap_params(info_file, cloud_params);
         Integration_params integrator_params(info_file);
         Microscope_params microscope_params(info_file);
         
@@ -160,7 +161,7 @@ int main (int argc, char * const argv[]) {
         log.log(Logger::info, "Running cool down.");
         int nt_cool = integrator_params.cool_steps;
         double dt = integrator_params.time_step;
-        DataWriter writer(",");
+        DataWriter writer("\t");
         writer.writeComment(path + "totalEnergy.csv", "t\tE_tot");
 
         //int write_every = std::floor(6.2831/(15*dt));
@@ -223,6 +224,9 @@ int main (int argc, char * const argv[]) {
         stopWatchTimer();
         KE = 0;
         double etot = 0;
+        int swap_count = 0;
+        if (swap_params.do_swap)
+            swap_count = std::floor(0.5*nt/swap_params.from.number);
         for (int t=0; t<nt; ++t) {
 //            cloud->collide();
 //            if (cloud->number_of_ions() ==0) {
@@ -231,7 +235,9 @@ int main (int argc, char * const argv[]) {
 //            }
             
             integrator.evolve(dt);
-            cloud->update_position_histogram(ionImages);
+            if (microscope_params.makeimage)
+                cloud->update_position_histogram(ionImages);
+
             cloud->updateStats();
             
             // Track progress
@@ -243,6 +249,10 @@ int main (int argc, char * const argv[]) {
             KE += cloud->kinetic_energy();
             etot += cloud->total_energy();
 
+        if (swap_params.do_swap){
+            if (t%swap_count==0) 
+                cloud->swap_first(swap_params.from, swap_params.to);
+        }
 
             //if (t%write_every==0) {
                 //char buffer[50];

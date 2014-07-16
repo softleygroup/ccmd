@@ -94,17 +94,17 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
     // loop over ion types to initialise ion cloud
     for (std::list<Ion_type>::const_iterator it=cloud_params->ionTypeList.begin();
          it!=cloud_params->ionTypeList.end(); ++it) {
-        // loop over ions numeber for type, construct ions using *trap to ensure
+        // loop over ions number for type, construct ions using *trap to ensure
         // that changes to ion trap parameters are felt by the ions
         for (int i=0; i<it->number; ++i) {
             if (it->is_laser_cooled) {
                 ion_vec.push_back(
-                                  boost::make_shared<Lasercooled_ion>(ion_trap, *it));
+                        boost::make_shared<Lasercooled_ion>(ion_trap, *it));
             } else {
                 
                 //add_ion(new Trapped_ion(trap, *it));
                 ion_vec.push_back(
-                                  boost::make_shared<Trapped_ion>(ion_trap, *it));
+                        boost::make_shared<Trapped_ion>(ion_trap, *it));
             }
         }
     }
@@ -185,6 +185,24 @@ void Ion_cloud::collide()
     std::stringstream ss;
     ss << "Removed " << n << " ions."<< std::endl;
     log.log(Logger::info, ss.str());
+}
+
+/**
+ * @brief Swap the identity of the first ion matching from to to.
+ *
+ * Change the name, mass and charge of ion to the values given in to.
+ */
+void Ion_cloud::swap_first(const Ion_type& from, const Ion_type& to)
+{
+    Logger& log = Logger::getInstance();
+    for (auto ion : ion_vec) {
+        if (ion->name() == from.name) {
+            log.log(Logger::debug, "Found first ion named " + from.name);
+            ion->update_from(to);
+            return;
+        }
+    }
+    log.log(Logger::warn, "Did not find ion named " + from.name);
 }
 
 /**

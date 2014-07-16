@@ -345,6 +345,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionTypeList.push_back(ionType);
         
         log.log(Logger::info, ionType.name + " ions:");
+        log.log(Logger::info, "\tNumber: " + std::to_string(ionType.number));
         log.log(Logger::info, "\tMass: " + std::to_string(ionType.mass));
         log.log(Logger::info, "\tCharge: " + std::to_string(ionType.charge));
         if (ionType.is_laser_cooled) {
@@ -356,6 +357,39 @@ Cloud_params::Cloud_params(const std::string& file_name)
     }
 }
 
+
+/**
+ * @class Swap_params
+ * @brief Store ion type to swap from and to during a simulation.
+ */
+Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
+{
+    Logger& log = Logger::getInstance();
+    using boost::property_tree::iptree;
+    iptree pt;
+    read_info(file_name, pt);
+    boost::optional<iptree&> swap = pt.get_child_optional("ionswapper");
+    if (swap) {
+            log.log(Logger::debug, "Loading swap parameters.");
+            std::string from_formula = swap.get().get<std::string>("from");
+            std::string to_formula = swap.get().get<std::string>("to");
+            p = swap.get().get<double>("prob");
+
+            for (auto type : cp.ionTypeList) {
+                if (type.formula == from_formula) {
+                    from = type;
+                }
+                if (type.formula == to_formula) {
+                    to = type;
+                }
+            }
+            log.log(Logger::info, "Will swap from " + from.formula + " to "
+                    + to.formula);
+            do_swap=true;
+    } else {
+        do_swap=false;
+    }
+}
 
 /**
  *  @class Integration_params
@@ -400,7 +434,7 @@ Integration_params::Integration_params(const std::string& file_name)
 {
     int coolperiods;
     int histperiods;
-    
+
     using boost::property_tree::iptree;
     iptree pt;
     Logger& log = Logger::getInstance();
@@ -415,11 +449,11 @@ Integration_params::Integration_params(const std::string& file_name)
         log.log(Logger::error, e.what());
         throw runtime_error("Error reading integration params.");
     }
-    
+
     time_step = M_PI/steps_per_period;
     cool_steps = int(coolperiods*steps_per_period);
     hist_steps = int(histperiods*steps_per_period);
-    
+
     log.log(Logger::info, "Integrator parameters:");
     log.log(Logger::info, "\tTime step: " + std::to_string(time_step));
     log.log(Logger::info, "\tRESPA steps: " + std::to_string(respa_steps));
@@ -442,7 +476,7 @@ Microscope_params::Microscope_params(const std::string& file_name)
     using boost::property_tree::iptree;
     iptree pt;
     read_info(file_name, pt);
-    
+
     try {
         makeimage = pt.get<bool>("image.makeimage");
         pixels_to_distance   = pt.get<double>("image.scale");

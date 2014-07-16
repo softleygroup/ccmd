@@ -101,3 +101,15 @@ void Ion::updateStats()
     velStats.append(vel*vel);
 }
 
+/**
+ * @brief take new values from the given Ion_type.
+ *
+ * To swap ion to a new identity, take mass, charge and name.
+ */
+void Ion::update_from(const Ion_type& from)
+{
+    mass = from.mass;
+    charge = from.charge;
+    ion_type = &from;
+}
+

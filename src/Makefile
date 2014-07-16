@@ -30,8 +30,10 @@ LIBRARIES := -lboost_system-mt -lboost_thread-mt -lpthread -lpng -lz
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 
 intel: CPPFLAGS += -O3 -std=c++11
-gnu: CPPFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
-gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
+#gnu: CPPFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
+#gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
+gnu: CPPFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto -m64 -funroll-loops
+gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto -m64 -funroll-loops
 
 #LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
 
