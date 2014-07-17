@@ -13,7 +13,7 @@ integrator {
     stepsPerPeriod 20
     respasteps  50       ; Respa inner loop steps
     coolperiods 1000
-    histperiods   0
+    histperiods   100
 }
 image {
     makeimage   false
@@ -24,7 +24,7 @@ image {
     nx          480     ; Number of pixels in x axis
 }
 ionnumbers {
-    Ca      200
+    Ca      2000
      Xe      50
 }
 iontype {

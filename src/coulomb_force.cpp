@@ -13,8 +13,9 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <memory>
 #include <exception>
-#include <boost/thread.hpp>
+#include <thread>
 
 #include <assert.h>
 
@@ -38,8 +39,57 @@ void Coulomb_force::update()
     for (int i=0; i<ionsCopy.size(); i++) {
         ionsCopy[i] = ionCloud->ion_vec[i]->get_pos();
     }
-    m_Thread = boost::thread(&Coulomb_force::direct_force, this);
+
+    // Multi thread
+    max_thread=4;
+    switch (max_thread) {
+        case 0:
+            direct_force();
+            break;
+        case 1:
+            m_Thread = std::thread(&Coulomb_force::direct_force, this);
+        default:
+            for (int i_thread=0; i_thread<max_thread; i_thread++) {
+                threads.push_back(std::thread(&Coulomb_force::split_force, this, i_thread));
+            }
+            break;
+    }
+    
     return;
+}
+
+void Coulomb_force::split_force(int n)
+{
+    // evaluates Coulomb force by direct summation, making use
+    // of force antisymmetry, F_ji = -F_ij
+    Vector3D r1,r2;
+    double r,r3;
+    int q1,q2;
+    
+    int imin = std::floor(n/max_thread * ionsCopy.size());
+    int imax = std::floor((n+1)/max_thread * ionsCopy.size());
+    assert(imin>=0);
+    assert(imax<=ionsCopy.size());
+    // sum Coulomb force over all particles
+    for (int i=imin; i<imax; ++i) {
+        Vector3D force_local = Vector3D(0.0, 0.0, 0.0);
+        r1 = ionsCopy[i];
+        q1 = ionCloud->ion_vec[i]->get_charge();
+        for (int j=0; j<ionsCopy.size(); ++j) {
+            r2 = ionsCopy[j];
+            q2 = ionCloud->ion_vec[j]->get_charge();
+    
+            if (r1==r2) continue;
+            // range checking disabled in release to improve performance
+            assert ( r1 != r2 );
+            
+            // force term calculation
+            r = Vector3D::dist(r1,r2);
+            r3 = r*r*r;
+            force_local += (r1-r2)/r3*q1*q2;
+        }
+        force[i] = force_local;
+    }
 }
 
 void Coulomb_force::direct_force()
@@ -81,7 +131,12 @@ void Coulomb_force::direct_force()
 const std::vector<Vector3D>& Coulomb_force::get_force()
 {
     //Ensure the thread has finished before returning the new force.
-    m_Thread.join();
+    if (max_thread>1) {
+        for (auto& i : threads)
+            if(i.joinable()) i.join();
+    } else {
+        if (m_Thread.joinable()) m_Thread.join();
+    }
     return force;
 };
 

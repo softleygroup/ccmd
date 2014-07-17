@@ -25,14 +25,14 @@ intel: INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
 gnu: INCLUDE_DIRS :=  ./include
 
 intel: LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
-LIBRARIES := -lboost_system-mt -lboost_thread-mt -lpthread -lpng -lz
+LIBRARIES := -lboost_system-mt -lboost_thread-mt -lc++ -lpthread -lpng -lz
 
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 
 intel: CPPFLAGS += -O3 -std=c++11
 #gnu: CPPFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
 #gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
-gnu: CPPFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto -m64 -funroll-loops
+gnu: CPPFLAGS += -Ofast -std=c++11 -stdlib=libc++ -march=native -ffast-math -flto -m64 -funroll-loops
 gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto -m64 -funroll-loops
 
 #LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))

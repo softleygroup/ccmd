@@ -8,8 +8,9 @@
 
 #include "vector3D.h"
 #include "ion_cloud.h"
+#include <memory>
 #include <vector>
-#include <boost/thread.hpp>
+#include <thread>
 
 class Ion_cloud;
 
@@ -26,13 +27,21 @@ public:
     
     // recalculate forces
     void update();
+
 private:
     const Ion_cloud_ptr ionCloud;
     std::vector<Vector3D> ionsCopy;
     std::vector<Vector3D> force;
     void direct_force();
+    void split_force(int n);
     
-    boost::thread m_Thread;
+    int max_thread;
+    std::thread m_Thread;
+    std::vector<std::thread> threads;
+    
+    // Prevent copying
+    Coulomb_force( const Coulomb_force & other ) = delete;
+    Coulomb_force& operator=( const Coulomb_force& ) = delete;
 };
 
 #endif
