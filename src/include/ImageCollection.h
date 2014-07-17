@@ -52,7 +52,7 @@ private:
     boost::thread m_Thread;
     std::string fileName;
     Hist3D* pIonHist;
-    Microscope_params params;
+    Microscope_params& params;
     
     void generateAndSave();
     

@@ -11,7 +11,6 @@
 #include <cmath>
 #include <fstream>
 #include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
 
 /**
  *  @class IonHistogram
@@ -79,7 +78,8 @@ void IonHistogram::writeFiles (const std::string& basePath)
     int cumulate;
     int maxBin;
 
-    BOOST_FOREACH(HistMap::value_type &it, histMap) {
+    for (auto& it : histMap) {
+    //BOOST_FOREACH(HistMap::value_type &it, histMap) {
         fileName = basePath + it.first + fileEnding;
         std::ofstream fileStream(fileName.c_str());
         pTheHist = it.second;

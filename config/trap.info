@@ -28,7 +28,7 @@ simulation {
     seed        69
 }
 ionnumbers {
-    Ca      2000
+    Ca      200
      Xe      50
 }
 iontype {
@@ -47,16 +47,10 @@ iontype {
         recoil      0.00001
         direction   0.5
     }
-    NH3 {
+    ND3 {
         name        Ammonia-d3
-        symbol		ND3
         mass    	20.0
         charge  	1
-        lasercooled	No
-        beta    	0.00
-        heating 	No
-        recoil  	0.00 
-        cooldirection   0
     }
     Xe {
         Name        Xenon

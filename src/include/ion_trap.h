@@ -43,6 +43,9 @@ public:
  
     /** @brief Pointer to trap parameters object. */
     const Trap_params* trap_params;
+
+    Ion_trap(const Ion_trap&) = delete;
+    const Ion_trap& operator=(const Ion_trap&) = delete;
 protected:
     
     double v_end;           ///< End-cap voltage.
@@ -75,6 +78,9 @@ public:
     void evolve(double time);
     double phase_now() const {return cos_phase;}
 
+    Cosine_trap(const Cosine_trap&) = delete;
+    const Cosine_trap& operator=(const Cosine_trap&) = delete;
+
 private:
     double cos_phase;       ///< Magnitude of the cosine function at current time.
 };
@@ -84,6 +90,9 @@ public:
     Cosine_decay_trap(const Trap_params& params);
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+
+    Cosine_decay_trap(const Cosine_decay_trap&) = delete;
+    const Cosine_decay_trap operator=(const Cosine_decay_trap&) = delete;
 
 private:
     double cos_phase;       ///< Magnitude of the cosine function at current time.
@@ -99,6 +108,9 @@ public:
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
 
+    TwoFreq_trap(const TwoFreq_trap&) = delete;
+    const TwoFreq_trap& operator=(const TwoFreq_trap&) = delete;
+
 private:
     double cos_phase;       ///< Magnitude of the cosine function at current time.
     double freq_mult;       ///< Multiplier for second frequency
@@ -110,6 +122,9 @@ public:
     
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+
+    Pulsed_trap(const Pulsed_trap&) = delete;
+    const Pulsed_trap& operator=(const Pulsed_trap&) = delete;
     
 private:
     double tau;   
@@ -122,6 +137,10 @@ public:
     
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+
+    Waveform_trap(const Waveform_trap&) = delete;
+    const Waveform_trap& operator=(const Waveform_trap&) = delete;
+
 private:
     std::vector<double> amplitudes;
     

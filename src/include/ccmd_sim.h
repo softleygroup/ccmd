@@ -13,14 +13,8 @@
 #ifndef CCMD_ccmd_sim_h
 #define CCMD_ccmd_sim_h
 
-#include <string>
-#include <vector>
-#include <map>
 #include <list>
 #include <string>
-
-#include <stdexcept>
-#include <boost/shared_ptr.hpp>
 
 class Logger;
 
@@ -53,6 +47,9 @@ public:
     std::string waveformFile;   ///< File containing waveform data.
 
     double freq_mult;           ///< Multiplier for second waveform
+
+    Trap_params(const Trap_params&) = delete;
+    const Trap_params& operator= (const Trap_params&) = delete;
 };
 
 
@@ -76,15 +73,20 @@ public:
     int respa_steps;
     int cool_steps;          ///< Number of timesteps for cooling stage.
     int hist_steps;          ///< Number of steps to collect statistics.
+
+    Integration_params(const Integration_params&) = delete;
+    const Integration_params& operator=(const Integration_params&) = delete;
+
 };
 
 
 class Ion_type {
-    public:
+public:
+    Ion_type() = default;
     int number;                 ///< Number of these in the trap.
     std::string name;           ///< Name to call ion.
     std::string formula;        ///< Chemical formula.
-    
+
     // Ion physical properties
     double mass;                ///< Mass of ion in atomic mass units.
     int charge;                 ///< Charge of ion in electron charge units.
@@ -92,12 +94,17 @@ class Ion_type {
     double recoil;              ///< Magnitude of stochastic heating.
     int seed;                   ///< Seed for heating random number generator.
     double direction;           ///< Ratio of left-to-right cooling intensity.
-    
+
     bool is_laser_cooled;
     bool is_heated;
+
+    //Ion_type(Ion_type&&) = default;
+    //Ion_type(const Ion_type& ) = delete;
+    //const Ion_type& operator=(const Integration_params&) = delete;
+    //Ion_type& operator=(Integration_params&&) = default;
 };
 
-typedef boost::shared_ptr<Ion_type> Ion_type_ptr;
+//typedef boost::shared_ptr<Ion_type> Ion_type_ptr;
 
 
 class Cloud_params {
@@ -108,14 +115,19 @@ public:
     std::list<Ion_type> ionTypeList;
 };
 
+/*
 class Swap_params {
     public:
         Swap_params(const std::string& file_name, const Cloud_params& p);
         bool do_swap;
-        Ion_type from;
-        Ion_type to;
+        Ion_type_ptr from;
+        Ion_type_ptr to;
         double p;
+
+        Swap_params(const Swap_params&) = delete;
+        const Swap_params& operator=(const Swap_params&) = delete;
 };
+*/
 
 class Microscope_params {
 public:
@@ -129,6 +141,9 @@ public:
     int nx;                      // Number of pixels in x direction
 //    int zmin;                       // start plane
 //    int zmax;                       // end plane
+
+    Microscope_params(const Microscope_params&) = delete;
+    const Microscope_params& operator=(const Microscope_params&) = delete;
 };
 
 

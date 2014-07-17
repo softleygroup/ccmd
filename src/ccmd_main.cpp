@@ -120,7 +120,6 @@ int main (int argc, char * const argv[]) {
         // Get simulation parameters from files
         Trap_params trap_params(info_file);
         Cloud_params cloud_params(info_file);
-        Swap_params swap_params(info_file, cloud_params);
         Integration_params integrator_params(info_file);
         Microscope_params microscope_params(info_file);
         Sim_params sim_params(info_file);
@@ -226,8 +225,8 @@ int main (int argc, char * const argv[]) {
         KE = 0;
         double etot = 0;
         int swap_count = 0;
-        if (swap_params.do_swap)
-            swap_count = std::floor(0.5*nt/swap_params.from.number);
+        //if (swap_params.do_swap)
+            //swap_count = std::floor(0.5*nt/swap_params.from.number);
         for (int t=0; t<nt; ++t) {
 //            cloud->collide();
 //            if (cloud->number_of_ions() ==0) {
@@ -250,10 +249,10 @@ int main (int argc, char * const argv[]) {
             KE += cloud->kinetic_energy();
             etot += cloud->total_energy();
 
-        if (swap_params.do_swap){
-            if (t%swap_count==0) 
-                cloud->swap_first(swap_params.from, swap_params.to);
-        }
+        //if (swap_params.do_swap){
+            //if (t%swap_count==0) 
+                //cloud->swap_first(swap_params.from, swap_params.to);
+        //}
 
             //if (t%write_every==0) {
                 //char buffer[50];

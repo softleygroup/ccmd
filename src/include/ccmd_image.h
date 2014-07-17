@@ -161,7 +161,7 @@ public:
     
 private:
     const Hist3D* hist_ptr;
-    Microscope_params params;    
+    const Microscope_params& params;    
     int plane_now;
     int zmin;
     int zmax;

@@ -12,7 +12,6 @@
 #include <functional>
 #include <algorithm>
 #include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
 
 // To do:   fix aspect ratio
 //#include "eigs.h"
@@ -93,19 +92,18 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& cp,
 : cloud_params(cp), sim_params(sp)
 {
     // loop over ion types to initialise ion cloud
-    for (std::list<Ion_type>::const_iterator it=cloud_params.ionTypeList.begin();
-         it!=cloud_params.ionTypeList.end(); ++it) {
+    for (auto& it : cloud_params.ionTypeList) {
         // loop over ions number for type, construct ions using *trap to ensure
         // that changes to ion trap parameters are felt by the ions
-        for (int i=0; i<it->number; ++i) {
-            if (it->is_laser_cooled) {
+        for (int i=0; i<it.number; ++i) {
+            if (it.is_laser_cooled) {
                 ion_vec.push_back(
-                        boost::make_shared<Lasercooled_ion>(ion_trap, *it, sim_params));
+                        boost::make_shared<Lasercooled_ion>(ion_trap, it, sim_params));
             } else {
                 
                 //add_ion(new Trapped_ion(trap, *it));
                 ion_vec.push_back(
-                        boost::make_shared<Trapped_ion>(ion_trap, *it));
+                        boost::make_shared<Trapped_ion>(ion_trap, it));
             }
         }
     }
@@ -122,11 +120,11 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& cp,
     
     // move cloud centre to the origin
     Vector3D to_origin = -get_cloud_centre();
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         ion->move(to_origin);
     }
 
-    r02 = ion_trap->trap_params->r0;
+    //r02 = ion_trap->trap_params->r0;
 }
 
 
@@ -145,7 +143,7 @@ Ion_cloud::~Ion_cloud()
  */
 void Ion_cloud::drift(double dt)
 {
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         ion->drift(dt);
     }
 }
@@ -158,7 +156,7 @@ void Ion_cloud::drift(double dt)
  */
 void Ion_cloud::kick(double dt)
 {
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         ion->kick(dt);
     }
 }
@@ -169,6 +167,7 @@ void Ion_cloud::kick(double dt)
  *  Simulate trap ejection and electrode collision by removing ions. Note the
  *  radial-only test is not a physical representation of the electrodes.
  */
+/*
 void Ion_cloud::collide()
 {
     Logger& log = Logger::getInstance();
@@ -187,6 +186,7 @@ void Ion_cloud::collide()
     ss << "Removed " << n << " ions."<< std::endl;
     log.log(Logger::info, ss.str());
 }
+*/
 
 /**
  * @brief Swap the identity of the first ion matching from to to.
@@ -232,7 +232,7 @@ void Ion_cloud::kick(double dt, const std::vector<Vector3D>& f)
  */
 void Ion_cloud::velocity_scale(double dt)
 {
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         ion->velocity_scale(dt);
     }
 }
@@ -245,7 +245,7 @@ void Ion_cloud::velocity_scale(double dt)
  */
 void Ion_cloud::heat(double dt)
 {
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         ion->heat(dt);
     }
 }
@@ -262,7 +262,7 @@ double Ion_cloud::kinetic_energy() const
 {
     double e = 0;
     double m;
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         m = ion->get_mass();
         e += 0.5*m*( ion->get_vel().norm_sq() );
     }
@@ -325,7 +325,7 @@ double Ion_cloud::total_energy() const
  */
 void Ion_cloud::updateStats()
 {
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         ion->updateStats();
     }
 }
@@ -364,16 +364,14 @@ void Ion_cloud::saveStats(const std::string basePath,
     // Write the header for each file
       std::string statsHeader="<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)";
       std::string posHeader="x\ty\tz\tvx\tvy\tvz";
-    BOOST_FOREACH(Ion_type type, cloud_params.ionTypeList)
-    {
+    for (auto& type : cloud_params.ionTypeList) {
       name = basePath + type.name + statsFileEnding;
       writer.writeComment(name, statsHeader);
       name = basePath + type.name + posFileEnding;
       writer.writeComment(name, posHeader);
     }
     
-    BOOST_FOREACH(Ion_ptr ion, ion_vec)
-    {
+    for (auto ion : ion_vec) {
         // Write the final position and velocity for each ion.
     	name = basePath + ion->name() + posFileEnding;
     	rowdata.clear();
@@ -455,8 +453,7 @@ void Ion_cloud::savePos(const std::string basePath,
     std::list<double> rowdata;
     std::string name;
 
-    BOOST_FOREACH(Ion_ptr ion, ion_vec)
-    {
+    for (auto ion : ion_vec) {
         // Write the final position and velocity for each ion.
     	name = basePath + ion->name() + fileEnding;
     	rowdata.clear();
@@ -494,8 +491,7 @@ void Ion_cloud::savePos(const std::string basePath,
  */
 void Ion_cloud::update_energy_histogram(IonHistogram& h) const
 {
-    BOOST_FOREACH(Ion_ptr ion, ion_vec )
-    {
+    for (auto ion : ion_vec) {
         ion->recordKE(h);
     }
 }
@@ -513,8 +509,7 @@ void Ion_cloud::update_position_histogram(ImageCollection& h) const
     Vector3D posn;
     Vector3D rotated_pos;
     typedef Ion_ptr_vector::const_iterator ion_itr;
-    BOOST_FOREACH(Ion_ptr ion, ion_vec )
-    {
+    for (auto ion : ion_vec) {
         posn = ion->get_pos();
         rotated_pos.x = (posn.x+posn.y)/sqrt(2.0);
         rotated_pos.y = (posn.x-posn.y)/sqrt(2.0);
@@ -661,7 +656,7 @@ Vector3D Ion_cloud::get_cloud_centre() const
 	Vector3D centre;
     double n_ions = ion_vec.size();
     
-    BOOST_FOREACH(Ion_ptr ion, ion_vec) {
+    for (auto ion : ion_vec) {
         centre += ion->get_pos();
     }
     

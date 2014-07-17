@@ -49,7 +49,7 @@ public:
                    const double time_scale) const;
     void savePos (const std::string basePath, const double length_scale,
                    const double time_scale) const;
-    void collide ();
+    //void collide ();
 
     void swap_first(const Ion_type& from, const Ion_type& to);
 private:
@@ -60,7 +60,7 @@ private:
     typedef std::vector<Ion_ptr> Ion_ptr_vector;
     /** A list of pointers to the ion objects. */
     Ion_ptr_vector ion_vec;
-    double r02; ///< Square of the electrode spacing.
+    //double r02; ///< Square of the electrode spacing.
     
     Vector3D get_cloud_centre() const;
     void move_centre(const Vector3D& v);

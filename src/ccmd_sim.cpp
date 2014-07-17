@@ -5,11 +5,12 @@
 #include "ccmd_sim.h"
 #include "logger.h"
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <algorithm>
+#include <utility>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/exceptions.hpp>
@@ -342,7 +343,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
 
         
         // Append this to the list
-        ionTypeList.push_back(ionType);
+        ionTypeList.push_back(std::move(ionType));
         
         log.log(Logger::info, ionType.name + " ions:");
         log.log(Logger::info, "\tNumber: " + std::to_string(ionType.number));
@@ -362,6 +363,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
  * @class Swap_params
  * @brief Store ion type to swap from and to during a simulation.
  */
+/*
 Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
 {
     Logger& log = Logger::getInstance();
@@ -375,7 +377,7 @@ Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
             std::string to_formula = swap.get().get<std::string>("to");
             p = swap.get().get<double>("prob");
 
-            for (auto type : cp.ionTypeList) {
+            for (auto& type : cp.ionTypeList) {
                 if (type.formula == from_formula) {
                     from = type;
                 }
@@ -390,6 +392,7 @@ Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
         do_swap=false;
     }
 }
+*/
 
 /**
  *  @class Integration_params
