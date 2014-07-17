@@ -6,6 +6,7 @@
 #define CCMD_Stochastic_heat_h
 
 #include "vector3D.h"
+#include "logger.h"
 #include <boost/random.hpp>
 
 using namespace boost;
@@ -27,11 +28,9 @@ public:
     : normal(generator, norm_dist), flat_dist(0,1),
     flat(generator, flat_dist), kick_size(0.01) {
         if (seed<0) {
-            generator.seed(static_cast<unsigned int>(std::time(0)));
-        } else {
-            generator.seed(static_cast<unsigned int>(seed));
+            seed = std::time(0);
         }
-//        generator.seed(42u);
+        generator.seed(static_cast<unsigned int>(seed));
             
     }
     Vector3D random_kick() 

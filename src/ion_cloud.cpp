@@ -88,18 +88,19 @@ struct position_ions {
  * @param params    A reference to the cloud parameters object.
  *
  */
-Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params)
-: cloud_params(&params)
+Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& cp,
+        const Sim_params& sp)
+: cloud_params(cp), sim_params(sp)
 {
     // loop over ion types to initialise ion cloud
-    for (std::list<Ion_type>::const_iterator it=cloud_params->ionTypeList.begin();
-         it!=cloud_params->ionTypeList.end(); ++it) {
+    for (std::list<Ion_type>::const_iterator it=cloud_params.ionTypeList.begin();
+         it!=cloud_params.ionTypeList.end(); ++it) {
         // loop over ions number for type, construct ions using *trap to ensure
         // that changes to ion trap parameters are felt by the ions
         for (int i=0; i<it->number; ++i) {
             if (it->is_laser_cooled) {
                 ion_vec.push_back(
-                        boost::make_shared<Lasercooled_ion>(ion_trap, *it));
+                        boost::make_shared<Lasercooled_ion>(ion_trap, *it, sim_params));
             } else {
                 
                 //add_ion(new Trapped_ion(trap, *it));
@@ -363,7 +364,7 @@ void Ion_cloud::saveStats(const std::string basePath,
     // Write the header for each file
       std::string statsHeader="<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)";
       std::string posHeader="x\ty\tz\tvx\tvy\tvz";
-    BOOST_FOREACH(Ion_type type, cloud_params->ionTypeList)
+    BOOST_FOREACH(Ion_type type, cloud_params.ionTypeList)
     {
       name = basePath + type.name + statsFileEnding;
       writer.writeComment(name, statsHeader);

@@ -123,6 +123,7 @@ int main (int argc, char * const argv[]) {
         Swap_params swap_params(info_file, cloud_params);
         Integration_params integrator_params(info_file);
         Microscope_params microscope_params(info_file);
+        Sim_params sim_params(info_file);
         
         // Construct trap based on parameters
         Ion_trap_ptr trap;
@@ -145,10 +146,10 @@ int main (int argc, char * const argv[]) {
         }
         
         // Construct ion cloud
-        Ion_cloud_ptr cloud = boost::make_shared<Ion_cloud>(trap, cloud_params);
+        Ion_cloud_ptr cloud = boost::make_shared<Ion_cloud>(trap, cloud_params, sim_params);
         
         // Construct integrator
-        RESPA_integrator integrator(trap, cloud, integrator_params);
+        RESPA_integrator integrator(trap, cloud, integrator_params, sim_params);
 
         // Construct integrator
         //CUDA_integrator integrator(trap, cloud, integrator_params);

@@ -81,7 +81,7 @@ private:
 
 class Lasercooled_ion : public Trapped_ion {
 public:
-    Lasercooled_ion(const Ion_trap_ptr& ion_trap,const Ion_type& type);
+    Lasercooled_ion(const Ion_trap_ptr& ion_trap,const Ion_type& type, const Sim_params& sp);
     ~Lasercooled_ion() {}
     
     void kick(double dt);

@@ -24,11 +24,13 @@
  *
  *  @param it       Pointer to ion trap object.
  *  @param ic       Pointer to ion cloud object.
- *  @param params   Pointer to integrator parameters.
+ *  @param ip       Reference to integrator parameters.
+ *  @param sp       Reference to simulation parameters.
  */
 RESPA_integrator::RESPA_integrator(const Ion_trap_ptr &it, Ion_cloud_ptr &ic,
-                                   const Integration_params& params)
-    : Integrator(it,ic,params)
+                                   const Integration_params& params,
+                                   const Sim_params& sp)
+    : Integrator(it, ic, params, sp)
 {
     respa_steps = params.respa_steps;
 }

@@ -23,6 +23,10 @@ image {
     nz          640     ; Number of pixels in z axis
     nx          480     ; Number of pixels in x axis
 }
+simulation {
+    threads     0
+    seed        69
+}
 ionnumbers {
     Ca      2000
      Xe      50

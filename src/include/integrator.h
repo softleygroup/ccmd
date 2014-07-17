@@ -16,7 +16,8 @@ class Integration_params;
 class Integrator {
     friend class Coulomb_force;
 public:
-    Integrator(const Ion_trap_ptr& it, Ion_cloud_ptr& ic, const Integration_params& params);
+    Integrator(const Ion_trap_ptr& it, Ion_cloud_ptr& ic,
+               const Integration_params& params, const Sim_params& sp);
     virtual ~Integrator();
     virtual void evolve(double dt)=0;
 protected:
@@ -26,8 +27,8 @@ protected:
 private:
     // prevent copying Integrator to avoid ambiguous evolution
     // of Ion_cloud and Trap classes
-    Integrator(const Integrator& integrator_in);                // not implemented
-    Integrator& operator=(const Integrator& integrator_in);     // not implemented
+    Integrator(const Integrator& ) = delete;
+    Integrator& operator=(const Integrator&) = delete;
 };
 
 //
@@ -38,9 +39,9 @@ private:
 //
 class RESPA_integrator : public Integrator {
 public:
-    RESPA_integrator(const Ion_trap_ptr &it, Ion_cloud_ptr& ic, const Integration_params& params);
+    RESPA_integrator(const Ion_trap_ptr &it, Ion_cloud_ptr& ic,
+                     const Integration_params& params, const Sim_params& sp);
  
-    void set_fast_steps(int steps) { respa_steps = steps; }
     void evolve(double dt);
 
 protected:

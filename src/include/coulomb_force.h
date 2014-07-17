@@ -9,8 +9,9 @@
 #include "vector3D.h"
 #include "ion_cloud.h"
 #include <memory>
-#include <vector>
+#include <mutex>
 #include <thread>
+#include <vector>
 
 class Ion_cloud;
 
@@ -19,7 +20,7 @@ class Ion_cloud;
 
 class Coulomb_force {
 public:
-    Coulomb_force(const Ion_cloud_ptr &ic);
+    Coulomb_force(const Ion_cloud_ptr &ic, const Sim_params& sp);
     const std::vector<Vector3D>& get_force();
     
     // return Coulomb force on a particular ion
@@ -30,13 +31,16 @@ public:
 
 private:
     const Ion_cloud_ptr ionCloud;
-    std::vector<Vector3D> ionsCopy;
-    std::vector<Vector3D> force;
+    const Sim_params& sim_params;
+
     void direct_force();
     void split_force(int n);
-    
+
+    std::vector<Vector3D> ionsCopy;
+    std::vector<Vector3D> force;
     int max_thread;
     std::thread m_Thread;
+    std::mutex m_Mutex;
     std::vector<std::thread> threads;
     
     // Prevent copying

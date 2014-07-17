@@ -491,3 +491,31 @@ Microscope_params::Microscope_params(const std::string& file_name)
     }
 }
 
+/** 
+ *  @class Sim_params
+ *  @brief Store parameters related to overall simulation
+ *
+ *  These parameters control how the simulation runs and have minimal influence
+ *  on the output. All are optional
+ */
+Sim_params::Sim_params(const std::string& file_name)
+{
+    using boost::property_tree::iptree;
+    iptree pt;
+    read_info(file_name, pt);
+    
+    boost::optional<iptree&> params = pt.get_child_optional("simulation");
+    if (params) {
+        coulomb_threads = params.get().get<int>("threads", 0);
+        random_seed = params.get().get<int>("seed", -1);
+    } else {
+        coulomb_threads = 0;
+        random_seed = -1;
+    }
+    
+    Logger& log = Logger::getInstance();
+    log.log(Logger::info, "Coulomb Force using " + std::to_string(coulomb_threads)
+            + " threads.");
+    log.log(Logger::info, "Random seed " + std::to_string(random_seed));
+}
+

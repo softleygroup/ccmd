@@ -10,11 +10,11 @@
 #include "ion_cloud.h"
 #include "ion.h"
 
-#include <iostream>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include <iostream>
 #include <memory>
-#include <exception>
+#include <mutex>
 #include <thread>
 
 #include <assert.h>
@@ -22,8 +22,8 @@
 
 // To do: remove loops using std::transform
 
-Coulomb_force::Coulomb_force(const Ion_cloud_ptr &ic)
-    : ionCloud(ic)
+Coulomb_force::Coulomb_force(const Ion_cloud_ptr &ic, const Sim_params& sp)
+    : ionCloud(ic), sim_params(sp)
 {
     force = std::vector<Vector3D>( ionCloud->number_of_ions() );
     ionsCopy = std::vector<Vector3D>(ionCloud->number_of_ions());
@@ -41,21 +41,19 @@ void Coulomb_force::update()
     }
 
     // Multi thread
-    max_thread=4;
-    switch (max_thread) {
+    switch (sim_params.coulomb_threads) {
         case 0:
             direct_force();
             break;
         case 1:
             m_Thread = std::thread(&Coulomb_force::direct_force, this);
+            break;
         default:
-            for (int i_thread=0; i_thread<max_thread; i_thread++) {
+            for (int i_thread=0; i_thread<sim_params.coulomb_threads; i_thread++) {
                 threads.push_back(std::thread(&Coulomb_force::split_force, this, i_thread));
             }
             break;
     }
-    
-    return;
 }
 
 void Coulomb_force::split_force(int n)
@@ -66,8 +64,8 @@ void Coulomb_force::split_force(int n)
     double r,r3;
     int q1,q2;
     
-    int imin = std::floor(n/max_thread * ionsCopy.size());
-    int imax = std::floor((n+1)/max_thread * ionsCopy.size());
+    int imin = std::floor((double)n/(double)max_thread * ionsCopy.size());
+    int imax = std::floor((double)(n+1)/(double)max_thread * ionsCopy.size());
     assert(imin>=0);
     assert(imax<=ionsCopy.size());
     // sum Coulomb force over all particles
@@ -88,7 +86,9 @@ void Coulomb_force::split_force(int n)
             r3 = r*r*r;
             force_local += (r1-r2)/r3*q1*q2;
         }
+        m_Mutex.lock();
         force[i] = force_local;
+        m_Mutex.unlock();
     }
 }
 
@@ -131,9 +131,10 @@ void Coulomb_force::direct_force()
 const std::vector<Vector3D>& Coulomb_force::get_force()
 {
     //Ensure the thread has finished before returning the new force.
-    if (max_thread>1) {
+    if (sim_params.coulomb_threads>1) {
         for (auto& i : threads)
             if(i.joinable()) i.join();
+        threads.clear();
     } else {
         if (m_Thread.joinable()) m_Thread.join();
     }

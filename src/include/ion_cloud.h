@@ -21,7 +21,8 @@ class Ion_type;
 
 class Ion_cloud {
 public:
-    Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& params);
+    Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& cp,
+            const Sim_params& sp);
     ~Ion_cloud();
 
 
@@ -52,8 +53,10 @@ public:
 
     void swap_first(const Ion_type& from, const Ion_type& to);
 private:
-    /** @brief Keep a pointer to the parameters. */
-    const Cloud_params* cloud_params;
+    /** @brief Keep a reference to the parameters. */
+    const Cloud_params& cloud_params;
+    /** @brief Keep a reference to the parameters. */
+    const Sim_params& sim_params;
     typedef std::vector<Ion_ptr> Ion_ptr_vector;
     /** A list of pointers to the ion objects. */
     Ion_ptr_vector ion_vec;
@@ -66,6 +69,10 @@ private:
     
     /** @brief Coulomb_force needs direct access to the list of ions. */
     friend class Coulomb_force;
+
+    // Prevent copying
+    Ion_cloud(const Ion_cloud&) = delete;
+    const Ion_cloud& operator=(const Ion_cloud&) = delete;
 };
 
 typedef boost::shared_ptr<Ion_cloud> Ion_cloud_ptr;

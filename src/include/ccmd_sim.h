@@ -131,6 +131,21 @@ public:
 //    int zmax;                       // end plane
 };
 
-        
+
+class Sim_params {
+public:
+    Sim_params(const std::string& file_name);
+    
+    /** Number of threads to use in coulomb_force calculation. Default 0. */
+    int coulomb_threads;
+    /** Seed for random number generator used by stochastic_heat. -1 chooses
+     seed from system clock and will be different for every run. Default -1. */
+    int random_seed;
+    
+private:
+    Sim_params(const Sim_params& ) = delete;
+    const Sim_params& operator=(const Sim_params&) = delete;
+};
+
 
 #endif
