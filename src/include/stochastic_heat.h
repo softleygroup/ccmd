@@ -28,7 +28,7 @@ public:
     : normal(generator, norm_dist), flat_dist(0,1),
     flat(generator, flat_dist), kick_size(0.01) {
         if (seed<0) {
-            seed = std::time(0);
+            seed = (int)std::time(0);
         }
         generator.seed(static_cast<unsigned int>(seed));
             
@@ -41,6 +41,9 @@ public:
     bool kick_direction (const double p) {
         double num = flat();
         return p>num;}
+    
+    Stochastic_heat(const Stochastic_heat&) = delete;
+    const Stochastic_heat& operator=(const Stochastic_heat&) = delete;
 };
 
 #endif

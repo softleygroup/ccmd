@@ -24,6 +24,9 @@ public:
 	~DataWriter();
 	void writeRow(const std::string& fileName, const std::list<double>& rowData);
 	void writeComment(const std::string& fileName, const std::string& commentText);
+    
+    DataWriter(const DataWriter&) = delete;
+    const DataWriter& operator=(const DataWriter&) = delete;
 private:
     /// A pointer to a file stream.
     typedef boost::shared_ptr<std::ofstream> fStreamPt;

@@ -39,9 +39,9 @@ public:
     void recordKE(IonHistogram& ionHistogram) const;
     
     // accessor functions
-    const Ion_type& get_type() const {return *ion_type; }
-    std::string name() const {return ion_type->name;}
-    std::string formula() const {return ion_type->formula;}
+    const Ion_type& get_type() const {return ion_type; }
+    std::string name() const {return ion_type.name;}
+    std::string formula() const {return ion_type.formula;}
     const Vector3D& get_pos() const {return pos;}
     const Vector3D& get_vel() const {return vel;}
     double get_mass() const {return mass;}
@@ -52,8 +52,11 @@ public:
     void updateStats();
 
     void update_from(const Ion_type& from);
+
+    Ion(const Ion&) = delete;
+    const Ion& operator=(const Ion&) = delete;
 protected:
-    const Ion_type* ion_type;
+    const Ion_type& ion_type;
     Vector3D pos;
     Vector3D vel;
     double mass;
@@ -75,6 +78,8 @@ public:
     virtual void kick(double dt);
     virtual void velocity_scale(double dt) {}
 
+    Trapped_ion(const Trapped_ion&) = delete;
+    const Trapped_ion& operator=(const Trapped_ion&) = delete;
 private:
     const Ion_trap_ptr trap;
 };
@@ -88,6 +93,8 @@ public:
     void velocity_scale(double dt);
     void heat(double dt);
 
+    Lasercooled_ion(const Lasercooled_ion&) = delete;
+    const Lasercooled_ion& operator=(const Lasercooled_ion&) = delete;
 private:
     double beta;
     

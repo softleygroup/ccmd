@@ -44,6 +44,8 @@ public:
  
     void evolve(double dt);
 
+    RESPA_integrator(RESPA_integrator&) = delete;
+    const RESPA_integrator operator=(const RESPA_integrator&) = delete;
 protected:
     int respa_steps;
 };

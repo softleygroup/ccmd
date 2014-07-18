@@ -52,6 +52,9 @@ public:
     //void collide ();
 
     void swap_first(const Ion_type& from, const Ion_type& to);
+
+    Ion_cloud(const Ion_cloud&) = delete;
+    const Ion_cloud& operator=(const Ion_cloud&) = delete;
 private:
     /** @brief Keep a reference to the parameters. */
     const Cloud_params& cloud_params;
@@ -69,10 +72,6 @@ private:
     
     /** @brief Coulomb_force needs direct access to the list of ions. */
     friend class Coulomb_force;
-
-    // Prevent copying
-    Ion_cloud(const Ion_cloud&) = delete;
-    const Ion_cloud& operator=(const Ion_cloud&) = delete;
 };
 
 typedef boost::shared_ptr<Ion_cloud> Ion_cloud_ptr;

@@ -140,7 +140,6 @@ public:
 
     Waveform_trap(const Waveform_trap&) = delete;
     const Waveform_trap& operator=(const Waveform_trap&) = delete;
-
 private:
     std::vector<double> amplitudes;
     

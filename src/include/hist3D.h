@@ -18,7 +18,7 @@ class histPixel;
 
 class Hist3D {    
 public:
-    
+    Hist3D() = default;
     enum xyz{x=0,y,z};                  // specifies an axis
 
     void update(const Vector3D& r);     // adds point to histogram, increments bin
@@ -51,6 +51,9 @@ public:
     void reset();
 
     static double bin_size;
+    
+    Hist3D(const Hist3D&) = delete;
+    const Hist3D& operator=(const Hist3D&) = delete;
 private:
     std::map<std::vector<int>,double> hist;
 

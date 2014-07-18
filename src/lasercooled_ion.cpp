@@ -23,9 +23,9 @@ Lasercooled_ion::Lasercooled_ion(const Ion_trap_ptr& ion_trap, const Ion_type& t
         const Sim_params& sp)
     : Trapped_ion(ion_trap,type), heater(sp.random_seed)
 {
-    assert(ion_type->is_laser_cooled==true);
-    beta = ion_type->beta;
-    heater.set_kick_size( sqrt(ion_type->recoil) );
+    assert(ion_type.is_laser_cooled==true);
+    beta = ion_type.beta;
+    heater.set_kick_size( sqrt(ion_type.recoil) );
 }
 
 /**
@@ -44,7 +44,7 @@ inline void Lasercooled_ion::kick(double dt)
     Vector3D pressure(0.0, 0.0, 0.015);
     // Randomly apply pressure from positive or negative \c z direction,
     // weighted by the `direction` parameter.
-    if (heater.kick_direction(ion_type->direction))
+    if (heater.kick_direction(ion_type.direction))
         this->Ion::kick(dt,pressure);
     else
         this->Ion::kick(dt,-pressure);

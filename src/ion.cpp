@@ -33,10 +33,10 @@
  */
 
 Ion::Ion(const Ion_type& type)
-: ion_type(&type)
+: ion_type(type)
 {
-    mass = ion_type->mass;
-    charge = ion_type->charge;
+    mass = ion_type.mass;
+    charge = ion_type.charge;
 }
 
 /**
@@ -74,7 +74,7 @@ inline void Ion::kick(const double dt, const Vector3D& f)
 void Ion::recordKE(IonHistogram& ionHistogram) const
 {
     double energy;
-    double mon2 = 0.5 * ion_type->mass;
+    double mon2 = 0.5 * ion_type.mass;
     //total
     energy = mon2 * vel.norm_sq();
     ionHistogram.addIon(name() + "_total", energy);
@@ -108,8 +108,9 @@ void Ion::updateStats()
  */
 void Ion::update_from(const Ion_type& from)
 {
-    mass = from.mass;
-    charge = from.charge;
-    ion_type = &from;
+    //mass = from.mass;
+    //charge = from.charge;
+    //ion_type = from;
+    std::cout << "NO UPDATING!";
 }
 

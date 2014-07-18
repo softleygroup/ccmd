@@ -18,6 +18,9 @@ public:
     ~IonHistogram();
     void addIon(const std::string& name, const double& energy);
     void writeFiles (const std::string& basePath);
+    
+    IonHistogram(IonHistogram&) = delete;
+    const IonHistogram& operator=(const IonHistogram&) = delete;
 private:
     /// A histogram with bin index number and bin count.
     typedef std::map<int, int> Histogram;
