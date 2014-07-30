@@ -220,6 +220,8 @@ int main (int argc, char * const argv[]) {
         cout << flush << "Acquiring histogram data" << endl;
         log.log(Logger::info, "Acquiring histogram data");
 
+        IonHistogram ionHistogram(0.5);
+
 	    // Start timer
         stopWatchTimer();
         KE = 0;
@@ -239,6 +241,7 @@ int main (int argc, char * const argv[]) {
                 cloud.update_position_histogram(ionImages);
 
             cloud.updateStats();
+            cloud.update_energy_histogram(ionHistogram);
             
             // Track progress
             int percent = static_cast<int>( (t*100)/nt );
@@ -271,6 +274,8 @@ int main (int argc, char * const argv[]) {
 
         log.log(Logger::info, "total kinetic energy = " + std::to_string(KE));
         log.log(Logger::info, "total energy = " + std::to_string(etot));
+
+        ionHistogram.writeFiles("ionEnergy");
         
         if (microscope_params.makeimage)
         {

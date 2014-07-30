@@ -49,11 +49,6 @@ public:
     const Ion_trap& operator=(const Ion_trap&) = delete;
 protected:
     
-    double v_end;           ///< End-cap voltage.
-    double v_rf;            ///< RF amplitude.
-    double eta;             ///< Trap geometric parameter.
-    double r0;              ///< Centre-to-centre trap rod radius.
-    double z0;              ///< Length of trap RF electrodes.
     double freq;            ///< RF driving frequency.
     
     double a_unit_mass;     ///< Mathieu \c a parameter.
@@ -61,7 +56,6 @@ protected:
     double length_scale;    ///< Derived simulation length scale.
     double time_scale;      ///< Derived simulation time scale.
     
-    double omega;           ///< Trap voltage angular frequency.
     double time_now;        ///< Current time in simulation units.
 
     static const double pi;

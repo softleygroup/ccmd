@@ -38,19 +38,13 @@ Ion_trap::Ion_trap(const Trap_params& params)
 { 
     // Start at zero-time
     time_now = 0.0;
-
-    // Update trap variables
-    v_rf = trap_params.v_rf;
-    v_end = trap_params.v_end;
-    eta = trap_params.eta;
-    r0 = trap_params.r0;
-    z0 = trap_params.z0;
-    freq = trap_params.freq;
     
-    // Update derived quantities
-    omega = 2*pi*freq;
-    a_unit_mass =  -4.0*eta*electron_charge*v_end/(u_mass*omega*omega*z0*z0);
-    q_unit_mass =  2.0*electron_charge*v_rf/(u_mass*omega*omega*r0*r0);
+    // Calculate derived quantities
+    double omega = 2*pi*trap_params.freq;
+    a_unit_mass =  -4.0*trap_params.eta*electron_charge*trap_params.v_end
+        /(u_mass*omega*omega*trap_params.z0*trap_params.z0);
+    q_unit_mass =  2.0*electron_charge*trap_params.v_rf
+        /(u_mass*omega*omega*trap_params.r0*trap_params.r0);
     
     // TODO: move into params
     length_scale = electron_charge*electron_charge/(pi*epsilon_0*u_mass*omega*omega);

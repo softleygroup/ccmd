@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
-//#include <boost/make_shared.hpp>
 
 // To do:   fix aspect ratio
 //#include "eigs.h"
