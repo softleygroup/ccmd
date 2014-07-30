@@ -1,10 +1,10 @@
-/** @class Ion_trap @brief Base class defining a quadrupole ion trap.
+/** @class IonTrap @brief Base class defining a quadrupole ion trap.
  *
  *  This base class stores the trap parameters and calculates the parameters
  *  for the Mathieu equation: \c a and \c q. Sub-classes inheriting this class
  *  implement their own time-dependent voltage, and force calculation.
  *
- *  @see Cosine_trap @see Pulsed_trap @see Waveform_trap
+ *  @see CosineTrap @see Pulsed_trap @see Waveform_trap
  */
 
 #include "ion_trap.h"
@@ -15,13 +15,13 @@
 #include <cmath>
 
 /** @brief Over-precise value of pi. */
-const double Ion_trap::pi = 3.141592653589793238462643383279502884;
+const double IonTrap::pi = 3.141592653589793238462643383279502884;
 /** @brief Over-precise value of epsilon_0. */
-const double Ion_trap::epsilon_0 = 8.85418781762e-12;
+const double IonTrap::epsilon_0 = 8.85418781762e-12;
 /** @brief Over-precise value of electron charge. */
-const double Ion_trap::electron_charge = 1.60217733e-19;
+const double IonTrap::electron_charge = 1.60217733e-19;
 /** @brief 1 AMU in kg. */
-const double Ion_trap::u_mass = 1.6605402e-27;
+const double IonTrap::u_mass = 1.6605402e-27;
 
 /**
  *  @brief Create a new ion trap and determine some derived quantities.
@@ -33,18 +33,18 @@ const double Ion_trap::u_mass = 1.6605402e-27;
  *
  *  @param params Reference to the trap parameters.
  */
-Ion_trap::Ion_trap(const Trap_params& params) 
-    : trap_params(params)
+IonTrap::IonTrap(const TrapParams& params) 
+    : trapParams(params)
 { 
     // Start at zero-time
     time_now = 0.0;
     
     // Calculate derived quantities
-    double omega = 2*pi*trap_params.freq;
-    a_unit_mass =  -4.0*trap_params.eta*electron_charge*trap_params.v_end
-        /(u_mass*omega*omega*trap_params.z0*trap_params.z0);
-    q_unit_mass =  2.0*electron_charge*trap_params.v_rf
-        /(u_mass*omega*omega*trap_params.r0*trap_params.r0);
+    double omega = 2*pi*trapParams.freq;
+    a_unit_mass =  -4.0*trapParams.eta*electron_charge*trapParams.v_end
+        /(u_mass*omega*omega*trapParams.z0*trapParams.z0);
+    q_unit_mass =  2.0*electron_charge*trapParams.v_rf
+        /(u_mass*omega*omega*trapParams.r0*trapParams.r0);
     
     // TODO: move into params
     length_scale = electron_charge*electron_charge/(pi*epsilon_0*u_mass*omega*omega);

@@ -2,12 +2,13 @@
 //  ion.cpp
 //
 
-#include "ion.h"
-#include "ccmd_sim.h"
-#include "IonHistogram.h"
-#include "Stats.h"
+#include "include/ion.h"
 
 #include <stdexcept>
+
+#include "include/ccmd_sim.h"
+#include "include/IonHistogram.h"
+#include "include/Stats.h"
 
 /**
  *  @class Ion
@@ -33,8 +34,7 @@
  */
 
 Ion::Ion(const Ion_type& type)
-: ion_type(type)
-{
+: ion_type(type) {
     mass = ion_type.mass;
     charge = ion_type.charge;
 }
@@ -46,8 +46,7 @@ Ion::Ion(const Ion_type& type)
  *
  *  @param dt Time step.
  */
-void Ion::drift(const double dt)
-{
+void Ion::drift(const double dt) {
     pos += vel*dt;
 }
 
@@ -56,8 +55,7 @@ void Ion::drift(const double dt)
  *  @param dt   Time step.
  *  @param f    Force vector.
  */
-inline void Ion::kick(const double dt, const Vector3D& f)
-{
+inline void Ion::kick(const double dt, const Vector3D& f) {
     double time_over_mass = dt/mass;
     vel += f*time_over_mass;
 }
@@ -71,20 +69,19 @@ inline void Ion::kick(const double dt, const Vector3D& f)
  *
  *  @param ionHistogram A reference to the histogram object to update.
  */
-void Ion::recordKE(IonHistogram& ionHistogram) const
-{
+void Ion::recordKE(IonHistogram& ionHistogram) const {
     double energy;
     double mon2 = 0.5 * ion_type.mass;
-    //total
+    // total
     energy = mon2 * vel.norm_sq();
     ionHistogram.addIon(name() + "_total", energy);
-    //x - directed
+    // x - directed
     energy = mon2 * vel[0] * vel[0];
     ionHistogram.addIon(name() + "_x", energy);
-    //y - directed
+    // y - directed
     energy = mon2 * vel[1] * vel[1];
     ionHistogram.addIon(name() + "_y", energy);
-    //z - directed
+    // z - directed
     energy = mon2 * vel[2] * vel[2];
     ionHistogram.addIon(name() + "_z", energy);
 }
@@ -95,8 +92,7 @@ void Ion::recordKE(IonHistogram& ionHistogram) const
  *  Appends the current kinetic energy (velocity^2, so this needs to be 
  *  multiplied by mass/2 before output) and position to the `Stats` objects.
  */
-void Ion::updateStats()
-{
+void Ion::updateStats() {
     posStats.append(pos);
     velStats.append(vel*vel);
 }
@@ -106,11 +102,10 @@ void Ion::updateStats()
  *
  * To swap ion to a new identity, take mass, charge and name.
  */
-void Ion::update_from(const Ion_type& from)
-{
-    //mass = from.mass;
-    //charge = from.charge;
-    //ion_type = from;
+void Ion::update_from(const Ion_type& from) {
+    // mass = from.mass;
+    // charge = from.charge;
+    // ion_type = from;
     std::cout << "NO UPDATING!";
 }
 

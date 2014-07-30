@@ -15,8 +15,8 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-Cosine_decay_trap::Cosine_decay_trap(const Trap_params& params)
-   : Cosine_trap(params)
+Cosine_decay_trap::Cosine_decay_trap(const TrapParams& params)
+   : CosineTrap(params)
 {
     cos_phase = 0.0;
     tau = params.tau;

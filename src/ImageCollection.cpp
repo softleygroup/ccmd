@@ -48,7 +48,7 @@ void ImageCollection::addIon(const std::string &name, const Vector3D &r)
     pIonHist->update(r);
 }
 
-void ImageCollection::writeFiles(std::string const& basePath, Microscope_params& p) const
+void ImageCollection::writeFiles(std::string const& basePath, MicroscopeParams& p) const
 {
     typedef std::list<ImageWorker*> ThreadList;
     ThreadList threadList;
@@ -69,7 +69,7 @@ void ImageCollection::writeFiles(std::string const& basePath, Microscope_params&
 ImageWorker::ImageWorker(
                          std::string const& basePath,
                          ImageCollection::Collection::const_iterator const& it,
-                         Microscope_params& p)
+                         MicroscopeParams& p)
 :basePath(basePath), fileName(it->first), pIonHist(it->second), params(p)
 {
     m_Thread = boost::thread(&ImageWorker::generateAndSave, this);

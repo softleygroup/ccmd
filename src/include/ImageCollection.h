@@ -29,7 +29,7 @@ public:
     ~ImageCollection();
     
     void addIon(const std::string& name, const Vector3D& r);
-    void writeFiles(std::string const& basePath, Microscope_params& p) const;
+    void writeFiles(std::string const& basePath, MicroscopeParams& p) const;
 private:
     typedef std::map<std::string, Hist3D*> Collection;
     Collection collection;
@@ -42,7 +42,7 @@ class ImageWorker
 {
 public:
     ImageWorker(std::string const& basePath, ImageCollection::Collection::const_iterator const& it,
-                Microscope_params& p);
+                MicroscopeParams& p);
     void join();
     
 private:
@@ -52,7 +52,7 @@ private:
     boost::thread m_Thread;
     std::string fileName;
     Hist3D* pIonHist;
-    Microscope_params& params;
+    MicroscopeParams& params;
     
     void generateAndSave();
     

@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-//Microscope_params::Microscope_params() 
+//MicroscopeParams::MicroscopeParams() 
 //{
 //    pixels_to_distance = 1;
 //    w0 = 5.0*pixels_to_distance;
@@ -22,7 +22,7 @@
 //    zmax = 0;
 //}
 
-Microscope_image::Microscope_image(const Hist3D& hist, const Microscope_params& p)
+Microscope_image::Microscope_image(const Hist3D& hist, const MicroscopeParams& p)
     : CCMD_image(p.nx,p.nz), hist_ptr(&hist), zmin(0), zmax(0), params(p)
 {
     hist.minmax(Hist3D::x, zmin, zmax);

@@ -13,14 +13,14 @@
 #include <thread>
 #include <vector>
 
-class Ion_cloud;
+class IonCloud;
 
 // This class calculates and stores a vector of Coulomb 
 // forces for an ion cloud
 
 class Coulomb_force {
 public:
-    Coulomb_force(const Ion_cloud& ic, const Sim_params& sp);
+    Coulomb_force(const IonCloud& ic, const SimParams& sp);
     const std::vector<Vector3D>& get_force();
     
     // return Coulomb force on a particular ion
@@ -30,8 +30,8 @@ public:
     void update();
 
 private:
-    const Ion_cloud& ionCloud;
-    const Sim_params& sim_params;
+    const IonCloud& ionCloud;
+    const SimParams& sim_params;
 
     void direct_force();
     void split_force(int n);

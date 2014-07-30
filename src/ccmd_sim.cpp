@@ -2,20 +2,22 @@
 //  ccmd_sim.cpp
 //
 
-#include "ccmd_sim.h"
-#include "logger.h"
+#include "include/ccmd_sim.h"
+
+#include <boost/property_tree/exceptions.hpp>
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 #include <algorithm>
-#include <iostream>
+#include <cmath>  // only for M_PI
 #include <fstream>
-#include <sstream>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <utility>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
-#include <boost/property_tree/exceptions.hpp>
 
-#include <cmath> // only for M_PI
+#include "include/logger.h"
 
 using namespace std;
 
@@ -25,15 +27,15 @@ using namespace std;
  *
  *  All the parameters are stored in a text input file following the Boost info
  *  file format (see documentation at the [boost website][info_doc]), which is
- *  parsed as a property tree. The base branches are \c trap containing ion trap 
- *  parameters, \c integrator containing integrator parameters, \c ionnumber 
+ *  parsed as a property tree. The base branches are \c trap containing ion trap
+ *  parameters, \c integrator containing integrator parameters, \c ionnumber
  *  containing the number of each type of ion in the simulation and \c iontype
  *  which defines the physical properties of the ions.
  *
  *  Note: the names in the input file are not case sensitive.
  *
  *  # Example input file #
- *  
+ *
  *      trap {
  *          vrf     300.0
  *          vend    2.0
@@ -79,7 +81,7 @@ using namespace std;
  */
 
 /**
- *  @class Trap_params
+ *  @class TrapParams
  *  @brief Ion trap physical parameters
  *
  *  All the parameters are stored in a text input file following the Boost info
@@ -87,9 +89,9 @@ using namespace std;
  *  parsed as a property tree.
  *  [info_doc]: http://www.boost.org/doc/libs/1_46_1/doc/html/boost_propertytree/parsers.html#boost_propertytree.parsers.info_parser
  *
- *  Parameters such as voltage and frequency are always defined for any trap. 
+ *  Parameters such as voltage and frequency are always defined for any trap.
  *  the trap type is defined in the \c type sub-branch by the \c name parameter.
- *  Valid trap names are \c cosine for a regular cosine trap, which takes no 
+ *  Valid trap names are \c cosine for a regular cosine trap, which takes no
  *  additional parameters; or \c digital for a digital, pulsed waveform, trap
  *  which takes the additional parameter of \c tau specifying the duty cycle.
  *
@@ -147,8 +149,7 @@ using namespace std;
  *
  *  @param file_name file containing trap parameters.
  */
-Trap_params::Trap_params(const std::string& file_name)
-{
+TrapParams::TrapParams(const std::string& file_name) {
     Logger& log = Logger::getInstance();
     using boost::property_tree::iptree;
     iptree pt;
@@ -169,7 +170,7 @@ Trap_params::Trap_params(const std::string& file_name)
         log.log(Logger::info, "\tr0: " + std::to_string(r0));
         log.log(Logger::info, "\tz0: " + std::to_string(z0));
         log.log(Logger::info, "\tfreq: " + std::to_string(freq));
-        
+
         // Read trap-specific information.
         std::string typeString = pt.get<std::string>("trap.type.name");
         ostringstream error_msg;
@@ -180,14 +181,14 @@ Trap_params::Trap_params(const std::string& file_name)
             log.log(Logger::info, "Making a digital trap.");
             wave = digital;
             tau = pt.get<double>("trap.type.tau");
-            if (tau<0.0) {
+            if (tau < 0.0) {
                 std::stringstream ss;
-                ss << "Warning: Tau="<< tau << " out of range. Limiting to 0.0";
+                ss << "Warning: Tau=" << tau << " out of range. Limiting to 0.0";
                 log.log(Logger::warn, ss.str());
                 tau = 0.0;
-            } else if (tau>1.0) {
+            } else if (tau > 1.0) {
                 std::stringstream ss;
-                ss << "Warning: Tau="<< tau << " out of range. Limiting to 1.0";
+                ss << "Warning: Tau=" << tau << " out of range. Limiting to 1.0";
                 log.log(Logger::warn, ss.str());
                 tau = 1.0;
             }
@@ -196,8 +197,8 @@ Trap_params::Trap_params(const std::string& file_name)
             wave = waveform;
             // The waveform file is in the same directory as the trap parameters
             size_t found;
-            found=file_name.find_last_of("/\\");
-            waveformFile = file_name.substr(0,found) + "/waveform.dat";
+            found = file_name.find_last_of("/\\");
+            waveformFile = file_name.substr(0, found) + "/waveform.dat";
         } else if (typeString == "cosine_decay") {
             cout << "Making a decaying cosine trap.\n";
             wave = cosine_decay;
@@ -208,7 +209,7 @@ Trap_params::Trap_params(const std::string& file_name)
             wave = twofreq;
             freq_mult = pt.get<double>("trap.type.mult");
             log.log(Logger::info, "\tFreq multiple:" + std::to_string(freq_mult));
-        }else {
+        } else {
             std::stringstream ss;
             ss << "Unrecognised trap type " << typeString;
             log.log(Logger::error, ss.str());
@@ -222,7 +223,7 @@ Trap_params::Trap_params(const std::string& file_name)
 
 
 /**
- *  @class Cloud_params
+ *  @class CloudParams
  *  @brief Store the number of each type of ion, and their physical properties.
  *
  *  All the parameters are stored in a text input file following the Boost info
@@ -249,7 +250,7 @@ Trap_params::Trap_params(const std::string& file_name)
  *  as \c false if not specified (e.g. for CaF in the example below.) the other
  *  parameters marked optional require heating or cooling and are ignored if
  *  these are false.
- *  
+ *
  *  Parameter      | Description
  *  ---------------|------------------------------------------------------------
  *  \c name        |   Full name of the ion, spaces will be stripped
@@ -259,14 +260,14 @@ Trap_params::Trap_params(const std::string& file_name)
  *  \c direction   |   Weighting of laser cooling from left and right (0-1) (**optional**)
  *  \c beta        |   Laser cooling parameter  (**optional**)
  *  \c heating     |   Is the ion heated by photon recoil? (true/false) (**optional**)
- *  \c seed        |   Seed for random number generator, use -1 to generate 
+ *  \c seed        |   Seed for random number generator, use -1 to generate
  *                 |   automatically, or an integer to remove all randomness.
  *  \c recoil      |   Heating recoil factor (**optional**)
  *
  *
  *  # Example input #
- *  see the description of ccmd_sim.h for a full input file, the sections 
- *  of the input file relevant to Cloud_params is:
+ *  see the description of ccmd_sim.h for a full input file, the sections
+ *  of the input file relevant to CloudParams is:
  *
  *      ionnumbers {
  *          Ca      100
@@ -297,28 +298,27 @@ Trap_params::Trap_params(const std::string& file_name)
 /**
  *  @brief Load cloud parameters from the given file.
  *
- *  Read each line in the branch \c ionnumbers. For each ion, look up the 
- *  parameters in \c iontype, then store the number of ions and its physical 
+ *  Read each line in the branch \c ionnumbers. For each ion, look up the
+ *  parameters in \c iontype, then store the number of ions and its physical
  *  properties in an Ion_type object and append it to the ionType list.
  *
  *  @param file_name    File containing ion numbers and parameters.
  */
-Cloud_params::Cloud_params(const std::string& file_name)
-{
+CloudParams::CloudParams(const std::string& file_name) {
     using boost::property_tree::iptree;
     iptree pt;
     Logger& log = Logger::getInstance();
     read_info(file_name, pt);
     iptree numbers_node = pt.get_child("ionnumbers");
-    
+
     // Look through each node. The label should be the ion formula, and the
     // data should be an integer.
-    for (iptree::iterator it=numbers_node.begin(); it!=numbers_node.end(); ++it) {
+    for (auto& it : numbers_node) {
         // Now, read the parameters for this ion from the iontype node
-        iptree ionTypeTree = pt.get_child("iontype."+it->first);
+        iptree ionTypeTree = pt.get_child("iontype." + it.first);
         Ion_type ionType;
-        ionType.number = it->second.get_value<int>();
-        ionType.formula = it->first;
+        ionType.number = it.second.get_value<int>();
+        ionType.formula = it.first;
         ionType.name = ionTypeTree.get<std::string>("name");
         ionType.mass = ionTypeTree.get<double>("mass");
         ionType.charge = ionTypeTree.get<int>("charge");
@@ -327,24 +327,24 @@ Cloud_params::Cloud_params(const std::string& file_name)
         ionType.beta = ionTypeTree.get<double>("beta", 0.0);
         ionType.recoil = ionTypeTree.get<double>("recoil", 0.0);
         ionType.direction = ionTypeTree.get<double>("direction", 0.5);
-        if (ionType.direction<0.0) {
+        if (ionType.direction < 0.0) {
             std::stringstream ss;
-            ss << "Warning: direction="<< ionType.direction;
+            ss << "Warning: direction=" << ionType.direction;
             ss << " out of range. Limiting to 0.0";
             log.log(Logger::warn, ss.str());
             ionType.direction = 0.0;
-        } else if (ionType.direction>1.0) {
+        } else if (ionType.direction > 1.0) {
             std::stringstream ss;
-            ss << "Warning: direction="<< ionType.direction;
+            ss << "Warning: direction=" << ionType.direction;
             ss << " out of range. Limiting to 1.0";
             log.log(Logger::warn, ss.str());
             ionType.direction = 1.0;
         }
 
-        
+
         // Append this to the list
         ionTypeList.push_back(std::move(ionType));
-        
+
         log.log(Logger::info, ionType.name + " ions:");
         log.log(Logger::info, "\tNumber: " + std::to_string(ionType.number));
         log.log(Logger::info, "\tMass: " + std::to_string(ionType.mass));
@@ -364,8 +364,7 @@ Cloud_params::Cloud_params(const std::string& file_name)
  * @brief Store ion type to swap from and to during a simulation.
  */
 /*
-Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
-{
+Swap_params::Swap_params(const std::string& file_name, const CloudParams& cp) {
     Logger& log = Logger::getInstance();
     using boost::property_tree::iptree;
     iptree pt;
@@ -395,7 +394,7 @@ Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
 */
 
 /**
- *  @class Integration_params
+ *  @class IntegrationParams
  *  @brief Load and store parameters relating to the integrator
  *
  *  All the parameters are stored in a text input file following the Boost info
@@ -409,7 +408,7 @@ Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
  *  Parameter   | Description
  *  ------------|---------------------------------------------------------------
  *  timestep    | Stepsize for integrator loop in units of 2/\Omega = 1/(\pi f)
- *  respasteps  | Number of fast trap force steps to take between each slow 
+ *  respasteps  | Number of fast trap force steps to take between each slow
  *              | Coulomb force calculation. \c respasteps = 1 is equivalent to
  *              | velocity Verlet algorithm.
  *  coolsteps   | Number of steps to take letting the ions cool (no data collected)
@@ -417,7 +416,7 @@ Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
  *
  *  # Example input #
  *  see the description of ccmd_sim.h for a full input file, the sections
- *  of the input file relevant to Integration_params is:
+ *  of the input file relevant to IntegrationParams is:
  *
  *      integrator {
  *          timestep    0.1
@@ -433,8 +432,7 @@ Swap_params::Swap_params(const std::string& file_name, const Cloud_params& cp)
  *
  *  @param file_name file containing integration parameters.
  */
-Integration_params::Integration_params(const std::string& file_name)
-{
+IntegrationParams::IntegrationParams(const std::string& file_name) {
     int coolperiods;
     int histperiods;
 
@@ -454,8 +452,8 @@ Integration_params::Integration_params(const std::string& file_name)
     }
 
     time_step = M_PI/steps_per_period;
-    cool_steps = int(coolperiods*steps_per_period);
-    hist_steps = int(histperiods*steps_per_period);
+    cool_steps = static_cast<int>(coolperiods*steps_per_period);
+    hist_steps = static_cast<int>(histperiods*steps_per_period);
 
     log.log(Logger::info, "Integrator parameters:");
     log.log(Logger::info, "\tTime step: " + std::to_string(time_step));
@@ -468,14 +466,13 @@ Integration_params::Integration_params(const std::string& file_name)
 
 
 /**
- *  @class Microscope_params
+ *  @class MicroscopeParams
  *  @brief Stores microscope model parameters
  *
  *  see: A. D. Gingell, D.Phil thesis, University of Oxford
  *  Chapter 3
  */
-Microscope_params::Microscope_params(const std::string& file_name)
-{
+MicroscopeParams::MicroscopeParams(const std::string& file_name) {
     using boost::property_tree::iptree;
     iptree pt;
     read_info(file_name, pt);
@@ -484,7 +481,7 @@ Microscope_params::Microscope_params(const std::string& file_name)
         makeimage = pt.get<bool>("image.makeimage");
         pixels_to_distance   = pt.get<double>("image.scale");
         w0   = pt.get<double>("image.blur") * pixels_to_distance;
-        z0   = pt.get<double>("image.dof") ;
+        z0   = pt.get<double>("image.dof");
         nz = pt.get<int>("image.nz");
         nx = pt.get<int>("image.nx");
     } catch(const boost::property_tree::ptree_error &e) {
@@ -494,19 +491,18 @@ Microscope_params::Microscope_params(const std::string& file_name)
     }
 }
 
-/** 
- *  @class Sim_params
+/**
+ *  @class SimParams
  *  @brief Store parameters related to overall simulation
  *
  *  These parameters control how the simulation runs and have minimal influence
  *  on the output. All are optional
  */
-Sim_params::Sim_params(const std::string& file_name)
-{
+SimParams::SimParams(const std::string& file_name) {
     using boost::property_tree::iptree;
     iptree pt;
     read_info(file_name, pt);
-    
+
     boost::optional<iptree&> params = pt.get_child_optional("simulation");
     if (params) {
         coulomb_threads = params.get().get<int>("threads", 0);
@@ -515,7 +511,7 @@ Sim_params::Sim_params(const std::string& file_name)
         coulomb_threads = 0;
         random_seed = -1;
     }
-    
+
     Logger& log = Logger::getInstance();
     log.log(Logger::info, "Coulomb Force using " + std::to_string(coulomb_threads)
             + " threads.");

@@ -16,7 +16,7 @@
  *
  *  The input file must be named \c trap.info and the file format is documented in ccmd_sim.h. The file is divided
  *  into sections, one for each set of related parameters. These are documented
- *  in detail in Trap_params, Cloud_params and Integration_params.
+ *  in detail in TrapParams, CloudParams and IntegrationParams.
  *  Output files are written
  *  to the same directory. The puropse of this is to keep generated data
  *  together with the input file that generated it, somewhat documenting the
@@ -27,8 +27,8 @@
  *
  *  After loading the simulation parameters, the program integrates the
  *  equations of motion of the trapped ions. The first run for a total of
- *  Integration_params.cool_steps time steps allows the ions to equilibrate,
- *  then for the number of time steps in Integration_params.hist_steps while
+ *  IntegrationParams.cool_steps time steps allows the ions to equilibrate,
+ *  then for the number of time steps in IntegrationParams.hist_steps while
  *  collecting statistics on each ion's position and kinetic energy. The
  *  positions are stored in a 3-dimensional histogram, which is used to
  *  generate a representation of a microscope image of the crystal. Here, each
@@ -38,10 +38,10 @@
  *
  *  # Base Classes
  *
- *  The primary classes used to drive the simulation are the Ion_cloud,
- *  Ion_trap, and Integrator. These are base classes that provide a uniform
+ *  The primary classes used to drive the simulation are the IonCloud,
+ *  IonTrap, and Integrator. These are base classes that provide a uniform
  *  interface to more specific implementations. The simulation progresses by
- *  calling Integrator.evolve which calls Ion_trap.evolve to update the
+ *  calling Integrator.evolve which calls IonTrap.evolve to update the
  *  trapping voltages, and then calculates the forces on each ion and updates
  *  position and velocity.
  *
@@ -118,40 +118,40 @@ int main (int argc, char * const argv[]) {
     
     try {
         // Get simulation parameters from files
-        Trap_params trap_params(info_file);
-        Cloud_params cloud_params(info_file);
-        Integration_params integrator_params(info_file);
-        Microscope_params microscope_params(info_file);
-        Sim_params sim_params(info_file);
+        TrapParams trapParams(info_file);
+        CloudParams cloud_params(info_file);
+        IntegrationParams integrationParams(info_file);
+        MicroscopeParams microscope_params(info_file);
+        SimParams sim_params(info_file);
         
         // Construct trap based on parameters
-        std::shared_ptr<Ion_trap> trap;
-        if (trap_params.wave == trap_params.cosine) {
-            trap = std::make_shared<Cosine_trap>(trap_params);
-        } else if (trap_params.wave == trap_params.digital) {
-            trap = std::make_shared<Pulsed_trap>(trap_params);
-        } else if (trap_params.wave == trap_params.waveform) {
-            trap = std::make_shared<Waveform_trap>(trap_params);
-        } else if (trap_params.wave == trap_params.cosine_decay) {
+        std::shared_ptr<IonTrap> trap;
+        if (trapParams.wave == trapParams.cosine) {
+            trap = std::make_shared<CosineTrap>(trapParams);
+        } else if (trapParams.wave == trapParams.digital) {
+            trap = std::make_shared<Pulsed_trap>(trapParams);
+        } else if (trapParams.wave == trapParams.waveform) {
+            trap = std::make_shared<Waveform_trap>(trapParams);
+        } else if (trapParams.wave == trapParams.cosine_decay) {
                 // have to do some unit conversions here for the decay params
-                trap_params.tau *= M_PI;
-                trap_params.deltaT = (integrator_params.cool_steps + integrator_params.hist_steps)*integrator_params.time_step-trap_params.deltaT*M_PI;
-            trap = std::make_shared<Cosine_decay_trap>(trap_params);
-        } else if (trap_params.wave == trap_params.twofreq) {
-            trap = std::make_shared<TwoFreq_trap>(trap_params);
+                trapParams.tau *= M_PI;
+                trapParams.deltaT = (integrationParams.cool_steps + integrationParams.hist_steps)*integrationParams.time_step-trapParams.deltaT*M_PI;
+            trap = std::make_shared<Cosine_decay_trap>(trapParams);
+        } else if (trapParams.wave == trapParams.twofreq) {
+            trap = std::make_shared<TwoFreq_trap>(trapParams);
         } else {
             log.log(Logger::error, "Unrecognised trap type");
             throw runtime_error("Unrecognised trap type");
         }
         
         // Construct ion cloud
-        Ion_cloud cloud(trap, cloud_params, sim_params);
+        IonCloud cloud(trap, cloud_params, sim_params);
         
         // Construct integrator
-        RESPA_integrator integrator(trap, cloud, integrator_params, sim_params);
+        RESPA_integrator integrator(trap, cloud, integrationParams, sim_params);
 
         // Construct integrator
-        //CUDA_integrator integrator(trap, cloud, integrator_params);
+        //CUDA_integrator integrator(trap, cloud, integrationParams);
         
         // 3D histogram for image creation
         ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance * trap->get_length_scale()));
@@ -159,14 +159,14 @@ int main (int argc, char * const argv[]) {
         // Cool down ion cloud
         cout << flush << "Running cool down" << endl;
         log.log(Logger::info, "Running cool down.");
-        int nt_cool = integrator_params.cool_steps;
-        double dt = integrator_params.time_step;
+        int nt_cool = integrationParams.cool_steps;
+        double dt = integrationParams.time_step;
         DataWriter writer("\t");
         writer.writeComment(path + "totalEnergy.csv", "t\tE_tot");
 
         //int write_every = std::floor(6.2831/(15*dt));
         // Write frame once every 2 RF cycles
-        int write_every = (integrator_params.steps_per_period);
+        int write_every = (integrationParams.steps_per_period);
         write_every = std::max(1, write_every);
         log.log(Logger::debug, "Writing one frame every " + std::to_string(write_every));
         int frameNumber=0;
@@ -211,7 +211,7 @@ int main (int argc, char * const argv[]) {
         cout << '\n';
         
         // Evolution
-        int nt = integrator_params.hist_steps;
+        int nt = integrationParams.hist_steps;
 
 //------------------------------------------------------------------------------
 // Histogram 

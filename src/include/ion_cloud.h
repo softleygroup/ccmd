@@ -15,18 +15,18 @@
 
 class ImageCollection;
 class IonHistogram;
-class Ion_trap;
-class Cloud_params;
+class IonTrap;
+class CloudParams;
 class Vector3D;
 class Ion_type;
 
-typedef std::shared_ptr<Ion_trap> Ion_trap_ptr;
+typedef std::shared_ptr<IonTrap> IonTrap_ptr;
 
-class Ion_cloud {
+class IonCloud {
 public:
-    Ion_cloud(const Ion_trap_ptr ion_trap, const Cloud_params& cp,
-            const Sim_params& sp);
-    ~Ion_cloud();
+    IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
+            const SimParams& sp);
+    ~IonCloud();
 
 
     // Call the same-named function for each ion in turn
@@ -43,7 +43,7 @@ public:
     
     double aspect_ratio() const;
     
-    size_t number_of_ions() const { return ion_vec.size(); }
+    size_t number_of_ions() const { return ionVec_.size(); }
     
     void update_position_histogram(ImageCollection&) const;
     void update_energy_histogram(IonHistogram&) const;
@@ -56,16 +56,16 @@ public:
 
     void swap_first(const Ion_type& from, const Ion_type& to);
 
-    Ion_cloud(const Ion_cloud&) = delete;
-    const Ion_cloud& operator=(const Ion_cloud&) = delete;
+    IonCloud(const IonCloud&) = delete;
+    const IonCloud& operator=(const IonCloud&) = delete;
 private:
     /** @brief Keep a reference to the parameters. */
-    const Cloud_params& cloud_params;
+    const CloudParams& cloudParams_;
     /** @brief Keep a reference to the parameters. */
-    const Sim_params& sim_params;
+    const SimParams& simParams_;
     typedef std::vector<Ion_ptr> Ion_ptr_vector;
     /** A list of pointers to the ion objects. */
-    Ion_ptr_vector ion_vec;
+    Ion_ptr_vector ionVec_;
     //double r02; ///< Square of the electrode spacing.
     
     Vector3D get_cloud_centre() const;
@@ -77,7 +77,7 @@ private:
     friend class Coulomb_force;
 };
 
-typedef boost::shared_ptr<Ion_cloud> Ion_cloud_ptr;
+typedef boost::shared_ptr<IonCloud> IonCloud_ptr;
 
 #endif
 

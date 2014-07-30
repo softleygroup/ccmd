@@ -38,7 +38,7 @@ struct position_ions {
 };
 
 /**
- *  @class Ion_cloud
+ *  @class IonCloud
  *  @brief Class to hold a collection of ions and perform actions on each.
  *
  *  # Simulation functions  
@@ -65,7 +65,7 @@ struct position_ions {
  *  # Initialisation
  *
  *  The cloud is generated from the parameters in 
- *  Cloud_params. Each ion is initialised as either a Trapped_ion or 
+ *  CloudParams. Each ion is initialised as either a Trapped_ion or 
  *  Lasercooled_ion, and a pointer stored in a list. The initial 
  *  position of each ion is arranged on a cubic lattice, and the initial 
  *  velocity is zero.
@@ -76,8 +76,8 @@ struct position_ions {
 /**
  *  @brief Build a cloud of ions from the given parameters.
  *
- *  Build a new ion cloud from the parameters held in A Cloud_params object. The
- *  trapped ions will be given a pointer to the Ion_trap. A pointer to each ion
+ *  Build a new ion cloud from the parameters held in A CloudParams object. The
+ *  trapped ions will be given a pointer to the IonTrap. A pointer to each ion
  *  object is put into the list of all ions, `all_ions`.
  *
  *  Generate a set of lattice points for the initial ion positions, then centre
@@ -87,52 +87,52 @@ struct position_ions {
  * @param params    A reference to the cloud parameters object.
  *
  */
-Ion_cloud::Ion_cloud(const Ion_trap_ptr ion_trap, const Cloud_params& cp,
-        const Sim_params& sp)
-: cloud_params(cp), sim_params(sp)
+IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
+        const SimParams& sp)
+: cloudParams_(cp), simParams_(sp)
 {
     // loop over ion types to initialise ion cloud
-    for (auto& it : cloud_params.ionTypeList) {
+    for (auto& it : cloudParams_.ionTypeList) {
         // loop over ions number for type, construct ions using *trap to ensure
         // that changes to ion trap parameters are felt by the ions
         for (int i=0; i<it.number; ++i) {
             if (it.is_laser_cooled) {
-                ion_vec.push_back(
-                        std::make_shared<Lasercooled_ion>(ion_trap, it, sim_params));
+                ionVec_.push_back(
+                        std::make_shared<Lasercooled_ion>(ion_trap, it, simParams_));
             } else {
                 
                 //add_ion(new Trapped_ion(trap, *it));
-                ion_vec.push_back(
+                ionVec_.push_back(
                         std::make_shared<Trapped_ion>(ion_trap, it));
             }
         }
     }
     // sort ions by mass
-    sort(ion_vec.begin(),ion_vec.end(), compare_ions_by_mass() );
+    sort(ionVec_.begin(),ionVec_.end(), compare_ions_by_mass() );
     
     // generate initial positions
     vector<Vector3D> lattice = get_lattice( number_of_ions() );
     
     // move ions into position
-    std::transform(ion_vec.begin(), ion_vec.end(),
-                   lattice.begin(), ion_vec.begin(),
+    std::transform(ionVec_.begin(), ionVec_.end(),
+                   lattice.begin(), ionVec_.begin(),
                    position_ions() );
     
     // move cloud centre to the origin
     Vector3D to_origin = -get_cloud_centre();
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         ion->move(to_origin);
     }
 
-    //r02 = ion_trap->trap_params->r0;
+    //r02 = ion_trap->trapParams->r0;
 }
 
 
 /** @brief Clears the list of pointers to ions.
  */
-Ion_cloud::~Ion_cloud()
+IonCloud::~IonCloud()
 {
-    ion_vec.clear();
+    ionVec_.clear();
 }
 
 
@@ -141,9 +141,9 @@ Ion_cloud::~Ion_cloud()
  *
  *  @param dt   Time step.
  */
-void Ion_cloud::drift(double dt)
+void IonCloud::drift(double dt)
 {
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         ion->drift(dt);
     }
 }
@@ -154,9 +154,9 @@ void Ion_cloud::drift(double dt)
  *
  *  @param dt   Time step.
  */
-void Ion_cloud::kick(double dt)
+void IonCloud::kick(double dt)
 {
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         ion->kick(dt);
     }
 }
@@ -168,15 +168,15 @@ void Ion_cloud::kick(double dt)
  *  radial-only test is not a physical representation of the electrodes.
  */
 /*
-void Ion_cloud::collide()
+void IonCloud::collide()
 {
     Logger& log = Logger::getInstance();
     int n=0;
-    for (auto it = ion_vec.begin(); it != ion_vec.end();) {
+    for (auto it = ionVec_.begin(); it != ionVec_.end();) {
         Vector3D p = (*it)->get_pos();
         double r2 = p.x*p.x + p.y*p.y;
         if (r2 > r02) {
-            it = ion_vec.erase(it);
+            it = ionVec_.erase(it);
             ++n;
         } else {
             ++it;
@@ -193,10 +193,10 @@ void Ion_cloud::collide()
  *
  * Change the name, mass and charge of ion to the values given in to.
  */
-void Ion_cloud::swap_first(const Ion_type& from, const Ion_type& to)
+void IonCloud::swap_first(const Ion_type& from, const Ion_type& to)
 {
     Logger& log = Logger::getInstance();
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         if (ion->name() == from.name) {
             log.log(Logger::debug, "Found first ion named " + from.name);
             ion->update_from(to);
@@ -212,10 +212,10 @@ void Ion_cloud::swap_first(const Ion_type& from, const Ion_type& to)
  *  @param dt   Time step.
  *  @param f    Force vector.
  */
-void Ion_cloud::kick(double dt, const std::vector<Vector3D>& f)
+void IonCloud::kick(double dt, const std::vector<Vector3D>& f)
 {
-    for (int i=0; i<ion_vec.size(); ++i) {
-        ion_vec[i]->kick(dt, f[i] );
+    for (int i=0; i<ionVec_.size(); ++i) {
+        ionVec_[i]->kick(dt, f[i] );
     }
 }
 
@@ -230,9 +230,9 @@ void Ion_cloud::kick(double dt, const std::vector<Vector3D>& f)
  *
  *  @param dt   Time step.
  */
-void Ion_cloud::velocity_scale(double dt)
+void IonCloud::velocity_scale(double dt)
 {
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         ion->velocity_scale(dt);
     }
 }
@@ -243,9 +243,9 @@ void Ion_cloud::velocity_scale(double dt)
  *
  *  @param dt   Time step.
  */
-void Ion_cloud::heat(double dt)
+void IonCloud::heat(double dt)
 {
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         ion->heat(dt);
     }
 }
@@ -258,11 +258,11 @@ void Ion_cloud::heat(double dt)
  *
  *  @return The total kinetic energy.
  */
-double Ion_cloud::kinetic_energy() const
+double IonCloud::kinetic_energy() const
 {
     double e = 0;
     double m;
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         m = ion->get_mass();
         e += 0.5*m*( ion->get_vel().norm_sq() );
     }
@@ -277,19 +277,19 @@ double Ion_cloud::kinetic_energy() const
  *
  *  @return The total Coulomb energy.
  */
-double Ion_cloud::coulomb_energy() const
+double IonCloud::coulomb_energy() const
 {
     Vector3D r1,r2;
     int q1,q2;
     double e = 0;
     double r;
     
-    for (int i=0; i<ion_vec.size(); ++i) {
-        r1 = ion_vec[i]->get_pos();
-        q1 = ion_vec[i]->get_charge();
-        for (int j=i+1; j<ion_vec.size(); ++j) {
-            r2 = ion_vec[j]->get_pos();
-            q2 = ion_vec[j]->get_charge();
+    for (int i=0; i<ionVec_.size(); ++i) {
+        r1 = ionVec_[i]->get_pos();
+        q1 = ionVec_[i]->get_charge();
+        for (int j=i+1; j<ionVec_.size(); ++j) {
+            r2 = ionVec_[j]->get_pos();
+            q2 = ionVec_[j]->get_charge();
             
             if (r1 != r2) {
                 r = Vector3D::dist(r1,r2);
@@ -308,12 +308,12 @@ double Ion_cloud::coulomb_energy() const
  *  @brief Determine the total energy the ion cloud.
  *
  *  The function sums the Coulomb and kinetic energy contribution of each ion 
- *  by calling the Ion_cloud::coulomb_energy() and Ion_cloud::kinetic_energy()
+ *  by calling the IonCloud::coulomb_energy() and IonCloud::kinetic_energy()
  *  functions.
  *
  *  @return The total energy.
  */
-double Ion_cloud::total_energy() const
+double IonCloud::total_energy() const
 {
     return kinetic_energy() + coulomb_energy();
 }
@@ -323,9 +323,9 @@ double Ion_cloud::total_energy() const
  *
  *  @param dt   Time step.
  */
-void Ion_cloud::updateStats()
+void IonCloud::updateStats()
 {
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         ion->updateStats();
     }
 }
@@ -340,14 +340,14 @@ void Ion_cloud::updateStats()
  *  also writes the last position and velocity vector to another file.
  *
  *  Scaling values need to be provided here to transform from simulation units
- *  to S.I. units. Currently these are stored in Ion_trap::length_scale, and
- *  Ion_trap::time_scale.
+ *  to S.I. units. Currently these are stored in IonTrap::length_scale, and
+ *  IonTrap::time_scale.
  *
  *  @param basePath     Directory in which to save files.
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
-void Ion_cloud::saveStats(const std::string basePath,
+void IonCloud::saveStats(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
     std::string statsFileEnding = "_stats.csv";
@@ -364,14 +364,14 @@ void Ion_cloud::saveStats(const std::string basePath,
     // Write the header for each file
       std::string statsHeader="<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)";
       std::string posHeader="x\ty\tz\tvx\tvy\tvz";
-    for (auto& type : cloud_params.ionTypeList) {
+    for (auto& type : cloudParams_.ionTypeList) {
       name = basePath + type.name + statsFileEnding;
       writer.writeComment(name, statsHeader);
       name = basePath + type.name + posFileEnding;
       writer.writeComment(name, posHeader);
     }
     
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         // Write the final position and velocity for each ion.
     	name = basePath + ion->name() + posFileEnding;
     	rowdata.clear();
@@ -433,14 +433,14 @@ void Ion_cloud::saveStats(const std::string basePath,
  * comma for Povray compatability.
  *
  *  Scaling values need to be provided here to transform from simulation units
- *  to S.I. units. Currently these are stored in Ion_trap::length_scale, and
- *  Ion_trap::time_scale.
+ *  to S.I. units. Currently these are stored in IonTrap::length_scale, and
+ *  IonTrap::time_scale.
  *
  *  @param basePath     Directory in which to save files.
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
-void Ion_cloud::savePos(const std::string basePath,
+void IonCloud::savePos(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
     std::string fileEnding = ".csv";
@@ -453,7 +453,7 @@ void Ion_cloud::savePos(const std::string basePath,
     std::list<double> rowdata;
     std::string name;
 
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         // Write the final position and velocity for each ion.
     	name = basePath + ion->name() + fileEnding;
     	rowdata.clear();
@@ -489,9 +489,9 @@ void Ion_cloud::savePos(const std::string basePath,
  *
  *  @param h    The histogram object in which to record energies.
  */
-void Ion_cloud::update_energy_histogram(IonHistogram& h) const
+void IonCloud::update_energy_histogram(IonHistogram& h) const
 {
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         ion->recordKE(h);
     }
 }
@@ -504,12 +504,12 @@ void Ion_cloud::update_energy_histogram(IonHistogram& h) const
  *
  *  @param h    The `ImageCollection` object that holds the histogram.
  */
-void Ion_cloud::update_position_histogram(ImageCollection& h) const
+void IonCloud::update_position_histogram(ImageCollection& h) const
 {
     Vector3D posn;
     Vector3D rotated_pos;
     typedef Ion_ptr_vector::const_iterator ion_itr;
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         posn = ion->get_pos();
         rotated_pos.x = (posn.x+posn.y)/sqrt(2.0);
         rotated_pos.y = (posn.x-posn.y)/sqrt(2.0);
@@ -528,7 +528,7 @@ void Ion_cloud::update_position_histogram(ImageCollection& h) const
  *
  *  @return The aspect ratio.
  */
-double Ion_cloud::aspect_ratio() const
+double IonCloud::aspect_ratio() const
 {
     // aspect ratio defined by maxmimum extent of ions
     // in x or y and z directions 
@@ -538,10 +538,10 @@ double Ion_cloud::aspect_ratio() const
     double y_max = 0.0;
     double z_max = 0.0;
 
-    for (int i=0; i<ion_vec.size(); ++i) {
-        x_max = max(x_max, abs(ion_vec[i]->get_pos().x) );
-        y_max = max(y_max, abs(ion_vec[i]->get_pos().y) );
-        z_max = max(z_max, abs(ion_vec[i]->get_pos().z) );
+    for (int i=0; i<ionVec_.size(); ++i) {
+        x_max = max(x_max, abs(ionVec_[i]->get_pos().x) );
+        y_max = max(y_max, abs(ionVec_[i]->get_pos().y) );
+        z_max = max(z_max, abs(ionVec_[i]->get_pos().z) );
     };
     return z_max/max(x_max,y_max); 
     
@@ -555,10 +555,10 @@ double Ion_cloud::aspect_ratio() const
     
     // Calculate moment of inertia tensor
     double I[9] = {0,0,0,0,0,0,0,0,0};
-    for (int i=0; i<ion_vec.size(); ++i) {
-        x = ion_vec[i]->pos.x;
-        y = ion_vec[i]->pos.y;
-        z = ion_vec[i]->pos.z;
+    for (int i=0; i<ionVec_.size(); ++i) {
+        x = ionVec_[i]->pos.x;
+        y = ionVec_[i]->pos.y;
+        z = ionVec_[i]->pos.z;
         I[0] += y*y + z*z; 
         I[1] += -x*y; 
         I[2] += -x*z; 
@@ -590,7 +590,7 @@ double Ion_cloud::aspect_ratio() const
  *
  *  @return     A list of coordinates, one for each ion.
  */
-std::vector<Vector3D> Ion_cloud::get_lattice(size_t n)
+std::vector<Vector3D> IonCloud::get_lattice(size_t n)
 {
     int side = int(ceil( pow(n,1.0/3.0) ));
     std::vector<Vector3D> lattice;
@@ -627,7 +627,7 @@ std::vector<Vector3D> Ion_cloud::get_lattice(size_t n)
  *  @return     An integer close to \n^3
  */
 
-int Ion_cloud::get_nearest_cube(int n)
+int IonCloud::get_nearest_cube(int n)
 {
     // returns integer which when cubed is closest to n
 	int min_cube = 1;
@@ -650,13 +650,13 @@ int Ion_cloud::get_nearest_cube(int n)
  *
  *  @return Cloud centre as a vector.
  */
-Vector3D Ion_cloud::get_cloud_centre() const
+Vector3D IonCloud::get_cloud_centre() const
 {
     // 	unweighted geometric centre of ion cloud
 	Vector3D centre;
-    double n_ions = ion_vec.size();
+    double n_ions = ionVec_.size();
     
-    for (auto ion : ion_vec) {
+    for (auto ion : ionVec_) {
         centre += ion->get_pos();
     }
     

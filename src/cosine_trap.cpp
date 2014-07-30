@@ -1,5 +1,5 @@
 /**
- *  @class Cosine_trap
+ *  @class CosineTrap
  *  @brief Defines an ideal cosine waveform ion trap.
  *
  *  The time-dependent potential is a pure cosine waveform, at equal phases on 
@@ -14,8 +14,8 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-Cosine_trap::Cosine_trap(const Trap_params& params) 
-    : Ion_trap(params)
+CosineTrap::CosineTrap(const TrapParams& params) 
+    : IonTrap(params)
 {
     cos_phase = 0.0;//cos(2.0*time_now);
 }
@@ -29,7 +29,7 @@ Cosine_trap::Cosine_trap(const Trap_params& params)
  *
  *  @param dt   Time step.
  */
-void Cosine_trap::evolve(double dt)
+void CosineTrap::evolve(double dt)
 {
     time_now += dt;
     cos_phase = cos(2.0*time_now);
@@ -45,7 +45,7 @@ void Cosine_trap::evolve(double dt)
  * @param r Ion position.
  * @return The force vector.
  */
-Vector3D Cosine_trap::force_now(const Vector3D& r) const
+Vector3D CosineTrap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);    

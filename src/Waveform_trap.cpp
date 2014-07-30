@@ -6,9 +6,9 @@
  *  from a text file. The file should contain only a single column representing
  *  one complete period. In the time units used here the first point is at t=0
  *  and the final at t=1. The waveform will be scaled in time to match the
- *  frequency given in the Trap_params::freq parameter. The peak voltage
+ *  frequency given in the TrapParams::freq parameter. The peak voltage
  *  should be +-1 as the interpolated value will be multiplied by the 
- *  Trap_params::v_rf parameter. Check the waveform carefully to ensure the 
+ *  TrapParams::v_rf parameter. Check the waveform carefully to ensure the 
  *  ends match without causing sudden jumps in voltage.
  *
  *  The idealised Matthieu equations are used in the force calculation, therefore
@@ -30,8 +30,8 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-Waveform_trap::Waveform_trap(const Trap_params& params)
-    : Ion_trap(params)
+Waveform_trap::Waveform_trap(const TrapParams& params)
+    : IonTrap(params)
 {
     std::cout << "Initialising a waveform trap..." << std::endl;
     std::ifstream wfFile ( params.waveformFile.c_str(), std::ifstream::in );

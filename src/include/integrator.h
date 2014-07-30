@@ -10,25 +10,25 @@
 #include "ion_trap.h"
 
 class Vector3D;
-class Integration_params;
+class IntegrationParams;
 
 // Base class to provide interface for integrator classes
 class Integrator {
     friend class Coulomb_force;
-public:
-    Integrator(const Ion_trap_ptr it, Ion_cloud& ic,
-               const Integration_params& params, const Sim_params& sp);
+ public:
+    Integrator(const IonTrap_ptr it, IonCloud& ic,
+               const IntegrationParams& integrationParams,
+               const SimParams& sp);
     virtual ~Integrator();
     virtual void evolve(double dt)=0;
-protected:
-    Ion_cloud& ions;
-    Ion_trap_ptr trap;
-    Coulomb_force f_coulomb;  
-private:
-    // prevent copying Integrator to avoid ambiguous evolution
-    // of Ion_cloud and Trap classes
+
     Integrator(const Integrator& ) = delete;
     Integrator& operator=(const Integrator&) = delete;
+ protected:
+    IonCloud& ions;
+    IonTrap_ptr trap;
+    Coulomb_force f_coulomb;  
+    const IntegrationParams& integrationParams;
 };
 
 //
@@ -38,16 +38,15 @@ private:
 //      J. Chem. Phys. 92, 1990 (1992)
 //
 class RESPA_integrator : public Integrator {
-public:
-    RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic,
-                     const Integration_params& params, const Sim_params& sp);
+ public:
+    RESPA_integrator(const IonTrap_ptr it, IonCloud& ic,
+                     const IntegrationParams& integrationParams,
+                     const SimParams& sp);
  
     void evolve(double dt);
 
     RESPA_integrator(RESPA_integrator&) = delete;
     const RESPA_integrator operator=(const RESPA_integrator&) = delete;
-protected:
-    int respa_steps;
 };
 
 #endif

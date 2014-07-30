@@ -129,8 +129,8 @@ private:
 //// see: A. D. Gingell, D.Phil thesis, University of Oxford
 ////      Chapter 3
 ////
-//struct Microscope_params {
-//    Microscope_params();
+//struct MicroscopeParams {
+//    MicroscopeParams();
 //    
 //    double pixels_to_distance;      // conversion from microns to pixels
 //    double w0;                      // blur size
@@ -147,7 +147,7 @@ private:
 //
 class Microscope_image : public CCMD_image {
 public:
-    Microscope_image(const Hist3D& hist, const Microscope_params& p);
+    Microscope_image(const Hist3D& hist, const MicroscopeParams& p);
 
     // generates image by adding successive blurred planes 
     // using microscope model
@@ -161,7 +161,7 @@ public:
     
 private:
     const Hist3D* hist_ptr;
-    const Microscope_params& params;    
+    const MicroscopeParams& params;    
     int plane_now;
     int zmin;
     int zmax;

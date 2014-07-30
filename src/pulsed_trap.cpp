@@ -12,11 +12,11 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-Pulsed_trap::Pulsed_trap(const Trap_params& params) 
-    : Ion_trap(params)
+Pulsed_trap::Pulsed_trap(const TrapParams& params) 
+    : IonTrap(params)
 {
-    tau = params.tau;
-    pulse_height = v_rf;
+    tau = trapParams.tau;
+    pulse_height = trapParams.v_rf;
 }
 
 

@@ -14,7 +14,7 @@
  *  @param ion_trap A pointer to the ion trap.
  *  @param type     A pointer to ion parameters.
  */
-Trapped_ion::Trapped_ion(const Ion_trap_ptr ion_trap, const Ion_type& type)
+Trapped_ion::Trapped_ion(const IonTrap_ptr ion_trap, const Ion_type& type)
     : trap(ion_trap), Ion(type)
 {
 }

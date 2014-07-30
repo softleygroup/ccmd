@@ -27,12 +27,10 @@
  *  @param ip       Reference to integrator parameters.
  *  @param sp       Reference to simulation parameters.
  */
-RESPA_integrator::RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic,
-                                   const Integration_params& params,
-                                   const Sim_params& sp)
-    : Integrator(it, ic, params, sp)
-{
-    respa_steps = params.respa_steps;
+RESPA_integrator::RESPA_integrator(const IonTrap_ptr it, IonCloud& ic,
+                                   const IntegrationParams& integrationParams,
+                                   const SimParams& sp)
+    : Integrator(it, ic, integrationParams, sp) {
 }
 
 
@@ -46,10 +44,9 @@ RESPA_integrator::RESPA_integrator(const Ion_trap_ptr it, Ion_cloud& ic,
  *
  *  @param dt   Time step.
  */
-void RESPA_integrator::evolve(double dt)
-{    
+void RESPA_integrator::evolve(double dt) {    
     double half_dt = dt/2.0;
-    double dt_respa = dt/respa_steps;
+    double dt_respa = dt/integrationParams.respa_steps;
     double half_dt_respa = dt_respa/2.0;
     
     // slow Coulomb force half-kick
@@ -61,7 +58,7 @@ void RESPA_integrator::evolve(double dt)
     ions.heat(half_dt);
 
     // Velocity Verlet style evolution for fast forces
-    for (int i=0; i<respa_steps; ++i) {
+    for (int i=0; i < integrationParams.respa_steps; ++i) {
         // update trap by half_dt_respa
         trap->evolve(half_dt_respa);
         // kick ions with resulting force

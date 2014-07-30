@@ -19,8 +19,8 @@
  *  @param ion_trap A pointer to the ion trap.
  *  @param type     A pointer to ion parameters.
  */
-Lasercooled_ion::Lasercooled_ion(const Ion_trap_ptr ion_trap, const Ion_type& type,
-        const Sim_params& sp)
+Lasercooled_ion::Lasercooled_ion(const IonTrap_ptr ion_trap, const Ion_type& type,
+        const SimParams& sp)
     : Trapped_ion(ion_trap,type), heater(sp.random_seed)
 {
     assert(ion_type.is_laser_cooled==true);

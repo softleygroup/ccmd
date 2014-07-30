@@ -14,7 +14,7 @@
 //  see: http://http.developer.nvidia.com/GPUGems3/gpugems3_ch31.html
 //
 
-CUDA_integrator::CUDA_integrator(Ion_trap& it, Ion_cloud& ic, const Integration_params& params)
+CUDA_integrator::CUDA_integrator(IonTrap& it, IonCloud& ic, const IntegrationParams& params)
     : RESPA_integrator(it,ic,params)
 {
     nbody = ions->number_of_ions();

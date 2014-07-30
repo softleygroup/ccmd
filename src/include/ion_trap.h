@@ -1,9 +1,9 @@
 //
-//  Ion_trap.h
+//  IonTrap.h
 //
 
-#ifndef CCMD_Ion_trap_h
-#define CCMD_Ion_trap_h
+#ifndef CCMD_IonTrap_h
+#define CCMD_IonTrap_h
 
 #include "vector3D.h"
 #include "ion.h"
@@ -12,11 +12,11 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-class Trap_params;
+class TrapParams;
 
-class Ion_trap {
+class IonTrap {
 public:
-    Ion_trap(const Trap_params& params);
+    IonTrap(const TrapParams& params);
     
     /** @brief returns the force at a particular position in the trap.
      *
@@ -42,11 +42,11 @@ public:
     double get_time_scale() const { return time_scale; }
  
     /** @brief Reference to trap parameters object. */
-    const Trap_params& trap_params;
+    const TrapParams& trapParams;
 
-    //Ion_trap& operator=(Ion_trap&& other) = default;
-    Ion_trap(const Ion_trap&) = delete;
-    const Ion_trap& operator=(const Ion_trap&) = delete;
+    //IonTrap& operator=(IonTrap&& other) = default;
+    IonTrap(const IonTrap&) = delete;
+    const IonTrap& operator=(const IonTrap&) = delete;
 protected:
     
     double freq;            ///< RF driving frequency.
@@ -65,24 +65,24 @@ protected:
 };
 
 
-class Cosine_trap : public Ion_trap {
+class CosineTrap : public IonTrap {
 public:
-    Cosine_trap(const Trap_params& params);
+    CosineTrap(const TrapParams& params);
 
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
     double phase_now() const {return cos_phase;}
 
-    Cosine_trap(const Cosine_trap&) = delete;
-    const Cosine_trap& operator=(const Cosine_trap&) = delete;
+    CosineTrap(const CosineTrap&) = delete;
+    const CosineTrap& operator=(const CosineTrap&) = delete;
 
 private:
     double cos_phase;       ///< Magnitude of the cosine function at current time.
 };
 
-class Cosine_decay_trap : public Cosine_trap {
+class Cosine_decay_trap : public CosineTrap {
 public:
-    Cosine_decay_trap(const Trap_params& params);
+    Cosine_decay_trap(const TrapParams& params);
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
 
@@ -96,9 +96,9 @@ private:
     double maxTime;
 };
 
-class TwoFreq_trap : public Ion_trap {
+class TwoFreq_trap : public IonTrap {
 public:
-    TwoFreq_trap(const Trap_params& params);
+    TwoFreq_trap(const TrapParams& params);
 
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
@@ -111,9 +111,9 @@ private:
     double freq_mult;       ///< Multiplier for second frequency
 };
 
-class Pulsed_trap : public Ion_trap {
+class Pulsed_trap : public IonTrap {
 public:
-    Pulsed_trap(const Trap_params& params);
+    Pulsed_trap(const TrapParams& params);
     
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
@@ -126,9 +126,9 @@ private:
     double pulse_height;
 };
 
-class Waveform_trap : public Ion_trap {
+class Waveform_trap : public IonTrap {
 public:
-    Waveform_trap(const Trap_params& params);
+    Waveform_trap(const TrapParams& params);
     
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);

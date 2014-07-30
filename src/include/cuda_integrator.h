@@ -10,9 +10,9 @@
 #include <cutil_inline.h>    // includes cuda.h and cuda_runtime_api.h
 #include "bodysystemcuda.h"
 
-class Ion_cloud;
-class Ion_trap;
-class Integration_params;
+class IonCloud;
+class IonTrap;
+class IntegrationParams;
 
 //template <typename T>
 //class BodySystemCUDA;
@@ -20,7 +20,7 @@ class Integration_params;
 class CUDA_integrator : public RESPA_integrator 
 {
 public:
-    CUDA_integrator(Ion_trap& it, Ion_cloud& ic, const Integration_params& params);
+    CUDA_integrator(IonTrap& it, IonCloud& ic, const IntegrationParams& params);
     ~CUDA_integrator();
 
     void evolve(double dt=RESPA_integrator::default_timestep);
