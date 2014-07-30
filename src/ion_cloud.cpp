@@ -9,9 +9,10 @@
 #include "stats.h"
 #include "DataWriter.h"
 
-#include <functional>
 #include <algorithm>
-#include <boost/make_shared.hpp>
+#include <functional>
+#include <memory>
+//#include <boost/make_shared.hpp>
 
 // To do:   fix aspect ratio
 //#include "eigs.h"
@@ -87,7 +88,7 @@ struct position_ions {
  * @param params    A reference to the cloud parameters object.
  *
  */
-Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& cp,
+Ion_cloud::Ion_cloud(const Ion_trap_ptr ion_trap, const Cloud_params& cp,
         const Sim_params& sp)
 : cloud_params(cp), sim_params(sp)
 {
@@ -98,12 +99,12 @@ Ion_cloud::Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& cp,
         for (int i=0; i<it.number; ++i) {
             if (it.is_laser_cooled) {
                 ion_vec.push_back(
-                        boost::make_shared<Lasercooled_ion>(ion_trap, it, sim_params));
+                        std::make_shared<Lasercooled_ion>(ion_trap, it, sim_params));
             } else {
                 
                 //add_ion(new Trapped_ion(trap, *it));
                 ion_vec.push_back(
-                        boost::make_shared<Trapped_ion>(ion_trap, it));
+                        std::make_shared<Trapped_ion>(ion_trap, it));
             }
         }
     }

@@ -41,9 +41,10 @@ public:
     double get_length_scale() const { return length_scale; }
     double get_time_scale() const { return time_scale; }
  
-    /** @brief Pointer to trap parameters object. */
-    const Trap_params* trap_params;
+    /** @brief Reference to trap parameters object. */
+    const Trap_params& trap_params;
 
+    //Ion_trap& operator=(Ion_trap&& other) = default;
     Ion_trap(const Ion_trap&) = delete;
     const Ion_trap& operator=(const Ion_trap&) = delete;
 protected:
@@ -146,7 +147,5 @@ private:
     int npts;
     double potential;
 };
-
-typedef boost::shared_ptr<Ion_trap> Ion_trap_ptr;
 
 #endif

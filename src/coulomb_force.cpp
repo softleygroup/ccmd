@@ -22,11 +22,11 @@
 
 // To do: remove loops using std::transform
 
-Coulomb_force::Coulomb_force(const Ion_cloud_ptr &ic, const Sim_params& sp)
+Coulomb_force::Coulomb_force(const Ion_cloud& ic, const Sim_params& sp)
     : ionCloud(ic), sim_params(sp)
 {
-    force = std::vector<Vector3D>( ionCloud->number_of_ions() );
-    ionsCopy = std::vector<Vector3D>(ionCloud->number_of_ions());
+    force = std::vector<Vector3D>( ionCloud.number_of_ions() );
+    ionsCopy = std::vector<Vector3D>(ionCloud.number_of_ions());
 }
 
 
@@ -37,7 +37,7 @@ void Coulomb_force::update()
     // fast force calculation. Create a local copy of the ion positions so we can
     // work on them without them changing
     for (int i=0; i<ionsCopy.size(); i++) {
-        ionsCopy[i] = ionCloud->ion_vec[i]->get_pos();
+        ionsCopy[i] = ionCloud.ion_vec[i]->get_pos();
     }
 
     // Multi thread
@@ -72,10 +72,10 @@ void Coulomb_force::split_force(int n)
     for (int i=imin; i<imax; ++i) {
         Vector3D force_local = Vector3D(0.0, 0.0, 0.0);
         r1 = ionsCopy[i];
-        q1 = ionCloud->ion_vec[i]->get_charge();
+        q1 = ionCloud.ion_vec[i]->get_charge();
         for (int j=0; j<ionsCopy.size(); ++j) {
             r2 = ionsCopy[j];
-            q2 = ionCloud->ion_vec[j]->get_charge();
+            q2 = ionCloud.ion_vec[j]->get_charge();
     
             if (r1==r2) continue;
             // range checking disabled in release to improve performance
@@ -107,10 +107,10 @@ void Coulomb_force::direct_force()
     // sum Coulomb force over all particles
     for (int i=0; i<ionsCopy.size(); ++i) {
         r1 = ionsCopy[i];
-        q1 = ionCloud->ion_vec[i]->get_charge();
+        q1 = ionCloud.ion_vec[i]->get_charge();
         for (int j=i+1; j<ionsCopy.size(); ++j) {
             r2 = ionsCopy[j];
-            q2 = ionCloud->ion_vec[j]->get_charge();
+            q2 = ionCloud.ion_vec[j]->get_charge();
     
             // range checking disabled in release to improve performance
             assert ( r1 != r2 );
@@ -143,7 +143,7 @@ const std::vector<Vector3D>& Coulomb_force::get_force()
 
 Vector3D Coulomb_force::get_force(size_t i)
 { 
-    if ( i < ionCloud->ion_vec.size() ) {
+    if ( i < ionCloud.ion_vec.size() ) {
         return force[i]; 
     } else {
         throw std::runtime_error("Coulomb force: invalid index in get_force");

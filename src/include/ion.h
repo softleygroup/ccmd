@@ -6,14 +6,14 @@
 #include "stats.h"
 #include "ccmd_sim.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Vector3D;
 class IonHistogram;
 template <class T> class Stats;
 
 class Ion_trap;
-typedef boost::shared_ptr<Ion_trap> Ion_trap_ptr;
+typedef std::shared_ptr<Ion_trap> Ion_trap_ptr;
 
 class Ion {
 public:
@@ -72,7 +72,7 @@ protected:
 
 class Trapped_ion : public Ion {
 public:
-    Trapped_ion(const Ion_trap_ptr& ion_trap,const Ion_type& type);
+    Trapped_ion(const Ion_trap_ptr ion_trap,const Ion_type& type);
     ~Trapped_ion() {}
 
     virtual void kick(double dt);
@@ -86,7 +86,7 @@ private:
 
 class Lasercooled_ion : public Trapped_ion {
 public:
-    Lasercooled_ion(const Ion_trap_ptr& ion_trap,const Ion_type& type, const Sim_params& sp);
+    Lasercooled_ion(const Ion_trap_ptr ion_trap,const Ion_type& type, const Sim_params& sp);
     ~Lasercooled_ion() {}
     
     void kick(double dt);
@@ -105,7 +105,7 @@ private:
 };
 
 /// Ion pointer type.
-typedef boost::shared_ptr<Ion> Ion_ptr;
+typedef std::shared_ptr<Ion> Ion_ptr;
 
 #endif
 

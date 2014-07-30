@@ -12,8 +12,8 @@ trap {
 integrator {
     stepsPerPeriod 20
     respasteps  50       ; Respa inner loop steps
-    coolperiods 1000
-    histperiods   0
+    coolperiods 2000
+    histperiods   500
 }
 image {
     makeimage   false

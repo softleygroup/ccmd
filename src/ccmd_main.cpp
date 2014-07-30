@@ -58,11 +58,11 @@
 #include "logger.h"
 #include "stats.h"
 
-#include <boost/make_shared.hpp>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <list>
+#include <memory>
 #include <fstream>
 #include <sstream>
 
@@ -125,27 +125,27 @@ int main (int argc, char * const argv[]) {
         Sim_params sim_params(info_file);
         
         // Construct trap based on parameters
-        Ion_trap_ptr trap;
+        std::shared_ptr<Ion_trap> trap;
         if (trap_params.wave == trap_params.cosine) {
-                trap = boost::make_shared<Cosine_trap>(trap_params);
+            trap = std::make_shared<Cosine_trap>(trap_params);
         } else if (trap_params.wave == trap_params.digital) {
-                trap = boost::make_shared<Pulsed_trap>(trap_params);
+            trap = std::make_shared<Pulsed_trap>(trap_params);
         } else if (trap_params.wave == trap_params.waveform) {
-                trap = boost::make_shared<Waveform_trap>(trap_params);
+            trap = std::make_shared<Waveform_trap>(trap_params);
         } else if (trap_params.wave == trap_params.cosine_decay) {
                 // have to do some unit conversions here for the decay params
                 trap_params.tau *= M_PI;
                 trap_params.deltaT = (integrator_params.cool_steps + integrator_params.hist_steps)*integrator_params.time_step-trap_params.deltaT*M_PI;
-                trap = boost::make_shared<Cosine_decay_trap>(trap_params);
+            trap = std::make_shared<Cosine_decay_trap>(trap_params);
         } else if (trap_params.wave == trap_params.twofreq) {
-            trap = boost::make_shared<TwoFreq_trap>(trap_params);
+            trap = std::make_shared<TwoFreq_trap>(trap_params);
         } else {
             log.log(Logger::error, "Unrecognised trap type");
             throw runtime_error("Unrecognised trap type");
         }
         
         // Construct ion cloud
-        Ion_cloud_ptr cloud = boost::make_shared<Ion_cloud>(trap, cloud_params, sim_params);
+        Ion_cloud cloud(trap, cloud_params, sim_params);
         
         // Construct integrator
         RESPA_integrator integrator(trap, cloud, integrator_params, sim_params);
@@ -186,7 +186,7 @@ int main (int argc, char * const argv[]) {
 //            }
             
             integrator.evolve(dt);
-            mean_energy.append(cloud->kinetic_energy());
+            mean_energy.append(cloud.kinetic_energy());
             
             if (t%write_every==0) {
                 std::list<double> rowdata;
@@ -236,9 +236,9 @@ int main (int argc, char * const argv[]) {
             
             integrator.evolve(dt);
             if (microscope_params.makeimage)
-                cloud->update_position_histogram(ionImages);
+                cloud.update_position_histogram(ionImages);
 
-            cloud->updateStats();
+            cloud.updateStats();
             
             // Track progress
             int percent = static_cast<int>( (t*100)/nt );
@@ -246,8 +246,8 @@ int main (int argc, char * const argv[]) {
                 printProgBar(percent);
                 cout << setw(4) << stopWatchTimer() << "s";
             }
-            KE += cloud->kinetic_energy();
-            etot += cloud->total_energy();
+            KE += cloud.kinetic_energy();
+            etot += cloud.total_energy();
 
         //if (swap_params.do_swap){
             //if (t%swap_count==0) 
@@ -276,7 +276,7 @@ int main (int argc, char * const argv[]) {
         {
             ionImages.writeFiles(path, microscope_params);
         }
-        cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
+        cloud.saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
     } catch (std::exception& e) {
         cerr << "Error: " << e.what() << endl;

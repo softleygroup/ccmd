@@ -34,18 +34,18 @@ const double Ion_trap::u_mass = 1.6605402e-27;
  *  @param params Reference to the trap parameters.
  */
 Ion_trap::Ion_trap(const Trap_params& params) 
-    : trap_params(&params)
+    : trap_params(params)
 { 
     // Start at zero-time
     time_now = 0.0;
 
     // Update trap variables
-    v_rf = trap_params->v_rf;
-    v_end = trap_params->v_end;
-    eta = trap_params->eta;
-    r0 = trap_params->r0;
-    z0 = trap_params->z0;
-    freq = trap_params->freq;
+    v_rf = trap_params.v_rf;
+    v_end = trap_params.v_end;
+    eta = trap_params.eta;
+    r0 = trap_params.r0;
+    z0 = trap_params.z0;
+    freq = trap_params.freq;
     
     // Update derived quantities
     omega = 2*pi*freq;

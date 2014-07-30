@@ -10,18 +10,21 @@
 #define CCMD_ion_cloud_h
 
 #include "ion.h"
+#include <memory>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 
 class ImageCollection;
 class IonHistogram;
+class Ion_trap;
 class Cloud_params;
 class Vector3D;
 class Ion_type;
 
+typedef std::shared_ptr<Ion_trap> Ion_trap_ptr;
+
 class Ion_cloud {
 public:
-    Ion_cloud(const Ion_trap_ptr& ion_trap, const Cloud_params& cp,
+    Ion_cloud(const Ion_trap_ptr ion_trap, const Cloud_params& cp,
             const Sim_params& sp);
     ~Ion_cloud();
 
