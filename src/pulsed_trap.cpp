@@ -12,7 +12,7 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-Pulsed_trap::Pulsed_trap(const TrapParams& params) 
+PulsedTrap::PulsedTrap(const TrapParams& params) 
     : IonTrap(params)
 {
     tau = trapParams.tau;
@@ -29,7 +29,7 @@ Pulsed_trap::Pulsed_trap(const TrapParams& params)
  *  @param dt   Time step.
  */
 
-void Pulsed_trap::evolve(double dt)
+void PulsedTrap::evolve(double dt)
 {
     time_now += dt;
     
@@ -63,7 +63,7 @@ void Pulsed_trap::evolve(double dt)
  * @param r Ion position.
  * @return The force vector.
  */
-Vector3D Pulsed_trap::force_now(const Vector3D& r) const
+Vector3D PulsedTrap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);

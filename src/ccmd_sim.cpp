@@ -300,7 +300,7 @@ TrapParams::TrapParams(const std::string& file_name) {
  *
  *  Read each line in the branch \c ionnumbers. For each ion, look up the
  *  parameters in \c iontype, then store the number of ions and its physical
- *  properties in an Ion_type object and append it to the ionType list.
+ *  properties in an IonType object and append it to the ionType list.
  *
  *  @param file_name    File containing ion numbers and parameters.
  */
@@ -316,7 +316,7 @@ CloudParams::CloudParams(const std::string& file_name) {
     for (auto& it : numbers_node) {
         // Now, read the parameters for this ion from the iontype node
         iptree ionTypeTree = pt.get_child("iontype." + it.first);
-        Ion_type ionType;
+        IonType ionType;
         ionType.number = it.second.get_value<int>();
         ionType.formula = it.first;
         ionType.name = ionTypeTree.get<std::string>("name");
@@ -360,11 +360,11 @@ CloudParams::CloudParams(const std::string& file_name) {
 
 
 /**
- * @class Swap_params
+ * @class SwapParams
  * @brief Store ion type to swap from and to during a simulation.
  */
 /*
-Swap_params::Swap_params(const std::string& file_name, const CloudParams& cp) {
+SwapParams::SwapParams(const std::string& file_name, const CloudParams& cp) {
     Logger& log = Logger::getInstance();
     using boost::property_tree::iptree;
     iptree pt;

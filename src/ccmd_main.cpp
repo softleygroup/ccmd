@@ -129,14 +129,14 @@ int main (int argc, char * const argv[]) {
         if (trapParams.wave == trapParams.cosine) {
             trap = std::make_shared<CosineTrap>(trapParams);
         } else if (trapParams.wave == trapParams.digital) {
-            trap = std::make_shared<Pulsed_trap>(trapParams);
+            trap = std::make_shared<PulsedTrap>(trapParams);
         } else if (trapParams.wave == trapParams.waveform) {
-            trap = std::make_shared<Waveform_trap>(trapParams);
+            trap = std::make_shared<WaveformTrap>(trapParams);
         } else if (trapParams.wave == trapParams.cosine_decay) {
                 // have to do some unit conversions here for the decay params
                 trapParams.tau *= M_PI;
                 trapParams.deltaT = (integrationParams.cool_steps + integrationParams.hist_steps)*integrationParams.time_step-trapParams.deltaT*M_PI;
-            trap = std::make_shared<Cosine_decay_trap>(trapParams);
+            trap = std::make_shared<CosineDecayTrap>(trapParams);
         } else if (trapParams.wave == trapParams.twofreq) {
             trap = std::make_shared<TwoFreq_trap>(trapParams);
         } else {

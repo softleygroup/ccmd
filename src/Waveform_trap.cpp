@@ -1,5 +1,5 @@
 /**
- *  @class Waveform_trap
+ *  @class WaveformTrap
  *  @brief Ion trap that uses an arbitraty waveform for the voltage amplitude.
  *
  *  The time-dependent potential is interpolated from a set of points loaded
@@ -30,7 +30,7 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-Waveform_trap::Waveform_trap(const TrapParams& params)
+WaveformTrap::WaveformTrap(const TrapParams& params)
     : IonTrap(params)
 {
     std::cout << "Initialising a waveform trap..." << std::endl;
@@ -59,7 +59,7 @@ Waveform_trap::Waveform_trap(const TrapParams& params)
  *
  *  @param dt   Time step.
  */
-void Waveform_trap::evolve(double dt)
+void WaveformTrap::evolve(double dt)
 {
     time_now += dt;
     // Get the fractional part of the time
@@ -93,7 +93,7 @@ void Waveform_trap::evolve(double dt)
  * @param r Ion position.
  * @return The force vector.
  */
-Vector3D Waveform_trap::force_now(const Vector3D& r) const
+Vector3D WaveformTrap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);

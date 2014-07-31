@@ -18,25 +18,23 @@
  *  update the position due to free-flight, and acceleration due to a force.
  *  This class also stores ion information: mass, charge, name and formula.
  *
- *  Two member variables posStats and velStats are used to calculate the mean 
+ *  Two member variables posStats_ and velStats_ are used to calculate the mean 
  *  and standard deviation of position and velocity. The function updateStats
  *  should be called once per time step to update these.
  *
- *  Subclasses Trapped_ion and Lasercooled_ion provide the correct functionality
- *  for the Ion::kick function. The Trapped_ion determines the trapping force 
- *  and uses this to update the velocity, and the Lasercooled_ion uses both this 
+ *  Subclasses TrappedIon and LaserCooledIon provide the correct functionality
+ *  for the Ion::kick function. The TrappedIon determines the trapping force 
+ *  and uses this to update the velocity, and the LaserCooledIon uses both this 
  *  and laser forces.
  *
  *  The position and velocity vectors are hidden as private variables; they
  *  can be read-out, but only modified correctly by a force or free flight.
  *
- *  @see Trapped_ion, Lasercooled_ion
+ *  @see TrappedIon, LaserCooledIon
  */
 
-Ion::Ion(const Ion_type& type)
-: ion_type(type) {
-    mass = ion_type.mass;
-    charge = ion_type.charge;
+Ion::Ion(const IonType& type)
+: ionType_(type) {
 }
 
 /**
@@ -47,7 +45,7 @@ Ion::Ion(const Ion_type& type)
  *  @param dt Time step.
  */
 void Ion::drift(const double dt) {
-    pos += vel*dt;
+    pos_ += vel_*dt;
 }
 
 /**
@@ -56,8 +54,8 @@ void Ion::drift(const double dt) {
  *  @param f    Force vector.
  */
 inline void Ion::kick(const double dt, const Vector3D& f) {
-    double time_over_mass = dt/mass;
-    vel += f*time_over_mass;
+    double time_over_mass = dt/ionType_.mass;
+    vel_ += f*time_over_mass;
 }
 
 /**
@@ -71,18 +69,18 @@ inline void Ion::kick(const double dt, const Vector3D& f) {
  */
 void Ion::recordKE(IonHistogram& ionHistogram) const {
     double energy;
-    double mon2 = 0.5 * ion_type.mass;
+    double mon2 = 0.5 * ionType_.mass;
     // total
-    energy = mon2 * vel.norm_sq();
+    energy = mon2 * vel_.norm_sq();
     ionHistogram.addIon(name() + "_total", energy);
     // x - directed
-    energy = mon2 * vel[0] * vel[0];
+    energy = mon2 * vel_[0] * vel_[0];
     ionHistogram.addIon(name() + "_x", energy);
     // y - directed
-    energy = mon2 * vel[1] * vel[1];
+    energy = mon2 * vel_[1] * vel_[1];
     ionHistogram.addIon(name() + "_y", energy);
     // z - directed
-    energy = mon2 * vel[2] * vel[2];
+    energy = mon2 * vel_[2] * vel_[2];
     ionHistogram.addIon(name() + "_z", energy);
 }
 
@@ -93,19 +91,17 @@ void Ion::recordKE(IonHistogram& ionHistogram) const {
  *  multiplied by mass/2 before output) and position to the `Stats` objects.
  */
 void Ion::updateStats() {
-    posStats.append(pos);
-    velStats.append(vel*vel);
+    posStats_.append(pos_);
+    velStats_.append(vel_*vel_);
 }
 
 /**
- * @brief take new values from the given Ion_type.
+ * @brief take new values from the given IonType.
  *
  * To swap ion to a new identity, take mass, charge and name.
  */
-void Ion::update_from(const Ion_type& from) {
-    // mass = from.mass;
-    // charge = from.charge;
-    // ion_type = from;
+void Ion::update_from(const IonType& from) {
+    // ionType_ = from;
     std::cout << "NO UPDATING!";
 }
 

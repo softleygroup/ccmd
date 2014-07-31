@@ -79,9 +79,9 @@ class IntegrationParams {
 };
 
 
-class Ion_type {
+class IonType {
  public:
-    Ion_type() = default;
+    IonType() = default;
     int number;                 ///< Number of these in the trap.
     std::string name;           ///< Name to call ion.
     std::string formula;        ///< Chemical formula.
@@ -97,34 +97,34 @@ class Ion_type {
     bool is_laser_cooled;
     bool is_heated;
 
-    // Ion_type(Ion_type&&) = default;
-    // Ion_type(const Ion_type& ) = delete;
-    // const Ion_type& operator=(const IntegrationParams&) = delete;
-    // Ion_type& operator=(IntegrationParams&&) = default;
+    // IonType(IonType&&) = default;
+    // IonType(const IonType& ) = delete;
+    // const IonType& operator=(const IntegrationParams&) = delete;
+    // IonType& operator=(IntegrationParams&&) = default;
 };
 
-// typedef boost::shared_ptr<Ion_type> Ion_type_ptr;
+// typedef boost::shared_ptr<IonType> IonType_ptr;
 
 
 class CloudParams {
  public:
     explicit CloudParams(const std::string& file_name);
 
-    /// List to hold an Ion_type for each ion type used.
-    std::list<Ion_type> ionTypeList;
+    /// List to hold an IonType for each ion type used.
+    std::list<IonType> ionTypeList;
 };
 
 /*
-class Swap_params {
+class SwapParams {
     public:
-        Swap_params(const std::string& file_name, const CloudParams& p);
+        SwapParams(const std::string& file_name, const CloudParams& p);
         bool do_swap;
-        Ion_type_ptr from;
-        Ion_type_ptr to;
+        IonType_ptr from;
+        IonType_ptr to;
         double p;
 
-        Swap_params(const Swap_params&) = delete;
-        const Swap_params& operator=(const Swap_params&) = delete;
+        SwapParams(const SwapParams&) = delete;
+        const SwapParams& operator=(const SwapParams&) = delete;
 };
 */
 

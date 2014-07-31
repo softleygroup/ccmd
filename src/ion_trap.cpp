@@ -4,7 +4,7 @@
  *  for the Mathieu equation: \c a and \c q. Sub-classes inheriting this class
  *  implement their own time-dependent voltage, and force calculation.
  *
- *  @see CosineTrap @see Pulsed_trap @see Waveform_trap
+ *  @see CosineTrap @see PulsedTrap @see WaveformTrap
  */
 
 #include "ion_trap.h"

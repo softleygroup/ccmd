@@ -9,8 +9,10 @@
 #ifndef CCMD_ion_cloud_h
 #define CCMD_ion_cloud_h
 
-#include "ion.h"
+#include "include/ion.h"
+
 #include <memory>
+#include <string>
 #include <vector>
 
 class ImageCollection;
@@ -18,12 +20,12 @@ class IonHistogram;
 class IonTrap;
 class CloudParams;
 class Vector3D;
-class Ion_type;
+class IonType;
 
 typedef std::shared_ptr<IonTrap> IonTrap_ptr;
 
 class IonCloud {
-public:
+ public:
     IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
             const SimParams& sp);
     ~IonCloud();
@@ -36,29 +38,30 @@ public:
     void heat(double t);
     void velocity_scale(double dt);
     void updateStats();
-    
+
     double coulomb_energy() const;
     double kinetic_energy() const;
     double total_energy() const;
-    
+
     double aspect_ratio() const;
-    
+
     size_t number_of_ions() const { return ionVec_.size(); }
-    
+
     void update_position_histogram(ImageCollection&) const;
     void update_energy_histogram(IonHistogram&) const;
-    
+
     void saveStats(const std::string basePath, const double length_scale,
                    const double time_scale) const;
-    void savePos (const std::string basePath, const double length_scale,
+    void savePos(const std::string basePath, const double length_scale,
                    const double time_scale) const;
-    //void collide ();
+    // void collide ();
 
-    void swap_first(const Ion_type& from, const Ion_type& to);
+    void swap_first(const IonType& from, const IonType& to);
 
     IonCloud(const IonCloud&) = delete;
     const IonCloud& operator=(const IonCloud&) = delete;
-private:
+
+ private:
     /** @brief Keep a reference to the parameters. */
     const CloudParams& cloudParams_;
     /** @brief Keep a reference to the parameters. */
@@ -66,18 +69,18 @@ private:
     typedef std::vector<Ion_ptr> Ion_ptr_vector;
     /** A list of pointers to the ion objects. */
     Ion_ptr_vector ionVec_;
-    //double r02; ///< Square of the electrode spacing.
-    
+    // double r02; ///< Square of the electrode spacing.
+
     Vector3D get_cloud_centre() const;
     void move_centre(const Vector3D& v);
     static std::vector<Vector3D> get_lattice(size_t n);
     static int get_nearest_cube(int n);
-    
+
     /** @brief Coulomb_force needs direct access to the list of ions. */
     friend class Coulomb_force;
 };
 
-typedef boost::shared_ptr<IonCloud> IonCloud_ptr;
+// typedef boost::shared_ptr<IonCloud> IonCloud_ptr;
 
 #endif
 

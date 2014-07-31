@@ -18,10 +18,10 @@ typedef std::shared_ptr<IonTrap> IonTrap_ptr;
 
 class Ion {
  public:
-    explicit Ion(const Ion_type& type);
+    explicit Ion(const IonType& type);
     virtual ~Ion() {}
     // shifts ion position
-    void move(const Vector3D& move_va) { pos += move_va; }
+    void move(const Vector3D& move_va) { pos_ += move_va; }
 
     // free flight
     void drift(const double dt);
@@ -34,75 +34,70 @@ class Ion {
     virtual void heat(double dt) {}
 
     // These should only be called once on initialising the ion;
-    void set_position(const Vector3D& r) { pos = r; }
-    void set_velocity(const Vector3D& v) { vel = v; }
+    void set_position(const Vector3D& r) { pos_ = r; }
+    void set_velocity(const Vector3D& v) { vel_ = v; }
 
     void recordKE(IonHistogram& ionHistogram) const;
 
     // accessor functions
-    const Ion_type& get_type() const {return ion_type; }
-    std::string name() const {return ion_type.name;}
-    std::string formula() const {return ion_type.formula;}
-    const Vector3D& get_pos() const {return pos;}
-    const Vector3D& get_vel() const {return vel;}
-    double get_mass() const {return mass;}
-    double get_charge() const {return charge;}
-    const Stats<Vector3D> get_posStats() const {return posStats;}
-    const Stats<Vector3D> get_velStats() const {return velStats;}
+    const IonType& get_type() const {return ionType_; }
+    std::string name() const {return ionType_.name;}
+    std::string formula() const {return ionType_.formula;}
+    const Vector3D& get_pos() const {return pos_;}
+    const Vector3D& get_vel() const {return vel_;}
+    double get_mass() const {return ionType_.mass;}
+    double get_charge() const {return ionType_.charge;}
+    const Stats<Vector3D> get_posStats() const {return posStats_;}
+    const Stats<Vector3D> get_velStats() const {return velStats_;}
 
     void updateStats();
 
-    void update_from(const Ion_type& from);
+    void update_from(const IonType& from);
 
     Ion(const Ion&) = delete;
     const Ion& operator=(const Ion&) = delete;
 
  protected:
-    const Ion_type& ion_type;
-    Vector3D pos;
-    Vector3D vel;
-    double mass;
-    int charge;
-
+    const IonType& ionType_;
+    Vector3D pos_;
+    Vector3D vel_;
 
     // Ion statistics
-    Stats<Vector3D> posStats;
-    Stats<Vector3D> velStats;
+    Stats<Vector3D> posStats_;
+    Stats<Vector3D> velStats_;
 };
 
 
-class Trapped_ion : public Ion {
+class TrappedIon : public Ion {
  public:
-    Trapped_ion(const IonTrap_ptr ion_trap, const Ion_type& type);
-    ~Trapped_ion() {}
+    TrappedIon(const IonTrap_ptr trap, const IonType& type);
+    ~TrappedIon() {}
 
     virtual void kick(double dt);
     virtual void velocity_scale(double dt) {}
 
-    Trapped_ion(const Trapped_ion&) = delete;
-    const Trapped_ion& operator=(const Trapped_ion&) = delete;
+    TrappedIon(const TrappedIon&) = delete;
+    const TrappedIon& operator=(const TrappedIon&) = delete;
  private:
-    const IonTrap_ptr trap;
+    const IonTrap_ptr trap_;
 };
 
 
-class Lasercooled_ion : public Trapped_ion {
+class LaserCooledIon : public TrappedIon {
  public:
-    Lasercooled_ion(const IonTrap_ptr ion_trap,
-            const Ion_type& type, const SimParams& sp);
-    ~Lasercooled_ion() {}
+    LaserCooledIon(const IonTrap_ptr ion_trap,
+            const IonType& type, const SimParams& sp);
+    ~LaserCooledIon() {}
 
     void kick(double dt);
     void velocity_scale(double dt);
     void heat(double dt);
 
-    Lasercooled_ion(const Lasercooled_ion&) = delete;
-    const Lasercooled_ion& operator=(const Lasercooled_ion&) = delete;
+    LaserCooledIon(const LaserCooledIon&) = delete;
+    const LaserCooledIon& operator=(const LaserCooledIon&) = delete;
  private:
-    double beta;
-
     // photon recoil heating
-    Stochastic_heat heater;
+    Stochastic_heat heater_;
 
     Vector3D get_friction() const;
 };

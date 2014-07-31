@@ -1,5 +1,5 @@
 /**
- *  @class Cosine_decay_trap
+ *  @class CosineDecayTrap
  *  @brief Defines an ideal cosine waveform ion trap with exponential decay in the end.
  *
  *  The time-dependent potential is a pure cosine waveform, at equal phases on 
@@ -15,7 +15,7 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-Cosine_decay_trap::Cosine_decay_trap(const TrapParams& params)
+CosineDecayTrap::CosineDecayTrap(const TrapParams& params)
    : CosineTrap(params)
 {
     cos_phase = 0.0;
@@ -32,7 +32,7 @@ Cosine_decay_trap::Cosine_decay_trap(const TrapParams& params)
  *
  *  @param dt   Time step.
  */
-void Cosine_decay_trap::evolve(double dt)
+void CosineDecayTrap::evolve(double dt)
 {
     time_now += dt;
     cos_phase = cos(2.0*time_now);
@@ -53,7 +53,7 @@ void Cosine_decay_trap::evolve(double dt)
  * @param r Ion position.
  * @return The force vector.
  */
-Vector3D Cosine_decay_trap::force_now(const Vector3D& r) const
+Vector3D CosineDecayTrap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
     
