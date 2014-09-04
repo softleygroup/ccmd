@@ -20,7 +20,7 @@ class IonCloud;
 
 class Coulomb_force {
 public:
-    Coulomb_force(const IonCloud& ic, const SimParams& sp);
+    Coulomb_force(const IonCloud_ptr ic, const SimParams& sp);
     const std::vector<Vector3D>& get_force();
     
     // return Coulomb force on a particular ion
@@ -30,7 +30,7 @@ public:
     void update();
 
 private:
-    const IonCloud& ionCloud;
+    const IonCloud_ptr ionCloud;
     const SimParams& sim_params;
 
     void direct_force();

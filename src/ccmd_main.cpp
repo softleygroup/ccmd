@@ -45,18 +45,20 @@
  *  trapping voltages, and then calculates the forces on each ion and updates
  *  position and velocity.
  *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
  */
 
-#include "ccmd_image.h"
-#include "ccmd_sim.h"
-#include "DataWriter.h"
-#include "ion_trap.h"
-#include "ion_cloud.h"
-#include "IonHistogram.h"
-#include "ImageCollection.h"
-#include "integrator.h"
-#include "logger.h"
-#include "stats.h"
+#include "include/ccmd_image.h"
+#include "include/ccmd_sim.h"
+#include "include/DataWriter.h"
+#include "include/ion_trap.h"
+#include "include/ion_cloud.h"
+#include "include/IonHistogram.h"
+#include "include/ImageCollection.h"
+#include "include/integrator.h"
+#include "include/logger.h"
+#include "include/stats.h"
 
 #include <ctime>
 #include <iomanip>
@@ -145,7 +147,8 @@ int main (int argc, char * const argv[]) {
         }
         
         // Construct ion cloud
-        IonCloud cloud(trap, cloud_params, sim_params);
+        IonCloud_ptr cloud = std::make_shared<IonCloud>
+            (trap, cloud_params, sim_params);
         
         // Construct integrator
         RESPA_integrator integrator(trap, cloud, integrationParams, sim_params);
@@ -186,7 +189,7 @@ int main (int argc, char * const argv[]) {
 //            }
             
             integrator.evolve(dt);
-            mean_energy.append(cloud.kinetic_energy());
+            mean_energy.append(cloud->kinetic_energy());
             
             if (t%write_every==0) {
                 std::list<double> rowdata;
@@ -220,7 +223,7 @@ int main (int argc, char * const argv[]) {
         cout << flush << "Acquiring histogram data" << endl;
         log.log(Logger::info, "Acquiring histogram data");
 
-        IonHistogram ionHistogram(0.5);
+        IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5);
 
 	    // Start timer
         stopWatchTimer();
@@ -238,10 +241,10 @@ int main (int argc, char * const argv[]) {
             
             integrator.evolve(dt);
             if (microscope_params.makeimage)
-                cloud.update_position_histogram(ionImages);
+                cloud->update_position_histogram(ionImages);
 
-            cloud.updateStats();
-            cloud.update_energy_histogram(ionHistogram);
+            cloud->updateStats();
+            cloud->update_energy_histogram(ionHistogram);
             
             // Track progress
             int percent = static_cast<int>( (t*100)/nt );
@@ -249,8 +252,8 @@ int main (int argc, char * const argv[]) {
                 printProgBar(percent);
                 cout << setw(4) << stopWatchTimer() << "s";
             }
-            KE += cloud.kinetic_energy();
-            etot += cloud.total_energy();
+            KE += cloud->kinetic_energy();
+            etot += cloud->total_energy();
 
         //if (swap_params.do_swap){
             //if (t%swap_count==0) 
@@ -275,13 +278,13 @@ int main (int argc, char * const argv[]) {
         log.log(Logger::info, "total kinetic energy = " + std::to_string(KE));
         log.log(Logger::info, "total energy = " + std::to_string(etot));
 
-        ionHistogram.writeFiles("ionEnergy");
+        ionHistogram->writeFiles("ionEnergy");
         
         if (microscope_params.makeimage)
         {
             ionImages.writeFiles(path, microscope_params);
         }
-        cloud.saveStats(path, trap->get_length_scale(), trap->get_time_scale());
+        cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
 
     } catch (std::exception& e) {
         cerr << "Error: " << e.what() << endl;

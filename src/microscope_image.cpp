@@ -7,9 +7,9 @@
 //
 
 
-#include "ccmd_image.h"
-#include "ccmd_sim.h"
-#include "hist3D.h"
+#include "include/ccmd_image.h"
+#include "include/ccmd_sim.h"
+#include "include/hist3D.h"
 
 #include <iostream>
 
@@ -22,15 +22,14 @@
 //    zmax = 0;
 //}
 
-Microscope_image::Microscope_image(const Hist3D& hist, const MicroscopeParams& p)
-    : CCMD_image(p.nx,p.nz), hist_ptr(&hist), zmin(0), zmax(0), params(p)
-{
-    hist.minmax(Hist3D::x, zmin, zmax);
+Microscope_image::Microscope_image(const Hist3D_ptr hist,
+        const MicroscopeParams& p)
+    : CCMD_image(p.nx,p.nz), hist_ptr(hist), zmin(0), zmax(0), params(p) {
+    hist->minmax(Hist3D::x, zmin, zmax);
     plane_now = zmin;
 }
 
-void Microscope_image::draw()
-{
+void Microscope_image::draw() {
     std::vector<histPixel> pixels;
    
     pixels = hist_ptr->getPlane(Hist3D::x, plane_now);

@@ -7,12 +7,11 @@
  *  @see CosineTrap @see PulsedTrap @see WaveformTrap
  */
 
-#include "ion_trap.h"
+#include "include/ion_trap.h"
 
-#include "ccmd_sim.h"
-
-#include <iostream>
 #include <cmath>
+
+#include "include/ccmd_sim.h"
 
 /** @brief Over-precise value of pi. */
 const double IonTrap::pi = 3.141592653589793238462643383279502884;
@@ -33,21 +32,20 @@ const double IonTrap::u_mass = 1.6605402e-27;
  *
  *  @param params Reference to the trap parameters.
  */
-IonTrap::IonTrap(const TrapParams& params) 
-    : trapParams(params)
-{ 
+IonTrap::IonTrap(const TrapParams& params)
+    : trapParams(params) {
     // Start at zero-time
     time_now = 0.0;
-    
+
     // Calculate derived quantities
     double omega = 2*pi*trapParams.freq;
     a_unit_mass =  -4.0*trapParams.eta*electron_charge*trapParams.v_end
         /(u_mass*omega*omega*trapParams.z0*trapParams.z0);
     q_unit_mass =  2.0*electron_charge*trapParams.v_rf
         /(u_mass*omega*omega*trapParams.r0*trapParams.r0);
-    
-    // TODO: move into params
-    length_scale = electron_charge*electron_charge/(pi*epsilon_0*u_mass*omega*omega);
+
+    length_scale = electron_charge*electron_charge
+        /(pi*epsilon_0*u_mass*omega*omega);
     length_scale = pow(length_scale, 1.0/3.0);
     time_scale = 1/(pi * freq);
 }

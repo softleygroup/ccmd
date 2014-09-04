@@ -27,7 +27,7 @@
  *  @param ip       Reference to integrator parameters.
  *  @param sp       Reference to simulation parameters.
  */
-RESPA_integrator::RESPA_integrator(const IonTrap_ptr it, IonCloud& ic,
+RESPA_integrator::RESPA_integrator(const IonTrap_ptr it, const IonCloud_ptr ic,
                                    const IntegrationParams& integrationParams,
                                    const SimParams& sp)
     : Integrator(it, ic, integrationParams, sp) {
@@ -50,39 +50,39 @@ void RESPA_integrator::evolve(double dt) {
     double half_dt_respa = dt_respa/2.0;
     
     // slow Coulomb force half-kick
-    ions.kick(half_dt, f_coulomb.get_force() );
+    ions->kick(half_dt, f_coulomb.get_force() );
     // get new slow force
     f_coulomb.update();
     
     // ion stochastic heating for half-step
-    ions.heat(half_dt);
+    ions->heat(half_dt);
 
     // Velocity Verlet style evolution for fast forces
     for (int i=0; i < integrationParams.respa_steps; ++i) {
         // update trap by half_dt_respa
         trap->evolve(half_dt_respa);
         // kick ions with resulting force
-        ions.kick(half_dt_respa);
+        ions->kick(half_dt_respa);
 
         // free flight evolution
-        ions.drift(dt_respa);
+        ions->drift(dt_respa);
         
         // update trap by half_dt_respa
         trap->evolve(half_dt_respa);
         // kick ions with resulting force
-        ions.kick(half_dt_respa);
+        ions->kick(half_dt_respa);
 
         // correct for friction forces in Velocity Verlet algorithm
         // see: M. Tuckerman and B. J. Berne, 
         //      J. Chem. Phys. 95, 4389 (1991), Eqn. 3.7 
-        ions.velocity_scale(half_dt_respa);
+        ions->velocity_scale(half_dt_respa);
     }
     
     // ion stochastic heating for half-step
-    ions.heat(half_dt);
+    ions->heat(half_dt);
     
     // slow Coulomb force half-kick
-    ions.kick(half_dt, f_coulomb.get_force());
+    ions->kick(half_dt, f_coulomb.get_force());
     
     return;
 }

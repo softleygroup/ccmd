@@ -1,15 +1,15 @@
-//
-//  DataWriter.cpp
-//  ccmd
-//
-//  Created by Chris Rennick on 06/12/2013.
-//
-//
+/** 
+ * @file DataWriter.cpp
+ * @brief Function definitions for writing delimited data to a file.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 
-#include "DataWriter.h"
+#include "include/DataWriter.h"
 
 #include <list>
-//template<class T>
+#include <string>
 
 /**
  *  @class DataWriter
@@ -31,20 +31,18 @@
  *  @param delim    Column delimeter to use.
  */
 DataWriter::DataWriter(const std::string &delim)
-: delim(delim), commentLeader("# ")
-{
-}
+    : delim(delim), commentLeader("# ") {
+    }
 
 /**
  *  @brief Before the object is destroyed, close all open file streams.
  */
-DataWriter::~DataWriter()
-{
+DataWriter::~DataWriter() {
     // Close all out output streams.
-	for (StreamList::iterator it=fileStreams.begin(); it!=fileStreams.end(); ++it) {
-	it->second->close();
-	}
-	fileStreams.clear();
+    for (auto it : fileStreams) {
+        it.second->close();
+    }
+    fileStreams.clear();
 }
 
 
@@ -63,16 +61,15 @@ DataWriter::~DataWriter()
  *  @param fileName Path to write data to.
  *  @param rowData  List of values to write as one line of data.
  */
-void DataWriter::writeRow(const std::string& fileName, 
-                          const std::list<double>& rowData)
-{
+void DataWriter::writeRow(const std::string& fileName,
+        const std::list<double>& rowData) {
     DataWriter::fStreamPt out = getStream(fileName);
-    for (std::list<double>::const_iterator it=rowData.begin(); it!=rowData.end(); ++it) {
+    for (auto it : rowData) {
         // Output the delimeter if we're not at the start of the line.
-        if (it!=rowData.begin())
+        if (it != rowData.front()) {
             (*out) << delim;
-
-        (*out) << (*it);
+        }
+        (*out) << it;
     }
     (*out) << ",\n";
 }
@@ -89,26 +86,26 @@ void DataWriter::writeRow(const std::string& fileName,
  *  @param fileName Path to write data to.
  *  @param text Text to write to file
  */
-void DataWriter::writeComment(const std::string& fileName, 
-                               const std::string& commentText)
-{
-        DataWriter::fStreamPt out = getStream(fileName);
-        (*out) << commentLeader;
-        (*out) << commentText;
-        (*out) << std::endl;
+void DataWriter::writeComment(const std::string& fileName,
+        const std::string& commentText) {
+    DataWriter::fStreamPt out = getStream(fileName);
+    (*out) << commentLeader;
+    (*out) << commentText;
+    (*out) << std::endl;
 }
-  
+
 /**
  *  @brief Get the stored file stream pointer, or create a new one.
  *
  *  @param fileName The file name.
  *  @return Pointer to a file stream.
  */
-DataWriter::fStreamPt DataWriter::getStream (const std::string& fileName)
-{
-    // If we can't find the fileName in the map, the stream hasn't been opened yet.
+DataWriter::fStreamPt DataWriter::getStream(const std::string& fileName) {
+    // If we can't find the fileName in the map, the stream hasn't been opened
+    // yet.
     if (!fileStreams.count(fileName)) {
-        fStreamPt stream(new std::ofstream(fileName.c_str(), std::ofstream::out));
+        fStreamPt stream(new std::ofstream(
+                    fileName.c_str(), std::ofstream::out));
         fileStreams[fileName] = stream;
     }
     // Retrieve a pointer to the output file stream.

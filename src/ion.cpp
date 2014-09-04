@@ -4,7 +4,6 @@
 
 #include "include/ion.h"
 
-#include <stdexcept>
 
 #include "include/ccmd_sim.h"
 #include "include/IonHistogram.h"
@@ -44,7 +43,7 @@ Ion::Ion(const IonType& type)
  *
  *  @param dt Time step.
  */
-void Ion::drift(const double dt) {
+void Ion::drift(double dt) {
     pos_ += vel_*dt;
 }
 
@@ -67,21 +66,21 @@ inline void Ion::kick(const double dt, const Vector3D& f) {
  *
  *  @param ionHistogram A reference to the histogram object to update.
  */
-void Ion::recordKE(IonHistogram& ionHistogram) const {
+void Ion::recordKE(IonHistogram_ptr ionHistogram) const {
     double energy;
     double mon2 = 0.5 * ionType_.mass;
     // total
     energy = mon2 * vel_.norm_sq();
-    ionHistogram.addIon(name() + "_total", energy);
+    ionHistogram->addIon(name() + "_total", energy);
     // x - directed
     energy = mon2 * vel_[0] * vel_[0];
-    ionHistogram.addIon(name() + "_x", energy);
+    ionHistogram->addIon(name() + "_x", energy);
     // y - directed
     energy = mon2 * vel_[1] * vel_[1];
-    ionHistogram.addIon(name() + "_y", energy);
+    ionHistogram->addIon(name() + "_y", energy);
     // z - directed
     energy = mon2 * vel_[2] * vel_[2];
-    ionHistogram.addIon(name() + "_z", energy);
+    ionHistogram->addIon(name() + "_z", energy);
 }
 
 /** 

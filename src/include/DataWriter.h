@@ -9,10 +9,10 @@
 #ifndef __ccmd__DataWriter__
 #define __ccmd__DataWriter__
 
-#include <iostream>
 #include <fstream>
-#include <map>
 #include <list>
+#include <map>
+#include <memory>
 #include <string>
 
 #include <boost/shared_ptr.hpp>
@@ -29,7 +29,7 @@ public:
     const DataWriter& operator=(const DataWriter&) = delete;
 private:
     /// A pointer to a file stream.
-    typedef boost::shared_ptr<std::ofstream> fStreamPt;
+    typedef std::shared_ptr<std::ofstream> fStreamPt;
     /// A map holding pointers to a file stream using the file path as a key.
     typedef std::map<std::string, fStreamPt> StreamList;
     /// A map holding pointers to a file stream using the file path as a key.

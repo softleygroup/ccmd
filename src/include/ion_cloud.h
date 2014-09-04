@@ -48,7 +48,7 @@ class IonCloud {
     size_t number_of_ions() const { return ionVec_.size(); }
 
     void update_position_histogram(ImageCollection&) const;
-    void update_energy_histogram(IonHistogram&) const;
+    void update_energy_histogram(IonHistogram_ptr) const;
 
     void saveStats(const std::string basePath, const double length_scale,
                    const double time_scale) const;
@@ -80,7 +80,7 @@ class IonCloud {
     friend class Coulomb_force;
 };
 
-// typedef boost::shared_ptr<IonCloud> IonCloud_ptr;
+typedef std::shared_ptr<IonCloud> IonCloud_ptr;
 
 #endif
 

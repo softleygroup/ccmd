@@ -1,7 +1,6 @@
 
 #include "include/ion_cloud.h"
 
-#include <algorithm>
 #include <functional>
 #include <list>
 #include <memory>
@@ -18,8 +17,6 @@
 
 // To do:   fix aspect ratio
 // #include "eigs.h"
-
-//using namespace std;
 
 class Hist3D;
 int get_nearest_cube(int n);
@@ -474,7 +471,7 @@ void IonCloud::savePos(const std::string basePath,
  *
  *  @param h    The histogram object in which to record energies.
  */
-void IonCloud::update_energy_histogram(IonHistogram& h) const {
+void IonCloud::update_energy_histogram(IonHistogram_ptr h) const {
     for (auto ion : ionVec_) {
         ion->recordKE(h);
     }

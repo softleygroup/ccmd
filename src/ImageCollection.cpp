@@ -6,94 +6,69 @@
 //
 //
 
-#include "ImageCollection.h"
-
-#include "ccmd_image.h"
-#include "ccmd_sim.h"
-#include "hist3D.h"
-#include "vector3D.h"
+#include "include/ImageCollection.h"
 
 #include <list>
+#include <memory>
+#include <thread>
+#include <string>
 
-#include <boost/thread.hpp>
+#include "include/ccmd_image.h"
+#include "include/ccmd_sim.h"
+#include "include/logger.h"
+#include "include/hist3D.h"
+#include "include/vector3D.h"
 
-/**
- */
-
-ImageCollection::ImageCollection(const double binSize) : collection()
-{
+ImageCollection::ImageCollection(double binSize) : collection() {
     this->binSize = binSize;
 }
 
-ImageCollection::~ImageCollection()
-{
-    for (Collection::iterator it=collection.begin(); it!=collection.end(); ++it) {
-        delete it->second;
-        collection.erase(it);
-    }
-}
 
-void ImageCollection::addIon(const std::string &name, const Vector3D &r)
-{
-    Hist3D* pIonHist;
-    if (collection.count(name))
-    {
+void ImageCollection::addIon(const std::string &name, const Vector3D &r) {
+    Hist3D_ptr pIonHist;
+    if (collection.count(name)) {
         pIonHist = collection[name];
     } else {
-        pIonHist = new Hist3D;
-        pIonHist->set_bin_size(binSize);
+        pIonHist = std::make_shared<Hist3D>(binSize);
         collection[name] = pIonHist;
     }
-    
     pIonHist->update(r);
 }
 
-void ImageCollection::writeFiles(std::string const& basePath, MicroscopeParams& p) const
-{
-    typedef std::list<ImageWorker*> ThreadList;
+void ImageCollection::writeFiles(const std::string &basePath,
+        const MicroscopeParams &p) const {
     ThreadList threadList;
-    
-    for (Collection::const_iterator it=collection.begin();
-         it!=collection.end(); ++it)
-    {
-        ImageWorker *w = new ImageWorker(basePath, it, p);
+    for (auto& it : collection) {
+        ImageWorker_ptr w = std::make_shared<ImageWorker>(basePath,
+                it.first, it.second, p);
         threadList.push_back(w);
     }
-    
-    for (ThreadList::iterator it_thread=threadList.begin(); it_thread!=threadList.end(); ++it_thread) {
-        (*it_thread)->join();
-        delete *it_thread;
+    for (auto it_thread : threadList) {
+        it_thread->join();
     }
 }
 
 ImageWorker::ImageWorker(
-                         std::string const& basePath,
-                         ImageCollection::Collection::const_iterator const& it,
-                         MicroscopeParams& p)
-:basePath(basePath), fileName(it->first), pIonHist(it->second), params(p)
-{
-    m_Thread = boost::thread(&ImageWorker::generateAndSave, this);
+                         const std::string &basePath,
+                         const std::string &name,
+                         Hist3D_ptr hist,
+                         const MicroscopeParams &p)
+:basePath(basePath), fileName(name), pIonHist(hist), params(p) {
+    m_Thread = std::thread(&ImageWorker::generateAndSave, this);
 }
 
-void ImageWorker::join()
-{
+void ImageWorker::join() {
     m_Thread.join();
 }
 
 void ImageWorker::generateAndSave() {
+    Logger& log = Logger::getInstance();
     std::string fileEnding = "_image.png";
-    Microscope_image* image;
-    
-    std::cout << "Generating image: " << fileName << std::endl;
-    image = new Microscope_image((*pIonHist), params);
-    while (!image->is_finished())
-    {
-        image->draw();
-        printProgBar( static_cast<int>(image->get_progress()) );
+    log.log(Logger::info, "Generating image: " + fileName);
+    Microscope_image image(pIonHist, params);
+    while (!image.is_finished()) {
+        image.draw();
     }
-    std::cout << std::endl;
-    image->ouput_to_file(basePath + fileName + fileEnding);
-    delete image;
+    image.ouput_to_file(basePath + fileName + fileEnding);
+    log.log(Logger::info, "Done generating image: " + fileName);
 }
-
-

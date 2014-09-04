@@ -6,11 +6,12 @@
 //
 //
 
-#include "IonHistogram.h"
+#include "include/IonHistogram.h"
 
 #include <cmath>
 #include <fstream>
-#include <boost/make_shared.hpp>
+#include <memory>
+
 
 /**
  *  @class IonHistogram
@@ -47,12 +48,12 @@ IonHistogram::~IonHistogram()
  */
 void IonHistogram::addIon(const std::string& name, const double& energy)
 {
-    Hist_ptr pTheHist;
+    Histogram_ptr pTheHist;
     if (histMap.count(name))
     {
         pTheHist = histMap[name];
     } else {
-        pTheHist = boost::make_shared<Histogram>();
+        pTheHist = std::make_shared<Histogram>();
         histMap[name] = pTheHist;
     }
     
@@ -74,25 +75,25 @@ void IonHistogram::writeFiles (const std::string& basePath)
     std::string fileEnding = "_hist.dat";
     std::string fileName;
     double binCount;
-    Hist_ptr pTheHist;
+    Histogram_ptr pTheHist;
     int cumulate;
     int maxBin;
 
     for (auto& it : histMap) {
-    //BOOST_FOREACH(HistMap::value_type &it, histMap) {
         fileName = basePath + it.first + fileEnding;
         std::ofstream fileStream(fileName.c_str());
         pTheHist = it.second;
         
+        // Determine the cumulative total and the maximum bin number.
         cumulate = 0;
         maxBin = 0;
-        for (Histogram::iterator histIt=pTheHist->begin(); histIt!=pTheHist->end(); ++histIt)
-        {
-            maxBin = std::max(maxBin, histIt->first);
-            cumulate += histIt->second;
+        for (auto& histIt : *pTheHist) {
+            maxBin = std::max(maxBin, histIt.first);
+            cumulate += histIt.second;
         }
         
-        for (int i=0; i<maxBin; i++)
+        // Iterate over all bin numbers, output zero for unused bins.
+        for (int i = 0; i < maxBin; i++)
         {
             if(pTheHist->count(i))
                 binCount = (pTheHist->at(i));

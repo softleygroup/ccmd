@@ -9,10 +9,10 @@
 #ifndef __ccmd__logger__
 #define __ccmd__logger__
 
-#include <boost/thread/mutex.hpp>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <mutex>
 
 /**
  *  @class Logger
@@ -80,7 +80,7 @@ private:
     std::ofstream fileStream_; ///< Log file stream.
     int maxlevel_; ///< Verbosity set in initialise.
     std::vector<std::string> level_string_; ///< Names of each level.
-    boost::mutex mtx_; ///< Mutex lock.
+    std::mutex mtx_; ///< Mutex lock.
 };
 
 /**
@@ -94,7 +94,7 @@ private:
 class lock
 {
 public:
-    lock(boost::mutex &mtx) : mtx_(mtx)
+    lock(std::mutex &mtx) : mtx_(mtx)
     {
         mtx.lock();
     }
@@ -103,7 +103,7 @@ public:
         mtx_.unlock();
     }
 private:
-    boost::mutex& mtx_;
+    std::mutex& mtx_;
 };
 
 

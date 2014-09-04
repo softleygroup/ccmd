@@ -11,11 +11,10 @@
 #define ccmd_image_ccmd_image_h
 
 #include "ccmd_sim.h"
+#include "include/hist3d.h"
 
-#include <iostream>
 #include <vector>
 
-class Hist3D;
 class histPixel;
 class Gauss_kernel;
 
@@ -75,7 +74,6 @@ public:
     void normalise();
     
     void ouput_to_file(std::string file_name);
-    friend std::ostream& operator<<(std::ostream& os, const CCMD_image& im);
 
 private:
     //zero-padded one-dimensional convolution of u and v    
@@ -147,7 +145,7 @@ private:
 //
 class Microscope_image : public CCMD_image {
 public:
-    Microscope_image(const Hist3D& hist, const MicroscopeParams& p);
+    Microscope_image(const Hist3D_ptr hist, const MicroscopeParams& p);
 
     // generates image by adding successive blurred planes 
     // using microscope model
@@ -160,7 +158,7 @@ public:
     float get_progress();
     
 private:
-    const Hist3D* hist_ptr;
+    const Hist3D_ptr hist_ptr;
     const MicroscopeParams& params;    
     int plane_now;
     int zmin;

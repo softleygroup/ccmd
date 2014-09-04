@@ -1,29 +1,8 @@
-//
-//  ccmd_sim.cpp
-//
-
-#include "include/ccmd_sim.h"
-
-#include <boost/property_tree/exceptions.hpp>
-#include <boost/property_tree/info_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-
-#include <algorithm>
-#include <cmath>  // only for M_PI
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <utility>
-
-#include "include/logger.h"
-
-using namespace std;
-
-/**
- *  @file ccmd_sim.h
- *  @brief Load parameters from the file, check for correctness and store.
+/** 
+ * @file ccmd_sim.cpp
+ * @brief Class definitions for all parameter classes.
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
  *
  *  All the parameters are stored in a text input file following the Boost info
  *  file format (see documentation at the [boost website][info_doc]), which is
@@ -78,7 +57,20 @@ using namespace std;
  *
  *  [info_doc]: http://www.boost.org/doc/libs/1_46_1/doc/html/boost_propertytree/parsers.html#boost_propertytree.parsers.info_parser
  *
+ *
  */
+
+#include "include/ccmd_sim.h"
+
+#include <boost/property_tree/exceptions.hpp>
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include <cmath>  // only for M_PI
+#include <sstream>
+#include <string>
+
+#include "include/logger.h"
 
 /**
  *  @class TrapParams
@@ -173,7 +165,6 @@ TrapParams::TrapParams(const std::string& file_name) {
 
         // Read trap-specific information.
         std::string typeString = pt.get<std::string>("trap.type.name");
-        ostringstream error_msg;
         if (typeString == "cosine") {
             log.log(Logger::info, "Making a cosine trap.");
             wave = cosine;
@@ -183,12 +174,14 @@ TrapParams::TrapParams(const std::string& file_name) {
             tau = pt.get<double>("trap.type.tau");
             if (tau < 0.0) {
                 std::stringstream ss;
-                ss << "Warning: Tau=" << tau << " out of range. Limiting to 0.0";
+                ss << "Warning: Tau=" << tau;
+                ss << " out of range. Limiting to 0.0";
                 log.log(Logger::warn, ss.str());
                 tau = 0.0;
             } else if (tau > 1.0) {
                 std::stringstream ss;
-                ss << "Warning: Tau=" << tau << " out of range. Limiting to 1.0";
+                ss << "Warning: Tau=" << tau;
+                ss << " out of range. Limiting to 1.0";
                 log.log(Logger::warn, ss.str());
                 tau = 1.0;
             }
@@ -200,7 +193,7 @@ TrapParams::TrapParams(const std::string& file_name) {
             found = file_name.find_last_of("/\\");
             waveformFile = file_name.substr(0, found) + "/waveform.dat";
         } else if (typeString == "cosine_decay") {
-            cout << "Making a decaying cosine trap.\n";
+            log.log(Logger::info, "Making a decaying cosine trap.");
             wave = cosine_decay;
             tau = pt.get<double>("trap.type.tau");
             deltaT = pt.get<double>("trap.type.deltaT");
@@ -208,16 +201,17 @@ TrapParams::TrapParams(const std::string& file_name) {
             log.log(Logger::info, "Making a two-frequency trap.");
             wave = twofreq;
             freq_mult = pt.get<double>("trap.type.mult");
-            log.log(Logger::info, "\tFreq multiple:" + std::to_string(freq_mult));
+            log.log(Logger::info,
+                    "\tFreq multiple:" + std::to_string(freq_mult));
         } else {
             std::stringstream ss;
             ss << "Unrecognised trap type " << typeString;
             log.log(Logger::error, ss.str());
-            throw runtime_error("unrecognised trap");
+            throw std::runtime_error("unrecognised trap");
         }
     } catch(boost::property_tree::ptree_error& e) {
         log.log(Logger::error, e.what());
-        throw runtime_error(e.what());
+        throw std::runtime_error(e.what());
     }
 }
 
@@ -351,9 +345,12 @@ CloudParams::CloudParams(const std::string& file_name) {
         log.log(Logger::info, "\tCharge: " + std::to_string(ionType.charge));
         if (ionType.is_laser_cooled) {
             log.log(Logger::info, "\tLaser Cooled.");
-            log.log(Logger::info, "\tbeta: " + std::to_string(ionType.beta));
-            log.log(Logger::info, "\trecoil: " + std::to_string(ionType.recoil));
-            log.log(Logger::info, "\tdirection: " + std::to_string(ionType.direction));
+            log.log(Logger::info,
+                    "\tbeta: " + std::to_string(ionType.beta));
+            log.log(Logger::info,
+                    "\trecoil: " + std::to_string(ionType.recoil));
+            log.log(Logger::info,
+                    "\tdirection: " + std::to_string(ionType.direction));
         }
     }
 }
@@ -448,7 +445,7 @@ IntegrationParams::IntegrationParams(const std::string& file_name) {
     } catch(const boost::property_tree::ptree_error &e) {
         log.log(Logger::error, "Error reading integration params.");
         log.log(Logger::error, e.what());
-        throw runtime_error("Error reading integration params.");
+        throw std::runtime_error("Error reading integration params.");
     }
 
     time_step = M_PI/steps_per_period;
@@ -485,9 +482,7 @@ MicroscopeParams::MicroscopeParams(const std::string& file_name) {
         nz = pt.get<int>("image.nz");
         nx = pt.get<int>("image.nx");
     } catch(const boost::property_tree::ptree_error &e) {
-        ostringstream error_msg;
-        cout << e.what() << endl;
-        throw runtime_error("Error reading microscope params.");
+        throw std::runtime_error("Error reading microscope params.");
     }
 }
 
@@ -513,7 +508,8 @@ SimParams::SimParams(const std::string& file_name) {
     }
 
     Logger& log = Logger::getInstance();
-    log.log(Logger::info, "Coulomb Force using " + std::to_string(coulomb_threads)
+    log.log(Logger::info,
+            "Coulomb Force using " + std::to_string(coulomb_threads)
             + " threads.");
     log.log(Logger::info, "Random seed " + std::to_string(random_seed));
 }

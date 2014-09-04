@@ -10,6 +10,7 @@
 
 #include <ctime>
 #include <sstream>
+#include <iostream>
 
 
 /**
@@ -40,7 +41,7 @@ Logger::~Logger()
  *  @brief Log an event.
  *
  *  Write a log event to screen and file. This should be thread safe as we get 
- *  a boost::mutex lock before writing the log, and release it on return.
+ *  a mutex lock before writing the log, and release it on return.
  *
  *  @param level Error level.
  *  @param message The log message.

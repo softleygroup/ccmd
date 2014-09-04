@@ -9,75 +9,54 @@
 #ifndef __ccmd__ImageCollection__
 #define __ccmd__ImageCollection__
 
-#include "ccmd_sim.h"
-
-#include <ctime>
-#include <iomanip>
-#include <iostream>
+#include <list>
 #include <map>
+#include <memory>
 #include <string>
+#include <thread>
 
-#include <boost/thread.hpp>
+#include "include/hist3D.h"
 
-class Hist3D;
 class Vector3D;
-
+class MicroscopeParams;
+class ImageWorker;
 
 class ImageCollection {
-public:
-    ImageCollection(const double binSize);
-    ~ImageCollection();
-    
-    void addIon(const std::string& name, const Vector3D& r);
-    void writeFiles(std::string const& basePath, MicroscopeParams& p) const;
-private:
-    typedef std::map<std::string, Hist3D*> Collection;
+ public:
+    explicit ImageCollection(double binSize);
+
+    void addIon(const std::string &name, const Vector3D &r);
+    void writeFiles(const std::string &basePath, 
+            const MicroscopeParams &p) const;
+
+    ImageCollection(const ImageCollection&) = delete;
+    const ImageCollection operator=(const ImageCollection&) = delete;
+ private:
+    typedef std::map<std::string, Hist3D_ptr> Collection;
+    typedef std::shared_ptr<ImageWorker> ImageWorker_ptr;
+    typedef std::list<ImageWorker_ptr> ThreadList;
+
     Collection collection;
     double binSize;
-    
+
     friend class ImageWorker;
 };
 
-class ImageWorker
-{
-public:
-    ImageWorker(std::string const& basePath, ImageCollection::Collection::const_iterator const& it,
-                MicroscopeParams& p);
+class ImageWorker {
+ public:
+    ImageWorker(const std::string &basePath, const std::string &name,
+            Hist3D_ptr hist, const MicroscopeParams &p);
     void join();
-    
-private:
+
+ private:
     friend class ImageCollection;
     std::string basePath;
-    ImageCollection::Collection::iterator it;
-    boost::thread m_Thread;
+    std::thread m_Thread;
     std::string fileName;
-    Hist3D* pIonHist;
-    MicroscopeParams& params;
-    
+    Hist3D_ptr pIonHist;
+    const MicroscopeParams& params;
+
     void generateAndSave();
-    
-    static double stopWatchTimer() {
-        static clock_t start = clock();
-        double time_elapsed;
-        time_elapsed = ( std::clock() - start )/static_cast<double>(CLOCKS_PER_SEC);
-        return time_elapsed;
-    };
-    
-    static void printProgBar( int percent ){
-        std::string bar;
-        for(int i = 0; i < 50; i++){
-            if( i < (percent/2)){
-                bar.replace(i,1,"=");
-            }else if( i == (percent/2)){
-                bar.replace(i,1,">");
-            }else{
-                bar.replace(i,1," ");
-            }
-        }
-        std::cout << '\r' << "[" << bar << "] ";
-        std::cout.width( 3 );
-        std::cout<< percent << "%     " << std::flush;
-    }
 };
 
 

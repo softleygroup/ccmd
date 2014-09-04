@@ -4,10 +4,11 @@
 #include <memory>
 #include <string>
 
-#include "include/ion_trap.h"
-#include "include/stochastic_heat.h"
-#include "include/stats.h"
+#include "include/IonHistogram.h"
 #include "include/ccmd_sim.h"
+#include "include/ion_trap.h"
+#include "include/stats.h"
+#include "include/stochastic_heat.h"
 
 class Vector3D;
 class IonHistogram;
@@ -21,23 +22,23 @@ class Ion {
     explicit Ion(const IonType& type);
     virtual ~Ion() {}
     // shifts ion position
-    void move(const Vector3D& move_va) { pos_ += move_va; }
+    void move(const Vector3D &move_va) { pos_ += move_va; }
 
     // free flight
-    void drift(const double dt);
+    void drift(double dt);
 
     // velocity modifying functions
     // Subclasses must provide their own force calculation
     virtual void kick(double dt) = 0;
-    virtual void kick(double dt, const Vector3D& f);
+    virtual void kick(double dt, const Vector3D &f);
     virtual void velocity_scale(double dt) {}
     virtual void heat(double dt) {}
 
     // These should only be called once on initialising the ion;
-    void set_position(const Vector3D& r) { pos_ = r; }
-    void set_velocity(const Vector3D& v) { vel_ = v; }
+    void set_position(const Vector3D &r) { pos_ = r; }
+    void set_velocity(const Vector3D &v) { vel_ = v; }
 
-    void recordKE(IonHistogram& ionHistogram) const;
+    void recordKE(IonHistogram_ptr ionHistogram) const;
 
     // accessor functions
     const IonType& get_type() const {return ionType_; }
@@ -78,6 +79,7 @@ class TrappedIon : public Ion {
 
     TrappedIon(const TrappedIon&) = delete;
     const TrappedIon& operator=(const TrappedIon&) = delete;
+
  private:
     const IonTrap_ptr trap_;
 };

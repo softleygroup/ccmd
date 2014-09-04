@@ -16,7 +16,7 @@ class IntegrationParams;
 class Integrator {
     friend class Coulomb_force;
  public:
-    Integrator(const IonTrap_ptr it, IonCloud& ic,
+    Integrator(const IonTrap_ptr it, const IonCloud_ptr ic,
                const IntegrationParams& integrationParams,
                const SimParams& sp);
     virtual ~Integrator();
@@ -25,7 +25,7 @@ class Integrator {
     Integrator(const Integrator& ) = delete;
     Integrator& operator=(const Integrator&) = delete;
  protected:
-    IonCloud& ions;
+    IonCloud_ptr ions;
     IonTrap_ptr trap;
     Coulomb_force f_coulomb;  
     const IntegrationParams& integrationParams;
@@ -39,7 +39,7 @@ class Integrator {
 //
 class RESPA_integrator : public Integrator {
  public:
-    RESPA_integrator(const IonTrap_ptr it, IonCloud& ic,
+    RESPA_integrator(const IonTrap_ptr it, const IonCloud_ptr ic,
                      const IntegrationParams& integrationParams,
                      const SimParams& sp);
  

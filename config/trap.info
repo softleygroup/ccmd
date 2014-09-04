@@ -16,7 +16,7 @@ integrator {
     histperiods   200
 }
 image {
-    makeimage   false
+    makeimage   true
     scale       1; 2.5     ; Image scaling in pixels per micron
     blur        5.0     ; Blur radius in microns
     dof         50.0    ; Depth of field in microns
@@ -28,7 +28,7 @@ simulation {
     seed        69
 }
 ionnumbers {
-    Ca      500
+    Ca      50
      Xe      0
 }
 iontype {

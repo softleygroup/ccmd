@@ -1,3 +1,11 @@
+/** 
+ * @file cosine_trap.cpp
+ * @brief Function definitions a cosine trap.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
+
 /**
  *  @class CosineTrap
  *  @brief Defines an ideal cosine waveform ion trap.
@@ -6,7 +14,7 @@
  *  all rods. The force on an ion is determined via the Mathieu equations.
  */
 
-#include "ion_trap.h"
+#include "include/ion_trap.h"
 
 /**
  *  @brief Create a new cosine ion trap, call the parent class to initialise 
@@ -14,11 +22,10 @@
  *
  *  @param params   Reference to the trap parameters object.
  */
-CosineTrap::CosineTrap(const TrapParams& params) 
-    : IonTrap(params)
-{
-    cos_phase = 0.0;//cos(2.0*time_now);
-}
+CosineTrap::CosineTrap(const TrapParams& params)
+    : IonTrap(params) {
+        cos_phase = 0.0;
+    }
 
 
 /**
@@ -29,8 +36,7 @@ CosineTrap::CosineTrap(const TrapParams& params)
  *
  *  @param dt   Time step.
  */
-void CosineTrap::evolve(double dt)
-{
+void CosineTrap::evolve(double dt) {
     time_now += dt;
     cos_phase = cos(2.0*time_now);
 }
@@ -45,10 +51,9 @@ void CosineTrap::evolve(double dt)
  * @param r Ion position.
  * @return The force vector.
  */
-Vector3D CosineTrap::force_now(const Vector3D& r) const
-{
+Vector3D CosineTrap::force_now(const Vector3D& r) const {
     // Force calculation in scaled Mathieu parameter units
-    Vector3D f(r);    
+    Vector3D f(r);
     f.x *= +2*q_unit_mass*cos_phase - a_unit_mass;
     f.y *= -2*q_unit_mass*cos_phase - a_unit_mass;
     f.z *= 2*a_unit_mass;
