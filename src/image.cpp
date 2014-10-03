@@ -81,15 +81,15 @@ void Image::set_pixel(int x, int y, double pixel_val) {
     pixels[x-1][y-1] = pixel_val;
 }
 
- void Image::set_pixel(const std::vector<HistPixel>& pixels) {
+void Image::set_pixel(const std::vector<HistPixel>& pixels) {
      for (int i = 0; i < pixels.size(); ++i) {
          this->set_pixel(pixels[i]);
      }
- }
- 
- void Image::set_pixel(const HistPixel& pixel) {
-     set_pixel(pixel.x, pixel.y, pixel.value);
- }
+}
+
+void Image::set_pixel(const HistPixel& pixel) {
+    set_pixel(pixel.x, pixel.y, pixel.value);
+}
 
 Gauss_kernel::Gauss_kernel(int num_pixels, double sigma)
     : Image(1, num_pixels), s(sigma) {

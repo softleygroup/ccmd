@@ -30,15 +30,14 @@ class Image {
     Image(int num_rows, int num_cols, const Hist3D& hist);
     virtual ~Image() { cleanup(); }
 
-    Image(const Image& image)
-    {
+    Image(const Image& image) {
         // deep copy of pixel data
         rows = image.rows;
         cols = image.cols;
         allocate_image();
         // copies pixel array
-        for (int i=0; i<this->rows; ++i) {
-            for (int j=0; j<this->cols; ++j) {
+        for (int i = 0; i < this->rows; ++i) {
+            for (int j = 0; j < this->cols; ++j) {
                 this->pixels[i][j] = image.pixels[i][j];
             }
         }

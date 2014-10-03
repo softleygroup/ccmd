@@ -25,7 +25,7 @@ image {
 }
 simulation {
     threads     0
-    seed        69
+    seed        -1
 }
 ionnumbers {
     Ca      50

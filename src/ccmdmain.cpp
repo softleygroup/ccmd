@@ -49,6 +49,16 @@
  * @copyright Copyright 2014 University of Oxford.
  */
 
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <list>
+#include <algorithm>
+#include <memory>
+#include <fstream>
+#include <sstream>
+#include <string>
+
 #include "include/image.h"
 #include "include/ccmdsim.h"
 #include "include/datawriter.h"
@@ -60,62 +70,51 @@
 #include "include/logger.h"
 #include "include/stats.h"
 
-#include <ctime>
-#include <iomanip>
-#include <iostream>
-#include <list>
-#include <memory>
-#include <fstream>
-#include <sstream>
-
 double stopWatchTimer();
 double KE;
-void printProgBar( int percent );
+void printProgBar(int percent);
 
 double stopWatchTimer() {
     static clock_t start = clock();
     double time_elapsed;
-    time_elapsed = ( std::clock() - start )/static_cast<double>(CLOCKS_PER_SEC);
+    time_elapsed = (std::clock() - start)/static_cast<double>(CLOCKS_PER_SEC);
     return time_elapsed;
 }
 
-void printProgBar( int percent ){
+void printProgBar(int percent) {
     std::string bar;
-    for(int i = 0; i < 50; i++){
-        if( i < (percent/2)){
-            bar.replace(i,1,"=");
-        }else if( i == (percent/2)){
-            bar.replace(i,1,">");
-        }else{
-            bar.replace(i,1," ");
+    for (int i = 0; i < 50; i++) {
+        if ( i < (percent/2)) {
+            bar.replace(i, 1, "=");
+        } else if ( i == (percent/2)) {
+            bar.replace(i, 1, ">");
+        } else {
+            bar.replace(i, 1, " ");
         }
     }
     std::cout << '\r' << "[" << bar << "] ";
-    std::cout.width( 3 );
+    std::cout.width(3);
     std::cout<< percent << "%     " << std::flush;
 }
 
-using namespace std;
-
-
-int main (int argc, char * const argv[]) {
+int main(int argc, char * const argv[]) {
     Logger& log = Logger::getInstance();
 
     if (argc != 2) {
-	std::cout << "usage: " << argv[0] << " [working directory]" << std::endl;
-	std::exit(1);
+        std::cout << "usage: " << argv[0] << " [working directory]" << std::endl;
+        std::exit(1);
     }
 
     std::string path = std::string(argv[1]);
     if (path[path.length()-1] != '/')
-	    path += "/";
+        path += "/";
 
     log.initialise(Logger::debug, path + "log.txt");
     log.log(Logger::info, "CCMD - Coulomb crystal molecular dynamics");
     log.log(Logger::info, "Version 1.0.0");
 
     // Parameter file paths
-    string info_file = path + "trap.info";
+    std::string info_file = path + "trap.info";
     log.log(Logger::info, "Loading input file " + info_file);
 
     try {
@@ -135,15 +134,16 @@ int main (int argc, char * const argv[]) {
         } else if (trapParams.wave == trapParams.waveform) {
             trap = std::make_shared<WaveformTrap>(trapParams);
         } else if (trapParams.wave == trapParams.cosine_decay) {
-                // have to do some unit conversions here for the decay params
-                trapParams.tau *= M_PI;
-                trapParams.deltaT = (integrationParams.cool_steps + integrationParams.hist_steps)*integrationParams.time_step-trapParams.deltaT*M_PI;
+            // have to do some unit conversions here for the decay params
+            trapParams.tau *= M_PI;
+            trapParams.deltaT = (integrationParams.cool_steps + integrationParams.hist_steps)*
+                integrationParams.time_step-trapParams.deltaT*M_PI;
             trap = std::make_shared<CosineDecayTrap>(trapParams);
         } else if (trapParams.wave == trapParams.twofreq) {
             trap = std::make_shared<TwoFreq_trap>(trapParams);
         } else {
             log.log(Logger::error, "Unrecognised trap type");
-            throw runtime_error("Unrecognised trap type");
+            throw std::runtime_error("Unrecognised trap type");
         }
 
         // Construct ion cloud
@@ -154,44 +154,45 @@ int main (int argc, char * const argv[]) {
         RespaIntegrator integrator(trap, cloud, integrationParams, sim_params);
 
         // Construct integrator
-        //CUDA_integrator integrator(trap, cloud, integrationParams);
+        // CUDA_integrator integrator(trap, cloud, integrationParams);
 
         // 3D histogram for image creation
-        ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance * trap->get_length_scale()));
+        ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance *
+                                         trap->get_length_scale()));
 
         // Cool down ion cloud
-        cout << flush << "Running cool down" << endl;
         log.log(Logger::info, "Running cool down.");
         int nt_cool = integrationParams.cool_steps;
         double dt = integrationParams.time_step;
         DataWriter writer("\t");
         writer.writeComment(path + "totalEnergy.csv", "t\tE_tot");
 
-        //int write_every = std::floor(6.2831/(15*dt));
+        // int write_every = std::floor(6.2831/(15*dt));
         // Write frame once every 2 RF cycles
         int write_every = (integrationParams.steps_per_period);
         write_every = std::max(1, write_every);
-        log.log(Logger::debug, "Writing one frame every " + std::to_string(write_every));
-        int frameNumber=0;
+        log.log(Logger::debug, "Writing one frame every " +
+                std::to_string(write_every));
+        int frameNumber = 0;
 
         Stats<double> mean_energy;
         std::string stats_file = path + "energy.csv";
         int energy_row = 0;
 
-//------------------------------------------------------------------------------
-// Cooling
-//------------------------------------------------------------------------------
-        for (int t=0; t<nt_cool; ++t) {
-//            cloud->collide();
-//            if (cloud->number_of_ions() ==0) {
-//                log.log(Logger::warn, "No ions remaining, stopping.");
-//                break;
-//            }
+        //------------------------------------------------------------------------------
+        // Cooling
+        //------------------------------------------------------------------------------
+        for (int t = 0; t < nt_cool; ++t) {
+            //            cloud->collide();
+            //            if (cloud->number_of_ions() ==0) {
+            //                log.log(Logger::warn, "No ions remaining, stopping.");
+            //                break;
+            //            }
 
             integrator.evolve(dt);
             mean_energy.append(cloud->kinetic_energy());
 
-            if (t%write_every==0) {
+            if (t%write_every == 0) {
                 std::list<double> rowdata;
                 rowdata.push_back(energy_row++);
                 rowdata.push_back(mean_energy.average());
@@ -199,40 +200,39 @@ int main (int argc, char * const argv[]) {
                 writer.writeRow(stats_file, rowdata);
                 mean_energy.reset();
 
-                //char buffer[50];
-                //std::sprintf(buffer, "%.4i", frameNumber++);
-                //std::string framepath = buffer;
-                //cloud->savePos(framepath, trap->get_length_scale(), trap->get_time_scale());
+                // char buffer[50];
+                // std::sprintf(buffer, "%.4i", frameNumber++);
+                // std::string framepath = buffer;
+                // cloud->savePos(framepath, trap->get_length_scale(), trap->get_time_scale());
             }
             // Track progress
-            int percent = static_cast<int>( (t*100)/nt_cool );
+            int percent = static_cast<int>((t*100)/nt_cool);
             if ( (t*100/5)%nt_cool == 0 ) {
                 printProgBar(percent);
             }
         }
         printProgBar(100);
-        cout << '\n';
+        std::cout << '\n';
 
         // Evolution
         int nt = integrationParams.hist_steps;
 
-//------------------------------------------------------------------------------
-// Histogram
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
+        // Histogram
+        //------------------------------------------------------------------------------
 
-        cout << flush << "Acquiring histogram data" << endl;
         log.log(Logger::info, "Acquiring histogram data");
 
         IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5);
 
-	    // Start timer
+        // Start timer
         stopWatchTimer();
         KE = 0;
         double etot = 0;
         int swap_count = 0;
-        //if (swap_params.do_swap)
-            //swap_count = std::floor(0.5*nt/swap_params.from.number);
-        for (int t=0; t<nt; ++t) {
+        // if (swap_params.do_swap)
+            // swap_count = std::floor(0.5*nt/swap_params.from.number);
+        for (int t = 0; t < nt; ++t) {
 //            cloud->collide();
 //            if (cloud->number_of_ions() ==0) {
 //                log.log(Logger::warn, "No ions remaining, stopping.");
@@ -247,47 +247,42 @@ int main (int argc, char * const argv[]) {
             cloud->update_energy_histogram(ionHistogram);
 
             // Track progress
-            int percent = static_cast<int>( (t*100)/nt );
-            if ( (t*100/5)%nt == 0) {
+            int percent = static_cast<int>((t*100)/nt);
+            if ((t*100/5)%nt == 0) {
                 printProgBar(percent);
-                cout << setw(4) << stopWatchTimer() << "s";
+                std::cout << std::setw(4) << stopWatchTimer() << "s";
             }
             KE += cloud->kinetic_energy();
             etot += cloud->total_energy();
 
-        //if (swap_params.do_swap){
-            //if (t%swap_count==0)
-                //cloud->swap_first(swap_params.from, swap_params.to);
-        //}
+        // if (swap_params.do_swap){
+            // if (t%swap_count==0)
+                // cloud->swap_first(swap_params.from, swap_params.to);
+        // }
 
-            //if (t%write_every==0) {
-                //char buffer[50];
-                //std::sprintf(buffer, "%.4i", frameNumber++);
-                //std::string framepath = buffer;
-                //cloud->savePos(framepath,
-                        //trap->get_length_scale(), trap->get_time_scale());
-            //}
+            // if (t%write_every==0) {
+                // char buffer[50];
+                // std::sprintf(buffer, "%.4i", frameNumber++);
+                // std::string framepath = buffer;
+                // cloud->savePos(framepath,
+                        // trap->get_length_scale(), trap->get_time_scale());
+            // }
         }
         KE /= nt;
         printProgBar(100);
-        std::cout << endl;
-
-        cout << "total kinetic energy = " << KE << endl;
-        cout << "Total energy = " << etot << endl;
+        std::cout << std::endl;
 
         log.log(Logger::info, "total kinetic energy = " + std::to_string(KE));
         log.log(Logger::info, "total energy = " + std::to_string(etot));
 
         ionHistogram->writeFiles("ionEnergy");
 
-        if (microscope_params.make_image)
-        {
+        if (microscope_params.make_image) {
             ionImages.writeFiles(path, microscope_params);
         }
         cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
-
     } catch (std::exception& e) {
-        cerr << "Error: " << e.what() << endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 
