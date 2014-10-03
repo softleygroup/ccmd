@@ -1,13 +1,12 @@
-//
-//  logger.h
-//  ccmd
-//
-//  Created by Chris Rennick on 22/03/2014.
-//
-//
-
-#ifndef __ccmd__logger__
-#define __ccmd__logger__
+/**
+ * @file logger.h
+ * @brief Declaration of a simple logging class.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
+#ifndef INCLUDE_LOGGER_H_
+#define INCLUDE_LOGGER_H_
 
 #include <fstream>
 #include <string>
@@ -48,9 +47,8 @@
  *      log.log(Logger::error, "An error occured.");    // Write an event
  */
 
-class Logger
-{
-public:
+class Logger {
+ public:
     /**
      * @brief log output levels in increasing verbosity.
      *  Name        |   Usage
@@ -59,52 +57,49 @@ public:
      *  \c debug    | Debugging information that is not normally needed.
      *  \c info     | Normal level, simulation information and output.
      *  \c warn     | Warning that a default parameter is used as input file is out of range
-     *  \c error    | Critical error or exception, simulation will stop after this.
+     *  \c error    | Critical error, simulation will stop after this.
      */
     enum Level {error, warn, info, debug, loop};
     ~Logger();
-    
+
     static Logger& getInstance() {
         static Logger instance;
         return instance;
     }
-    
+
     void initialise(const Level maxlevel, const std::string filename);
     void log(const Level level, const std::string message);
-private:
+
+ private:
     // Don't implement
     Logger() : maxlevel_(-1) {}
     Logger(Logger const&);
     void operator=(Logger const&);
-    
-    std::ofstream fileStream_; ///< Log file stream.
-    int maxlevel_; ///< Verbosity set in initialise.
-    std::vector<std::string> level_string_; ///< Names of each level.
-    std::mutex mtx_; ///< Mutex lock.
+
+    std::ofstream fileStream_;               ///< Log file stream.
+    int maxlevel_;                           ///< Verbosity set in initialise.
+    std::vector<std::string> level_string_;  ///< Names of each level.
+    std::mutex mtx_;                         ///< Mutex lock.
 };
 
 /**
  *  @class lock
- *  @brief Holds a reference to a mutex lock and ensures the lock is released on exception.
+ *  @brief Holds a reference to a mutex lock and ensures the lock is released
+ *  on exception.
  *
  *  Releasing the lock in the destructor ensures the lock is released when this
- *  object goes out of scope, either through completing the function that needed
- *  a lock, or after an exception.
+ *  object goes out of scope, either through completing the function that
+ *  needed a lock, or after an exception.
  */
-class lock
-{
-public:
-    lock(std::mutex &mtx) : mtx_(mtx)
-    {
-        mtx.lock();
-    }
-    ~lock()
-    {
-        mtx_.unlock();
-    }
-private:
+class lock {
+ public:
+    explicit lock(std::mutex &mtx) : mtx_(mtx) { mtx.lock(); }
+
+    ~lock() { mtx_.unlock(); }
+
+ private:
     std::mutex& mtx_;
 };
 
 
-#endif /* defined(__ccmd__logger__) */
+#endif  // INCLUDE_LOGGER_H_

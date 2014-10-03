@@ -1,6 +1,6 @@
 /** 
- * @file ccmd_image.cpp
- * @brief Function definitions for CCMD_image.
+ * @file image.cpp
+ * @brief Function definitions for Image.
  *
  * @author Chris Rennick
  * @copyright Copyright 2014 University of Oxford.
@@ -9,12 +9,13 @@
 #define png_infopp_NULL (png_infopp)NULL
 #define int_p_NULL (int*)NULL
 
-#include "include/ccmd_image.h"
+#include "include/image.h"
 
 #include <boost/gil/image.hpp>
 #include <boost/gil/typedefs.hpp>
 #include <boost/gil/extension/io/png_dynamic_io.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <string>
 #include <vector>
@@ -22,7 +23,7 @@
 #include "include/hist3D.h"
 
 /**
- *  @class CCMD_image
+ *  @class Image
  *  @brief Generates an image from the data in Hist3D.
  *
  *  Transforms the 3d histogram of ion positions into a microscope image by
@@ -40,9 +41,22 @@
  *  @param num_cols Number of pixel columns in image.
  *  @param hist The Hist3D object that will provide data for this image.
  */
-CCMD_image::CCMD_image(int num_rows, int num_cols, const Hist3D& hist)
+Image::Image(int num_rows, int num_cols, const Hist3D& hist)
     : rows(num_rows), cols(num_cols) {
     allocate_image();
+}
+
+
+/**
+ *  @brief Construct a new image of the given size.
+ *
+ *  @param num_rows Number of pixel rows in image.
+ *  @param num_cols Number of pixel columns in image.
+ *  @param hist The Hist3D object that will provide data for this image.
+ */
+Image::Image(int num_rows, int num_cols)
+    : rows(num_rows), cols(num_cols) {
+        allocate_image();
 }
 
 /**
@@ -50,7 +64,7 @@ CCMD_image::CCMD_image(int num_rows, int num_cols, const Hist3D& hist)
  *  range.
  *  @return Double precision pixel value.
  */
-double CCMD_image::get_pixel(int x, int y) const {
+double Image::get_pixel(int x, int y) const {
     // returns zero if pixel coordinates out of range
     if (x > rows || x < 1 || y > cols || y < 1) return 0.0;
     return pixels[x-1][y-1];
@@ -58,22 +72,27 @@ double CCMD_image::get_pixel(int x, int y) const {
 
 
 /**
- *  @brief Set the pixel value at the given coordinates, do nothing if out of range.
+ *  @brief Set the pixel value at the given coordinates, do nothing if out of
+ *  range.
  */
-void CCMD_image::set_pixel(int x, int y, double pixel_val) {
+void Image::set_pixel(int x, int y, double pixel_val) {
     // no change if pixel coordinates out of range
     if (x > rows || x < 1 || y > cols || y < 1) return;
     pixels[x-1][y-1] = pixel_val;
 }
 
-void CCMD_image::set_pixel(const std::vector<histPixel>& pixels) {
-    for (int i = 0; i < pixels.size(); ++i) {
-        this->set_pixel(pixels[i]);
-    }
-}
+ void Image::set_pixel(const std::vector<HistPixel>& pixels) {
+     for (int i = 0; i < pixels.size(); ++i) {
+         this->set_pixel(pixels[i]);
+     }
+ }
+ 
+ void Image::set_pixel(const HistPixel& pixel) {
+     set_pixel(pixel.x, pixel.y, pixel.value);
+ }
 
 Gauss_kernel::Gauss_kernel(int num_pixels, double sigma)
-    : CCMD_image(1, num_pixels), s(sigma) {
+    : Image(1, num_pixels), s(sigma) {
     double kernel_sum = 0.0;
     // as kernel is separable/symmetric, use only a single column
     for (int i = 0; i < cols; ++i) {
@@ -97,7 +116,7 @@ double Gauss_kernel::gaussian(double x, double mu, double sigma) {
     return exp( -(x-mu)*(x-mu)/(2.0*sigma*sigma) );
 }
 
-void CCMD_image::gaussian_blur(const Gauss_kernel& blurrer) {
+void Image::gaussian_blur(const Gauss_kernel& blurrer) {
     double* blur_ptr = blurrer.pixels[0];
     // apply filter to each row
     for (int i = 0; i < rows; ++i) {
@@ -116,11 +135,13 @@ void CCMD_image::gaussian_blur(const Gauss_kernel& blurrer) {
     return;
 }
 
-void CCMD_image::conv_1D(double u[], int m, double v[], int n) {
-    // zero-padded one-dimensional convolution of u and v
-    // u,v of length m,n respectively
-    // central part (of length m) of (u * v) returned in u
-
+/**
+ * @brief zero-padded one-dimensional convolution of u and v.
+ *
+    u,v of length m,n respectively
+    central part (of length m) of (u * v) returned in u
+ */
+void Image::conv_1D(double u[], int m, double v[], int n) {
     double w[m+n-1];
 
     // convolution integral as discrete sum
@@ -140,8 +161,8 @@ void CCMD_image::conv_1D(double u[], int m, double v[], int n) {
     return;
 }
 
-void CCMD_image::transpose() {
-    CCMD_image image_in(*this);
+void Image::transpose() {
+    Image image_in(*this);
 
     // delete pixel array
     this->cleanup();
@@ -159,11 +180,13 @@ void CCMD_image::transpose() {
     }
 }
 
-void CCMD_image::set_pixel(const histPixel& pixel) {
-    set_pixel(pixel.x, pixel.y, pixel.value);
-}
-
-void CCMD_image::ouput_to_file(std::string file_name) {
+/**
+ * @brief Write normalised pixel values to an 8 bit greyscale image.
+ *
+ * Normalises image first, which replaces all pixel values. Call this function
+ * after any other processing has been completed.
+ */
+void Image::ouput_to_file(std::string file_name) {
     normalise();
     boost::gil::gray8_image_t img(rows+1, cols+1);
     boost::gil::gray8_view_t view = boost::gil::view(img);
@@ -177,8 +200,12 @@ void CCMD_image::ouput_to_file(std::string file_name) {
     boost::gil::png_write_view(file_name, view);
 }
 
-void CCMD_image::normalise() {
-    // finds brightest pixel in image
+
+/**
+ * @brief Normalise all pixel values to double precision in range (0-1)
+ */
+void Image::normalise() {
+    // Find brightest pixel in image.
     double maxval = 0.0;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -187,7 +214,7 @@ void CCMD_image::normalise() {
         }
     }
 
-    // scales max brightness to 1
+    // Scale max brightness to 1
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             double newpixval = get_pixel(i, j)/maxval;

@@ -17,13 +17,13 @@ class IntegrationParams;
 //template <typename T>
 //class BodySystemCUDA;
 
-class CUDA_integrator : public RESPA_integrator 
+class CUDA_integrator : public RespaIntegrator 
 {
 public:
     CUDA_integrator(IonTrap& it, IonCloud& ic, const IntegrationParams& params);
     ~CUDA_integrator();
 
-    void evolve(double dt=RESPA_integrator::default_timestep);
+    void evolve(double dt=RespaIntegrator::default_timestep);
     
 private:
     size_t nbody;       // Number of ions

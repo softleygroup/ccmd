@@ -1,13 +1,13 @@
-//
-//  ImageCollection.h
-//  ccmd
-//
-//  Created by Chris Rennick on 21/05/2013.
-//
-//
+/** @file imagecollection.h
+ *
+ * @brief Class declaration for ImageCollection
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 
-#ifndef __ccmd__ImageCollection__
-#define __ccmd__ImageCollection__
+#ifndef INCLUDE_IMAGECOLLECTION_H_
+#define INCLUDE_IMAGECOLLECTION_H_
 
 #include <list>
 #include <map>
@@ -26,7 +26,7 @@ class ImageCollection {
     explicit ImageCollection(double binSize);
 
     void addIon(const std::string &name, const Vector3D &r);
-    void writeFiles(const std::string &basePath, 
+    void writeFiles(const std::string &basePath,
             const MicroscopeParams &p) const;
 
     ImageCollection(const ImageCollection&) = delete;
@@ -36,8 +36,8 @@ class ImageCollection {
     typedef std::shared_ptr<ImageWorker> ImageWorker_ptr;
     typedef std::list<ImageWorker_ptr> ThreadList;
 
-    Collection collection;
-    double binSize;
+    Collection collection_;
+    double binsize_;
 
     friend class ImageWorker;
 };
@@ -50,15 +50,15 @@ class ImageWorker {
 
  private:
     friend class ImageCollection;
-    std::string basePath;
-    std::thread m_Thread;
-    std::string fileName;
-    Hist3D_ptr pIonHist;
-    const MicroscopeParams& params;
+    std::string base_path_;
+    std::thread thread_;
+    std::string filename_;
+    Hist3D_ptr  hist_;
+    const MicroscopeParams& params_;
 
     void generateAndSave();
 };
 
 
 
-#endif /* defined(__ccmd__ImageCollection__) */
+#endif  // INCLUDE_IMAGECOLLECTION_H_

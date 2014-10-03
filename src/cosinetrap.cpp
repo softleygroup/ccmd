@@ -14,7 +14,7 @@
  *  all rods. The force on an ion is determined via the Mathieu equations.
  */
 
-#include "include/ion_trap.h"
+#include "include/iontrap.h"
 
 /**
  *  @brief Create a new cosine ion trap, call the parent class to initialise 
@@ -24,7 +24,7 @@
  */
 CosineTrap::CosineTrap(const TrapParams& params)
     : IonTrap(params) {
-        cos_phase = 0.0;
+        cos_phase_ = 0.0;
     }
 
 
@@ -37,13 +37,13 @@ CosineTrap::CosineTrap(const TrapParams& params)
  *  @param dt   Time step.
  */
 void CosineTrap::evolve(double dt) {
-    time_now += dt;
-    cos_phase = cos(2.0*time_now);
+    time_now_ += dt;
+    cos_phase_ = cos(2.0*time_now_);
 }
 
 
 /**
- * @brief Calculate the force on an ion at position r from the Mathieu equations. 
+ * @brief Calculate the force on an ion from the Mathieu equations. 
  *
  * This does not need the ion mass, but the result needs to be multiplied by the
  * charge to give the correct scaling and sign.
@@ -54,8 +54,8 @@ void CosineTrap::evolve(double dt) {
 Vector3D CosineTrap::force_now(const Vector3D& r) const {
     // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);
-    f.x *= +2*q_unit_mass*cos_phase - a_unit_mass;
-    f.y *= -2*q_unit_mass*cos_phase - a_unit_mass;
-    f.z *= 2*a_unit_mass;
+    f.x *= +2*q_unit_mass_ * cos_phase_ - a_unit_mass_;
+    f.y *= -2*q_unit_mass_ * cos_phase_ - a_unit_mass_;
+    f.z *= 2*a_unit_mass_;
     return f;
 }

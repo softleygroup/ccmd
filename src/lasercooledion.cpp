@@ -1,4 +1,12 @@
 /**
+ * @file lasercooledion.cpp
+ * @brief Function definitions for class derived from Ion
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
+
+/**
  *  @class LaserCooledIon
  *  @brief Representation of a trapped and laser cooled ion.
  *  This class extends the trapped ion class to include frictional cooling
@@ -10,9 +18,7 @@
 
 #include "include/ion.h"
 
-#include <assert.h>
-
-#include "include/ccmd_sim.h"
+#include "include/ccmdsim.h"
 
 /**
  *  Construct a new laser cooled ion. The trap  are passed up to the
@@ -23,7 +29,6 @@
 LaserCooledIon::LaserCooledIon(const IonTrap_ptr ion_trap, const IonType& type,
         const SimParams& sp)
     : TrappedIon(ion_trap, type), heater_(sp.random_seed) {
-    assert(ionType_.is_laser_cooled == true);
     heater_.set_kick_size(sqrt(ionType_.recoil));
 }
 

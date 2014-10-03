@@ -4,7 +4,7 @@
 
 // To do: Implement parameters for square wave
 
-#include "ion_trap.h"
+#include "iontrap.h"
 
 /**
  *  @brief Create a new digital ion trap, call the parent class to initialise
@@ -15,8 +15,7 @@
 PulsedTrap::PulsedTrap(const TrapParams& params) 
     : IonTrap(params)
 {
-    tau = trapParams.tau;
-    pulse_height = trapParams.v_rf;
+    pulse_height_ = 0;
 }
 
 
@@ -31,25 +30,25 @@ PulsedTrap::PulsedTrap(const TrapParams& params)
 
 void PulsedTrap::evolve(double dt)
 {
-    time_now += dt;
+    time_now_ += dt;
     
     // Implementation of square wave pulse shape
-    double scaled_time = time_now/pi - floor( time_now/pi );
+    double scaled_time = time_now_/pi - std::floor( time_now_/pi );
     
-    if (scaled_time <= tau/2) {
-        pulse_height = 1.0;
+    if (scaled_time <= params_.tau/2) {
+        pulse_height_ = 1.0;
         return;
-    } else if (scaled_time < (1.0-tau)/2) {
-        pulse_height = 0.0;
+    } else if (scaled_time < (1.0-params_.tau)/2) {
+        pulse_height_ = 0.0;
         return;
-    } else if (scaled_time < (1.0+tau)/2) {
-        pulse_height = -1.0;
+    } else if (scaled_time < (1.0+params_.tau)/2) {
+        pulse_height_ = -1.0;
         return;
-    } else if (scaled_time < 1.0-tau/2) {
-        pulse_height = 0.0;
+    } else if (scaled_time < 1.0-params_.tau/2) {
+        pulse_height_ = 0.0;
         return;
     }
-    pulse_height = 1.0;
+    pulse_height_ = 1.0;
     return;
 }
 
@@ -67,9 +66,9 @@ Vector3D PulsedTrap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);
-    f.x *= +2*q_unit_mass*pulse_height - a_unit_mass;
-    f.y *= -2*q_unit_mass*pulse_height - a_unit_mass;
-    f.z *= 2*a_unit_mass;
+    f.x *= +2*q_unit_mass_ * pulse_height_ - a_unit_mass_;
+    f.y *= -2*q_unit_mass_ * pulse_height_ - a_unit_mass_;
+    f.z *= 2*a_unit_mass_;
 
     return f;
 }

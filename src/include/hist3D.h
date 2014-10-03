@@ -1,59 +1,42 @@
-//
-//  Hist3D.h
-//  CCMD
-//
-//  Created by Martin Bell on 23/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ * @file cosine_trap.cpp
+ * @brief Function definitions a cosine trap.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 
-#ifndef CCMD_Hist3D_h
-#define CCMD_Hist3D_h
+#ifndef INCLUDE_HIST3D_H
+#define INCLUDE_HIST3D_H
 
 #include <map>
 #include <memory>
 #include <vector>
 
-#include "vector3D.h"
+#include "include/vector3D.h"
 
-class histPixel;
+class HistPixel;
 
-class Hist3D {    
-public:
+class Hist3D {
+ public:
     explicit Hist3D(double bin_size);
-    enum xyz{x=0,y,z};                  // specifies an axis
 
-    void update(const Vector3D& r);     // adds point to histogram, increments bin
-    
-    
-    size_t get_number_bins() const { return hist.size(); }
-    
-    // finds bounds of histogram along specified axis
+    enum xyz{x = 0, y, z};        ///< Specifies an axis
+    void update(const Vector3D& r);
     void minmax(const Hist3D::xyz&, int& minr, int& maxr) const;
-    
-    // returns all pixels that lie in the plane perpendicular to x,y or z,
-    // which passes through the bin specified by r
-    std::vector<histPixel> getPlane(const Hist3D::xyz& , int r) const;
-    
-    // removes histogram bins below a threshold (given as percentage of maximum)
+    std::vector<HistPixel> getPlane(const Hist3D::xyz& , int r) const;
     void prune(double threshold_percent);
-    
-    // clears histrogram data
     void reset();
 
-    double bin_size_;
-    
     Hist3D(const Hist3D&) = delete;
     const Hist3D& operator=(const Hist3D&) = delete;
-private:
-    std::map<std::vector<int>,double> hist;
-    
-                           std::vector<int>& , 
-                           std::vector<int>& ) const;
-
+ private:
+    std::map<std::vector<int>, double> hist_;
+    double bin_size_;
 };
 
-class histPixel {
-    public:
+class HistPixel {
+ public:
     int x;
     int y;
     double value;
@@ -61,4 +44,4 @@ class histPixel {
 
 typedef std::shared_ptr<Hist3D> Hist3D_ptr;
 
-#endif
+#endif  // INCLUDE_HIST3D_H

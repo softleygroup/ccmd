@@ -1,12 +1,20 @@
 /**
+ * @file trappedion.cpp
+ * @brief Function definitions for class derived from Ion
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
+
+#include "include/ion.h"
+#include "include/iontrap.h"
+
+/**
  *  @class TrappedIon
  *  @brief Representation of a trapped ion.
  *  This class adds a kick function that includes the electrostatic trapping
  *  force at the ion's location.
  */
-
-#include "include/ion.h"
-#include "include/ion_trap.h"
 
 /**
  *  Construct a new trapped ion that stores a pointer to the ion trap

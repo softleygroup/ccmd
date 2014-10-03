@@ -17,7 +17,7 @@
  *  time constant tau.
  */
 
-#include "include/ion_trap.h"
+#include "include/iontrap.h"
 
 /**
  *  @brief Create a new cosine ion trap, call the parent class to initialise 
@@ -27,9 +27,7 @@
  */
 CosineDecayTrap::CosineDecayTrap(const TrapParams& params)
     : CosineTrap(params) {
-        cos_phase = 0.0;
-        tau = params.tau;
-        deltaT = params.deltaT;
+        cos_phase_ = 0.0;
     }
 
 
@@ -42,16 +40,16 @@ CosineDecayTrap::CosineDecayTrap(const TrapParams& params)
  *  @param dt   Time step.
  */
 void CosineDecayTrap::evolve(double dt) {
-    time_now += dt;
-    cos_phase = cos(2.0*time_now);
-    if (time_now > deltaT) {
-        cos_phase *= exp(-(time_now-deltaT)/tau);
+    time_now_ += dt;
+    cos_phase_ = cos(2.0*time_now_);
+    if (time_now_ > params_.deltaT) {
+        cos_phase_ *= exp(-(time_now_-params_.deltaT)/params_.tau);
     }
 }
 
 
 /**
- * @brief Calculate the force on an ion at position r from the Mathieu equations. 
+ * @brief Calculate the force on an ion from the Mathieu equations. 
  *
  * This does not need the ion mass, but the result needs to be multiplied by the
  * charge to give the correct scaling and sign.
@@ -63,9 +61,9 @@ Vector3D CosineDecayTrap::force_now(const Vector3D& r) const {
     // Force calculation in scaled Mathieu parameter units
 
     Vector3D f(r);
-    f.x *= +2*q_unit_mass*cos_phase - a_unit_mass;
-    f.y *= -2*q_unit_mass*cos_phase - a_unit_mass;
-    f.z *= 2*a_unit_mass;
+    f.x *= +2*q_unit_mass_ * cos_phase_ - a_unit_mass_;
+    f.y *= -2*q_unit_mass_ * cos_phase_ - a_unit_mass_;
+    f.z *= 2*a_unit_mass_;
     return f;
 }
 

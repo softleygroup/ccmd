@@ -4,8 +4,8 @@
 
 
 #include "cuda_integrator.h"
-#include "ccmd_sim.h"
-#include "ion_trap.h"
+#include "ccmdsim.h"
+#include "iontrap.h"
 #include "ion_cloud.h"
 
 #include "bodysystemcuda.h"
@@ -15,7 +15,7 @@
 //
 
 CUDA_integrator::CUDA_integrator(IonTrap& it, IonCloud& ic, const IntegrationParams& params)
-    : RESPA_integrator(it,ic,params)
+    : RespaIntegrator(it,ic,params)
 {
     nbody = ions->number_of_ions();
     num_devices = 1;    // CUDA compatible cards
@@ -91,7 +91,7 @@ void CUDA_integrator::arrays_from_gpu()
 
 
 //
-//  CUDA evolve: algorithm is identical to RESPA_integrator 
+//  CUDA evolve: algorithm is identical to RespaIntegrator 
 //
 void CUDA_integrator::evolve(double dt)
 {

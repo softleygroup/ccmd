@@ -8,7 +8,7 @@
  *  all rods. The force on an ion is determined via the Mathieu equations.
  */
 
-#include "ion_trap.h"
+#include "iontrap.h"
 
 /**
  *  @brief Create a new TwoFrequency ion trap, call the parent class to initialise 
@@ -19,7 +19,7 @@
 TwoFreq_trap::TwoFreq_trap(const TrapParams& params) 
     : IonTrap(params)
 {
-    cos_phase = 0.0;//cos(2.0*time_now);
+    cos_phase = 0.0;//cos(2.0*time_now_);
     freq_mult = params.freq_mult;
 }
 
@@ -33,8 +33,8 @@ TwoFreq_trap::TwoFreq_trap(const TrapParams& params)
  *  @param dt   Time step.
  */
 void TwoFreq_trap::evolve(double dt) {
-    time_now += dt; 
-    cos_phase = 0.5 * (cos(2.0*time_now) + cos (2.0*time_now*freq_mult)); 
+    time_now_ += dt; 
+    cos_phase = 0.5 * (cos(2.0*time_now_) + cos (2.0*time_now_*freq_mult)); 
 }
 
 /**
@@ -50,8 +50,8 @@ Vector3D TwoFreq_trap::force_now(const Vector3D& r) const
 {
     // Force calculation in scaled Mathieu parameter units
     Vector3D f(r);
-    f.x *= +2*q_unit_mass*cos_phase - a_unit_mass;
-    f.y *= -2*q_unit_mass*cos_phase - a_unit_mass;
-    f.z *= 2*a_unit_mass;
+    f.x *= +2*q_unit_mass_ * cos_phase - a_unit_mass_;
+    f.y *= -2*q_unit_mass_ * cos_phase - a_unit_mass_;
+    f.z *= 2*a_unit_mass_;
     return f;
 }

@@ -1,9 +1,12 @@
-//
-//  vector3D.h
-//
-
-#ifndef CCMD_Vector3D_h
-#define CCMD_Vector3D_h
+/** 
+ * @file vector3d.h
+ * @brief Declaration of a 3 dimensional vector class.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
+#ifndef INCLUDE_VECTOR3D_H_
+#define INCLUDE_VECTOR3D_H_
 
 #include <cmath>
 #include <iostream>
@@ -18,15 +21,13 @@ class Vector3D {
     Vector3D(const Vector3D& a) : x(a.x), y(a.y), z(a.z) {}
 
     // copy assignment
-    Vector3D& operator=(const Vector3D& a)
-    {
+    Vector3D& operator=(const Vector3D& a) {
         x = a.x; y = a.y; z = a.z;
         return *this;
     }
 
     // index Access
-    double operator[] (int index) const
-    {
+    double operator[] (int index) const {
         switch (index) {
             case 0: return x;
             case 1: return y;
@@ -36,110 +37,95 @@ class Vector3D {
     }
 
     // unary operator
-    friend Vector3D operator-(const Vector3D& a)
-    {
-        return Vector3D(-a.x,-a.y,-a.z);
-    }
+    friend Vector3D operator-(const Vector3D& a) {
+        return Vector3D(-a.x,-a.y,-a.z); }
 
     // binary operators
-    friend Vector3D operator+(const Vector3D& a, const Vector3D& b)
-                    { return Vector3D(a.x+b.x,a.y+b.y,a.z+b.z); }
+    friend Vector3D operator+(const Vector3D& a, const Vector3D& b) {
+        return Vector3D(a.x+b.x,a.y+b.y,a.z+b.z); }
 
-    friend Vector3D operator-(const Vector3D& a, const Vector3D& b)
-                    { return Vector3D(a.x-b.x,a.y-b.y,a.z-b.z); }
+    friend Vector3D operator-(const Vector3D& a, const Vector3D& b) {
+        return Vector3D(a.x-b.x,a.y-b.y,a.z-b.z); }
 
     // element-wise multiply
-    friend Vector3D operator*(const Vector3D& a, const Vector3D& b)
-                    { return Vector3D(a.x*b.x,a.y*b.y,a.z*b.z); }
+    friend Vector3D operator*(const Vector3D& a, const Vector3D& b) {
+        return Vector3D(a.x*b.x,a.y*b.y,a.z*b.z); }
 
     // element-wise divide
-    friend Vector3D operator/(const Vector3D& a, const Vector3D& b)
-        { return Vector3D(a.x/b.x,a.y/b.y,a.z/b.z); }
+    friend Vector3D operator/(const Vector3D& a, const Vector3D& b) {
+        return Vector3D(a.x/b.x,a.y/b.y,a.z/b.z); }
 
     //multiply by constant
-    friend Vector3D operator*(const Vector3D& a, double d)
-        { return Vector3D(a.x*d,a.y*d,a.z*d); }
+    friend Vector3D operator*(const Vector3D& a, double d) {
+        return Vector3D(a.x*d,a.y*d,a.z*d); }
 
     //division by constant
-    friend Vector3D operator/(const Vector3D& a, double d)
-        { return Vector3D(a.x/d,a.y/d,a.z/d); }
+    friend Vector3D operator/(const Vector3D& a, double d) {
+        return Vector3D(a.x/d,a.y/d,a.z/d); }
 
     Vector3D add(const Vector3D& a)  { return (*this)+a; }
     Vector3D subtract(const Vector3D& a) { return (*this)-a; }
     Vector3D multiply(const Vector3D& a) { return (*this)*a; }
     Vector3D divide(const Vector3D& a) { return (*this)/a; }
 
-    Vector3D& operator+=(const Vector3D& a)
-    {
+    Vector3D& operator+=(const Vector3D& a) {
         x += a.x; y += a.y; z += a.z;
         return *this;
     }
 
-    Vector3D& operator-=(const Vector3D& a)
-    {
+    Vector3D& operator-=(const Vector3D& a) {
         x -= a.x; y -= a.y; z -= a.z;
         return *this;
     }
 
-    Vector3D& operator*=(const Vector3D& a)
-    {
+    Vector3D& operator*=(const Vector3D& a) {
         x *= a.x; y *= a.y; z *= a.z;
         return *this;
     }
 
-    Vector3D& operator*=(double d)
-    {
+    Vector3D& operator*=(double d) {
         x *= d; y *= d; z *= d;
         return *this;
     }
 
-    Vector3D& operator/=(const Vector3D& a)
-    {
+    Vector3D& operator/=(const Vector3D& a) {
         x /= a.x; y /= a.y; z /= a.z;
         return *this;
     }
 
-    Vector3D& operator/=(double d)
-    {
+    Vector3D& operator/=(double d) {
         x /= d; y /= d; z /= d;
         return *this;
     }
 
-    Vector3D& operator/(double d)
-    {
+    Vector3D& operator/(double d) {
         x /= d; y /= d; z /= d;
         return *this;
     }
 
     // comparison operators
-    friend bool operator==(const Vector3D& a,const Vector3D& b)
-    {
+    friend bool operator==(const Vector3D& a,const Vector3D& b) {
         return (a.x==b.x && a.y==b.y && a.z==b.z);
     }
 
-    friend bool operator!=(const Vector3D& a,const Vector3D& b)
-    {
+    friend bool operator!=(const Vector3D& a,const Vector3D& b) {
         return (a.x!=b.x || a.y!=b.y || a.z!=b.z);
     }
 
-    friend bool operator<(const Vector3D& a,const Vector3D& b)
-    {
+    friend bool operator<(const Vector3D& a,const Vector3D& b) {
         return (a.norm_sq() < b.norm_sq());
     }
 
-    friend bool operator>(const Vector3D& a,const Vector3D& b)
-    {
+    friend bool operator>(const Vector3D& a,const Vector3D& b) {
         return (a.norm_sq() > b.norm_sq());
     }
 
     // vector operations
-    static double dot(const Vector3D& a, const Vector3D& b)
-    {
+    static double dot(const Vector3D& a, const Vector3D& b) {
         return a.x*b.x + a.y*b.y + a.z*b.z;
     }
 
-    static Vector3D cross(const Vector3D& a, const Vector3D& b)
-    {
+    static Vector3D cross(const Vector3D& a, const Vector3D& b) {
         return Vector3D(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
     }
 
@@ -156,4 +142,4 @@ class Vector3D {
 
 };
 
-#endif
+#endif  // INCLUDE_VECTOR3D_H_

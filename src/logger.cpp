@@ -1,17 +1,17 @@
-//
-//  logger.cpp
-//  ccmd
-//
-//  Created by Chris Rennick on 22/03/2014.
-//
-//
-
+/**
+ * @file logger.cpp
+ * @brief Function definitions for a logging class.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 #include "logger.h"
 
 #include <ctime>
-#include <sstream>
 #include <iostream>
-
+#include <sstream>
+#include <string>
+#include <vector>
 
 /**
  *  @brief Set log level and output file.
@@ -19,11 +19,10 @@
  *  @param maxlevel A selection from the log level enumeration.
  *  @param filename Path to log output file.
  */
-void Logger::initialise(const Level maxlevel, const std::string filename)
-{
+void Logger::initialise(const Level maxlevel, const std::string filename) {
     fileStream_.open(filename.c_str());
     maxlevel_ = maxlevel;
-    
+
     level_string_ = std::vector<std::string>(5, "");
     level_string_[error] = "Error";
     level_string_[warn] = "Warn";
@@ -32,24 +31,22 @@ void Logger::initialise(const Level maxlevel, const std::string filename)
     level_string_[loop] = "Loop";
 }
 
-Logger::~Logger()
-{
+Logger::~Logger() {
     fileStream_.close();
 }
 
 /**
  *  @brief Log an event.
  *
- *  Write a log event to screen and file. This should be thread safe as we get 
+ *  Write a log event to screen and file. This should be thread safe as we get
  *  a mutex lock before writing the log, and release it on return.
  *
  *  @param level Error level.
  *  @param message The log message.
  */
-void Logger::log(const Level level, const std::string message)
-{
+void Logger::log(const Level level, const std::string message) {
     lock scopelock(mtx_);
-    
+
     if (maxlevel_ == -1) {
         std::cout << "Logger not initialised - " << message;
         return;
@@ -58,8 +55,8 @@ void Logger::log(const Level level, const std::string message)
         std::cout << "Log file not open.\n" << message;
         return;
     }
-    
-    if (level<=maxlevel_) {
+
+    if (level <= maxlevel_) {
         std::time_t rawtime;
         std::time(&rawtime);
         std::string time_string = std::ctime(&rawtime);

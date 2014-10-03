@@ -1,12 +1,19 @@
-#ifndef CCMD_ion_h
-#define CCMD_ion_h
+/** 
+ * @file ion.h
+ * @brief Declaration of all Ion base and derived classes.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
+#ifndef INCLUDE_ION_H_
+#define INCLUDE_ION_H_
 
 #include <memory>
 #include <string>
 
-#include "include/IonHistogram.h"
-#include "include/ccmd_sim.h"
-#include "include/ion_trap.h"
+#include "include/ionhistogram.h"
+#include "include/ccmdsim.h"
+#include "include/iontrap.h"
 #include "include/stats.h"
 #include "include/stochastic_heat.h"
 
@@ -21,11 +28,18 @@ class Ion {
  public:
     explicit Ion(const IonType& type);
     virtual ~Ion() {}
-    // shifts ion position
+    // Shift ion position.
     void move(const Vector3D &move_va) { pos_ += move_va; }
 
-    // free flight
+    // Base class functions
     void drift(double dt);
+    void recordKE(IonHistogram_ptr ionHistogram) const;
+    void updateStats();
+    void update_from(const IonType& from);
+
+    // These should only be called once on initialising the ion;
+    void set_position(const Vector3D &r) { pos_ = r; }
+    void set_velocity(const Vector3D &v) { vel_ = v; }
 
     // velocity modifying functions
     // Subclasses must provide their own force calculation
@@ -33,12 +47,6 @@ class Ion {
     virtual void kick(double dt, const Vector3D &f);
     virtual void velocity_scale(double dt) {}
     virtual void heat(double dt) {}
-
-    // These should only be called once on initialising the ion;
-    void set_position(const Vector3D &r) { pos_ = r; }
-    void set_velocity(const Vector3D &v) { vel_ = v; }
-
-    void recordKE(IonHistogram_ptr ionHistogram) const;
 
     // accessor functions
     const IonType& get_type() const {return ionType_; }
@@ -51,10 +59,6 @@ class Ion {
     const Stats<Vector3D> get_posStats() const {return posStats_;}
     const Stats<Vector3D> get_velStats() const {return velStats_;}
 
-    void updateStats();
-
-    void update_from(const IonType& from);
-
     Ion(const Ion&) = delete;
     const Ion& operator=(const Ion&) = delete;
 
@@ -63,7 +67,7 @@ class Ion {
     Vector3D pos_;
     Vector3D vel_;
 
-    // Ion statistics
+    // Store statistics for this ion
     Stats<Vector3D> posStats_;
     Stats<Vector3D> velStats_;
 };
@@ -98,14 +102,11 @@ class LaserCooledIon : public TrappedIon {
     LaserCooledIon(const LaserCooledIon&) = delete;
     const LaserCooledIon& operator=(const LaserCooledIon&) = delete;
  private:
-    // photon recoil heating
     Stochastic_heat heater_;
-
     Vector3D get_friction() const;
 };
 
 /// Ion pointer type.
 typedef std::shared_ptr<Ion> Ion_ptr;
 
-#endif
-
+#endif  // INCLUDE_ION_H_

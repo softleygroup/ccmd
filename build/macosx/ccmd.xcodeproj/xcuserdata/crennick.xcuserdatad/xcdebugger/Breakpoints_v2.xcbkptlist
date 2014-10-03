@@ -8,38 +8,6 @@
          <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../src/microscope_image.cpp"
-            timestampString = "419085877.17308"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "Microscope_image::Microscope_image(const Hist3D&amp; hist, const Microscope_params&amp; p)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../src/microscope_image.cpp"
-            timestampString = "419086130.528937"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "Microscope_image::draw()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
             condition = "plane_now&lt;-93"
             continueAfterRunningActions = "No"
             filePath = "../../src/microscope_image.cpp"
@@ -47,9 +15,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "53"
-            endingLineNumber = "53"
-            landmarkName = "Microscope_image::draw()"
-            landmarkType = "5">
+            endingLineNumber = "53">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

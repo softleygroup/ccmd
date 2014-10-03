@@ -1,5 +1,5 @@
 /** 
- * @file ccmd_sim.cpp
+ * @file ccmdsim.cpp
  * @brief Class definitions for all parameter classes.
  * @author Chris Rennick
  * @copyright Copyright 2014 University of Oxford.
@@ -60,7 +60,7 @@
  *
  */
 
-#include "include/ccmd_sim.h"
+#include "include/ccmdsim.h"
 
 #include <boost/property_tree/exceptions.hpp>
 #include <boost/property_tree/info_parser.hpp>
@@ -102,7 +102,7 @@
  *  \c tau      | (digital only) waveform duty cycle
  *
  *  # Example input #
- *  see the description of ccmd_sim.h for a full input file, possible parameter
+ *  see the description of ccmdsim.h for a full input file, possible parameter
  *  values for a cosine or digital trap are as follows:
  *
  *  ## Cosine trap ##
@@ -228,8 +228,8 @@ TrapParams::TrapParams(const std::string& file_name) {
  *  Ions are described as follows: a branch named \c ionnumbers lists one ion
  *  formula followed by the number of this ion in the simulation. We then look
  *  within the \c iontype branch for a sub-branch with the same name as each
- *  formula given in the \c ionnumbers branch. The physical properties of each ion
- *  in use is then loaded.
+ *  formula given in the \c ionnumbers branch. The physical properties of each
+ *  ion in use is then loaded.
  *
  *  The definition is arranged in two parts with the number defined separately
  *  to allow the definition of ion physical properties to be easily copied and
@@ -251,7 +251,7 @@ TrapParams::TrapParams(const std::string& file_name) {
  *  \c mass        |   Molecular mass in AMU
  *  \c charge      |   Charge in units of fundamental charge (+1, +2, ...)
  *  \c lasercooled |   Is this ion lasercooled (true/false) (**optional**)
- *  \c direction   |   Weighting of laser cooling from left and right (0-1) (**optional**)
+ *  \c direction   |   Weighting of laser cooling along -+z (0-1) (**optional**)
  *  \c beta        |   Laser cooling parameter  (**optional**)
  *  \c heating     |   Is the ion heated by photon recoil? (true/false) (**optional**)
  *  \c seed        |   Seed for random number generator, use -1 to generate
@@ -260,7 +260,7 @@ TrapParams::TrapParams(const std::string& file_name) {
  *
  *
  *  # Example input #
- *  see the description of ccmd_sim.h for a full input file, the sections
+ *  see the description of ccmdsim.h for a full input file, the sections
  *  of the input file relevant to CloudParams is:
  *
  *      ionnumbers {
@@ -337,7 +337,7 @@ CloudParams::CloudParams(const std::string& file_name) {
 
 
         // Append this to the list
-        ionTypeList.push_back(std::move(ionType));
+        ion_type_list.push_back(std::move(ionType));
 
         log.log(Logger::info, ionType.name + " ions:");
         log.log(Logger::info, "\tNumber: " + std::to_string(ionType.number));
@@ -373,7 +373,7 @@ SwapParams::SwapParams(const std::string& file_name, const CloudParams& cp) {
             std::string to_formula = swap.get().get<std::string>("to");
             p = swap.get().get<double>("prob");
 
-            for (auto& type : cp.ionTypeList) {
+            for (auto& type : cp.ion_type_list) {
                 if (type.formula == from_formula) {
                     from = type;
                 }
@@ -412,7 +412,7 @@ SwapParams::SwapParams(const std::string& file_name, const CloudParams& cp) {
  *  histsteps   | Number of steps to take while collecting data.
  *
  *  # Example input #
- *  see the description of ccmd_sim.h for a full input file, the sections
+ *  see the description of ccmdsim.h for a full input file, the sections
  *  of the input file relevant to IntegrationParams is:
  *
  *      integrator {
@@ -475,7 +475,7 @@ MicroscopeParams::MicroscopeParams(const std::string& file_name) {
     read_info(file_name, pt);
 
     try {
-        makeimage = pt.get<bool>("image.makeimage");
+        make_image = pt.get<bool>("image.makeimage");
         pixels_to_distance   = pt.get<double>("image.scale");
         w0   = pt.get<double>("image.blur") * pixels_to_distance;
         z0   = pt.get<double>("image.dof");

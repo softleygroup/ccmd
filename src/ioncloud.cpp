@@ -1,22 +1,27 @@
+/** 
+ * @file ioncloud.cpp
+ * @brief Function definitions for IonCloud class.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 
-#include "include/ion_cloud.h"
+#include "include/ioncloud.h"
 
+#include <algorithm>
 #include <functional>
 #include <list>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "include/DataWriter.h"
+#include "include/datawriter.h"
 #include "include/ImageCollection.h"
 #include "include/IonHistogram.h"
 #include "include/ion.h"
 #include "include/logger.h"
 #include "include/stats.h"
 #include "include/vector3D.h"
-
-// To do:   fix aspect ratio
-// #include "eigs.h"
 
 class Hist3D;
 int get_nearest_cube(int n);
@@ -87,7 +92,7 @@ IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
         const SimParams& sp)
 : cloudParams_(cp), simParams_(sp) {
     // loop over ion types to initialise ion cloud
-    for (auto& it : cloudParams_.ionTypeList) {
+    for (auto& it : cloudParams_.ion_type_list) {
         // loop over ions number for type, construct ions using *trap to ensure
         // that changes to ion trap parameters are felt by the ions
         for (int i = 0; i < it.number; ++i) {
@@ -346,7 +351,7 @@ void IonCloud::saveStats(const std::string basePath,
     // Write the header for each file
       std::string statsHeader="<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)";
       std::string posHeader="x\ty\tz\tvx\tvy\tvz";
-    for (auto& type : cloudParams_.ionTypeList) {
+    for (auto& type : cloudParams_.ion_type_list) {
       name = basePath + type.name + statsFileEnding;
       writer.writeComment(name, statsHeader);
       name = basePath + type.name + posFileEnding;

@@ -1,3 +1,11 @@
+/**
+ * @file iontrap.cpp
+ * @brief Function definitions for ion trap base class.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
+
 /** @class IonTrap @brief Base class defining a quadrupole ion trap.
  *
  *  This base class stores the trap parameters and calculates the parameters
@@ -7,11 +15,11 @@
  *  @see CosineTrap @see PulsedTrap @see WaveformTrap
  */
 
-#include "include/ion_trap.h"
+#include "include/iontrap.h"
 
 #include <cmath>
 
-#include "include/ccmd_sim.h"
+#include "include/ccmdsim.h"
 
 /** @brief Over-precise value of pi. */
 const double IonTrap::pi = 3.141592653589793238462643383279502884;
@@ -33,22 +41,19 @@ const double IonTrap::u_mass = 1.6605402e-27;
  *  @param params Reference to the trap parameters.
  */
 IonTrap::IonTrap(const TrapParams& params)
-    : trapParams(params) {
+    : params_(params) {
     // Start at zero-time
-    time_now = 0.0;
+    time_now_ = 0.0;
 
     // Calculate derived quantities
-    double omega = 2*pi*trapParams.freq;
-    a_unit_mass =  -4.0*trapParams.eta*electron_charge*trapParams.v_end
-        /(u_mass*omega*omega*trapParams.z0*trapParams.z0);
-    q_unit_mass =  2.0*electron_charge*trapParams.v_rf
-        /(u_mass*omega*omega*trapParams.r0*trapParams.r0);
+    double omega = 2*pi*params_.freq;
+    a_unit_mass_ =  -4.0*params_.eta*electron_charge*params_.v_end
+        /(u_mass*omega*omega*params_.z0*params_.z0);
+    q_unit_mass_ =  2.0*electron_charge*params_.v_rf
+        /(u_mass*omega*omega*params_.r0*params_.r0);
 
-    length_scale = electron_charge*electron_charge
+    length_scale_ = electron_charge*electron_charge
         /(pi*epsilon_0*u_mass*omega*omega);
-    length_scale = pow(length_scale, 1.0/3.0);
-    time_scale = 1/(pi * freq);
+    length_scale_ = std::pow(length_scale_, 1.0/3.0);
+    time_scale_ = 1/(pi * params_.freq);
 }
-
-
-

@@ -1,19 +1,19 @@
-//
-//  ion_cloud.h
-//  CCMD
-//
-//  Created by Martin Bell on 09/02/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/** 
+ * @file ioncloud.h
+ * @brief Class declaration for a cloud of ions.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 
-#ifndef CCMD_ion_cloud_h
-#define CCMD_ion_cloud_h
-
-#include "include/ion.h"
+#ifndef INCLUDE_IONCLOUD_H_
+#define INCLUDE_IONCLOUD_H_
 
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "include/ion.h"
 
 class ImageCollection;
 class IonHistogram;
@@ -30,8 +30,6 @@ class IonCloud {
             const SimParams& sp);
     ~IonCloud();
 
-
-    // Call the same-named function for each ion in turn
     void drift(double t);
     void kick(double t);
     void kick(double t, const std::vector<Vector3D>& fc);
@@ -54,7 +52,6 @@ class IonCloud {
                    const double time_scale) const;
     void savePos(const std::string basePath, const double length_scale,
                    const double time_scale) const;
-    // void collide ();
 
     void swap_first(const IonType& from, const IonType& to);
 
@@ -69,18 +66,16 @@ class IonCloud {
     typedef std::vector<Ion_ptr> Ion_ptr_vector;
     /** A list of pointers to the ion objects. */
     Ion_ptr_vector ionVec_;
-    // double r02; ///< Square of the electrode spacing.
 
     Vector3D get_cloud_centre() const;
     void move_centre(const Vector3D& v);
     static std::vector<Vector3D> get_lattice(size_t n);
     static int get_nearest_cube(int n);
 
-    /** @brief Coulomb_force needs direct access to the list of ions. */
-    friend class Coulomb_force;
+    /** @brief CoulombForce needs direct access to the list of ions. */
+    friend class CoulombForce;
 };
 
 typedef std::shared_ptr<IonCloud> IonCloud_ptr;
 
-#endif
-
+#endif  // INCLUDE_IONCLOUD_H_

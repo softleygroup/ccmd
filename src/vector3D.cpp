@@ -1,7 +1,10 @@
-//
-//  Vector3D.cpp
-//
-
+/** 
+ * @file vector3d.cpp
+ * @brief Function definitions for vector arithmetic.
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 #include "vector3D.h"
 
 // vector operations

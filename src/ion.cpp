@@ -1,13 +1,16 @@
-//
-//  ion.cpp
-//
+/** 
+ * @file ion.cpp
+ * @brief Definition of ion base class
+ *
+ * @author Chris Rennick
+ * @copyright Copyright 2014 University of Oxford.
+ */
 
 #include "include/ion.h"
 
-
-#include "include/ccmd_sim.h"
+#include "include/ccmdsim.h"
 #include "include/IonHistogram.h"
-#include "include/Stats.h"
+#include "include/stats.h"
 
 /**
  *  @class Ion

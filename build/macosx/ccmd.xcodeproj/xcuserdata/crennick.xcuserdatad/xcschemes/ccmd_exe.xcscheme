@@ -44,7 +44,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/crennick/Documents/Oxford/IonTrap/ccmd/config-c"
+      customWorkingDirectory = "/Users/crennick/Documents/Oxford/IonTrap/ccmd/config"
       buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
@@ -60,7 +60,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/crennick/Documents/Oxford/IonTrap/ccmd/config-c"
+            argument = "/Users/crennick/Documents/Oxford/IonTrap/ccmd/config"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
