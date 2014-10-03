@@ -15,45 +15,66 @@
  *
  *  # Example input file #
  *
- *      trap {
- *          vrf     300.0
- *          vend    2.0
- *          eta     0.244
- *          r0      3.5e-3
- *          z0      2.75e-3
- *          freq    3.85e6
- *          type    {
- *              name    digital
- *              tau     0.1
- *          }
- *      }
- *      integrator {
- *          timestep    0.1
- *          respasteps  5       ; Respa inner loop steps
- *          coolsteps   20000
- *          histsteps   20000
- *      }
- *      ionnumbers {
- *          Ca      100
- *          CaF     50
- *      }
- *      iontype {
- *          CaF {
- *              name        CalciumFluoride
- *              mass        59.0
- *              charge      1
- *          }
- *          Ca {
- *              name        Calcium
- *              mass        40.0
- *              charge      1
- *              lasercooled true
- *              beta        0.6
- *              heating     true
- *              recoil      0.01
- *              direction   0.5
- *          }
- *      }
+ *     trap {
+ *         vrf     150.75
+ *         vend    1.0
+ *         eta     0.244
+ *         r0      3.5e-3
+ *         z0      2.75e-3
+ *         freq    3.85e6
+ *         type    {
+ *             name cosine
+ *         }
+ *     }
+ *     integrator {
+ *         stepsPerPeriod 20
+ *         respasteps  50       ; Respa inner loop steps
+ *         coolperiods 2000
+ *         histperiods   200
+ *     }
+ *     image {
+ *         makeimage   true
+ *         scale       1; 2.5     ; Image scaling in pixels per micron
+ *         blur        5.0     ; Blur radius in microns
+ *         dof         50.0    ; Depth of field in microns
+ *         nz          640     ; Number of pixels in z axis
+ *         nx          480     ; Number of pixels in x axis
+ *     }
+ *     simulation {
+ *         threads     0
+ *         seed        -1
+ *     }
+ *     ionnumbers {
+ *         Ca      50
+ *          Xe      0
+ *     }
+ *     iontype {
+ *         CaF {
+ *             name        CalciumFluoride
+ *             mass        59.0
+ *             charge      1
+ *         }
+ *         Ca {
+ *             name        Calcium
+ *             mass        40.0
+ *             charge      1
+ *             lasercooled true
+ *             beta        0.8
+ *             heated      true
+ *             recoil      0.00001
+ *             direction   0.5
+ *         }
+ *         ND3 {
+ *             name        Ammonia-d3
+ *             mass    	20.0
+ *             charge  	1
+ *         }
+ *         Xe {
+ *             Name        Xenon
+ *             mass        130.0
+ *             charge  	1	
+ *         }
+ *     }
  *
  *  [info_doc]: http://www.boost.org/doc/libs/1_46_1/doc/html/boost_propertytree/parsers.html#boost_propertytree.parsers.info_parser
  *
@@ -133,7 +154,7 @@
  *              tau     0.1
  *          }
  *      }
- * .
+ * 
  */
 
 /**
@@ -468,6 +489,16 @@ IntegrationParams::IntegrationParams(const std::string& file_name) {
  *
  *  see: A. D. Gingell, D.Phil thesis, University of Oxford
  *  Chapter 3
+ *
+ *
+ * Parameter     | Description
+ * --------------|---------------------------------------------------------------
+ *  \c makeimage | Boolean. Image will be generated if  \c true or present.
+ *  \c scale     | Image scaling in pixels per micron
+ *  \c blur      | Blur radius in microns
+ *  \c dof       | Depth of field in microns
+ *  \c nz        | Number of pixels in z axis
+ *  \c nx        | Number of pixels in x axis
  */
 MicroscopeParams::MicroscopeParams(const std::string& file_name) {
     using boost::property_tree::iptree;
@@ -492,6 +523,14 @@ MicroscopeParams::MicroscopeParams(const std::string& file_name) {
  *
  *  These parameters control how the simulation runs and have minimal influence
  *  on the output. All are optional
+ *
+ * Parameter   | Description
+ * ------------|---------------------------------------------------------------
+ *  \c threads   | Number of threads to use in Coulomb force calculation.
+ *             | The total number of running threads will be this number plus one.
+ *             | Zero performs all calculations in a single thread.
+ *  \c seed      | Seed for random number generator. Set to -1 to pick seed from
+ *             | system clock.
  */
 SimParams::SimParams(const std::string& file_name) {
     using boost::property_tree::iptree;
