@@ -7,26 +7,28 @@
 
 #include "vector3D.h"
 #include "logger.h"
-#include <boost/random.hpp>
+//#include <boost/random.hpp>
+//
+#include <random>
 
-using namespace boost;
+//using namespace boost;
 
 class Stochastic_heat {
      // create a Mersenne twister random number generator
-    static mt19937 generator;
+    static std::mt19937 generator;
     // select Gaussian probability distribution
-    normal_distribution<double> norm_dist;
+    std::normal_distribution<double> norm_dist;
     // bind random number generator to distribution, forming a function
-    variate_generator<mt19937&, normal_distribution<> > normal;
+    //std::variate_generator<mt19937&, std::normal_distribution<> > normal;
     
-    uniform_real<double> flat_dist;
-    variate_generator<mt19937&, uniform_real<> > flat;
+    std::uniform_real_distribution<double> flat_dist;
+    //std::variate_generator<mt19937&, uniform_real<> > flat;
     
     double kick_size;
 public:
     Stochastic_heat(int seed)
-    : normal(generator, norm_dist), flat_dist(0,1),
-    flat(generator, flat_dist), kick_size(0.01) {
+        :norm_dist(0.0,1.0), flat_dist(0, 1), kick_size(0.01) {
+    //: normal(generator, norm_dist), flat_dist(0,1), flat(generator, flat_dist)
         if (seed<0) {
             seed = (int)std::time(0);
         }
@@ -34,12 +36,13 @@ public:
             
     }
     Vector3D random_kick() 
-       { return Vector3D( normal(), normal(), normal())*kick_size; }
+       //{ return Vector3D( normal(), normal(), normal())*kick_size; }
+       { return Vector3D(norm_dist(generator), norm_dist(generator), norm_dist(generator))*kick_size; }
     void set_kick_size(double d) { kick_size = d; }
     double get_kick_size() const { return kick_size; }
     
     bool kick_direction (const double p) {
-        double num = flat();
+        double num = flat_dist(generator);
         return p>num;}
     
     Stochastic_heat(const Stochastic_heat&) = delete;

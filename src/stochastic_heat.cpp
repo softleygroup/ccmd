@@ -4,5 +4,7 @@
 
 #include "stochastic_heat.h"
 
-mt19937 Stochastic_heat::generator = mt19937();
+#include <random>
+
+std::mt19937 Stochastic_heat::generator = std::mt19937();
 
