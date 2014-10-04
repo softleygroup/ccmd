@@ -25,7 +25,7 @@ intel: INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
 gnu: INCLUDE_DIRS :=  ./include
 
 intel: LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
-LIBRARIES := -lboost_system-mt -lboost_thread-mt -lc++ -lpthread -lpng -lz
+LIBRARIES := -lboost_system-mt -lboost_thread-mt -lpthread -lpng -lz
 
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 

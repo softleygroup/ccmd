@@ -5,7 +5,7 @@
  * @author Chris Rennick
  * @copyright Copyright 2014 University of Oxford.
  */
-#include "include/IonHistogram.h"
+#include "include/ionhistogram.h"
 
 #include <algorithm>
 #include <cmath>
