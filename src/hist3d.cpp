@@ -17,7 +17,7 @@
  *
  */
 
-#include "include/hist3d.h"
+#include "include/hist3D.h"
 
 #include <algorithm>
 #include <cmath>
@@ -26,7 +26,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "include/Logger.h"
+#include "include/logger.h"
 
 /**
  * @brief Construct a new Hist3D with a given bin size.

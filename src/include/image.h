@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 
-#include "include/ccmdsim.h"
-#include "include/hist3d.h"
+#include "ccmdsim.h"
+#include "hist3D.h"
 
 class HistPixel;
 class Gauss_kernel;

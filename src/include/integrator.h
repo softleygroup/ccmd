@@ -9,9 +9,9 @@
 #ifndef INCLUDE_INTEGRATOR_H_
 #define INCLUDE_INTEGRATOR_H_
 
-#include "include/coulombforce.h"
-#include "include/iontrap.h"
-#include "include/ioncloud.h"
+#include "coulombforce.h"
+#include "iontrap.h"
+#include "ioncloud.h"
 
 class Vector3D;
 class IntegrationParams;

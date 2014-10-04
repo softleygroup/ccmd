@@ -14,8 +14,8 @@
 #include <thread>
 #include <vector>
 
-#include "include/vector3D.h"
-#include "include/ioncloud.h"
+#include "vector3D.h"
+#include "ioncloud.h"
 
 class IonCloud;
 

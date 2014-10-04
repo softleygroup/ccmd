@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "include/ion.h"
+#include "ion.h"
 
 class ImageCollection;
 class IonHistogram;

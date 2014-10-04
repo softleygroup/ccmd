@@ -9,7 +9,7 @@
 #include "include/ion.h"
 
 #include "include/ccmdsim.h"
-#include "include/IonHistogram.h"
+#include "include/ionhistogram.h"
 #include "include/stats.h"
 
 /**

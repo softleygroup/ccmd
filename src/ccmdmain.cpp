@@ -64,7 +64,7 @@
 #include "include/datawriter.h"
 #include "include/iontrap.h"
 #include "include/ioncloud.h"
-#include "include/IonHistogram.h"
+#include "include/ionhistogram.h"
 #include "include/imagecollection.h"
 #include "include/integrator.h"
 #include "include/logger.h"

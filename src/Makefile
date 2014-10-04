@@ -32,7 +32,7 @@ CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 intel: CPPFLAGS += -O3 -std=c++11
 #gnu: CPPFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
 #gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
-gnu: CPPFLAGS += -Ofast -std=c++11 -stdlib=libc++ -march=native -ffast-math -flto -m64 -funroll-loops
+gnu: CPPFLAGS += -Ofast -std=c++11  -march=native -ffast-math -flto -m64 -funroll-loops
 gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto -m64 -funroll-loops
 
 #LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
@@ -48,7 +48,7 @@ $(EXECUTABLE): $(OBJS)
 #	ar rc $@ $^  
 	$(CC) -o $@ $^ $(LIBRARY_DIR) $(LIBRARIES)
 
-$(BUILD_DIR)%.o : %.cpp
+$(BUILD_DIR)%.o : %.cpp 
 	$(CC) -c $< -o $@ $(CPPFLAGS)
 
 # $(BUILD_DIR)bodysystemcuda.o: bodysystemcuda.cu bodysystemcuda.cpp include/bodysystemcuda.h

@@ -11,8 +11,8 @@
 #include <cmath>
 #include <vector>
 
-#include "include/ion.h"
-#include "include/vector3D.h"
+#include "ion.h"
+#include "vector3D.h"
 
 class TrapParams;
 

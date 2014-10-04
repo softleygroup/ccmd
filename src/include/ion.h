@@ -11,11 +11,11 @@
 #include <memory>
 #include <string>
 
-#include "include/ionhistogram.h"
-#include "include/ccmdsim.h"
-#include "include/iontrap.h"
-#include "include/stats.h"
-#include "include/stochastic_heat.h"
+#include "ionhistogram.h"
+#include "ccmdsim.h"
+#include "iontrap.h"
+#include "stats.h"
+#include "stochastic_heat.h"
 
 class Vector3D;
 class IonHistogram;

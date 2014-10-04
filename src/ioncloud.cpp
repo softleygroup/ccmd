@@ -16,8 +16,8 @@
 #include <vector>
 
 #include "include/datawriter.h"
-#include "include/ImageCollection.h"
-#include "include/IonHistogram.h"
+#include "include/imagecollection.h"
+#include "include/ionhistogram.h"
 #include "include/ion.h"
 #include "include/logger.h"
 #include "include/stats.h"

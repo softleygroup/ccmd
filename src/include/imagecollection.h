@@ -15,7 +15,7 @@
 #include <string>
 #include <thread>
 
-#include "include/hist3D.h"
+#include "hist3D.h"
 
 class Vector3D;
 class MicroscopeParams;
