@@ -98,6 +98,7 @@ void printProgBar(int percent) {
 }
 
 int main(int argc, char * const argv[]) {
+    printf("hello, there?\n");
     Logger& log = Logger::getInstance();
 
     if (argc != 2) {
@@ -111,7 +112,7 @@ int main(int argc, char * const argv[]) {
 
     log.initialise(Logger::debug, path + "log.txt");
     log.log(Logger::info, "CCMD - Coulomb crystal molecular dynamics");
-    log.log(Logger::info, "Version 1.0.0");
+    log.log(Logger::info, "Version 2.0.0");
 
     // Parameter file paths
     std::string info_file = path + "trap.info";

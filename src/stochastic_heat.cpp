@@ -2,7 +2,7 @@
 //  stochastic_heat.cpp
 //
 
-#include "stochastic_heat.h"
+#include "include/stochastic_heat.h"
 
 #include <random>
 

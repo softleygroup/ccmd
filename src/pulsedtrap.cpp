@@ -4,7 +4,7 @@
 
 // To do: Implement parameters for square wave
 
-#include "iontrap.h"
+#include "include/iontrap.h"
 
 /**
  *  @brief Create a new digital ion trap, call the parent class to initialise

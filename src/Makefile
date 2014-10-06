@@ -34,6 +34,8 @@ intel: CPPFLAGS += -O3 -std=c++11
 #gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto
 gnu: CPPFLAGS += -Ofast -std=c++11  -march=native -ffast-math -flto -m64 -funroll-loops
 gnu: LDFLAGS += -Ofast -std=c++11 -march=native -ffast-math -flto -m64 -funroll-loops
+gnu: CPPFLAGS = -std=c++11 -g
+gnu: LDFLAGS = -std=c++11
 
 #LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
 

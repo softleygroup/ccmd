@@ -451,8 +451,8 @@ SwapParams::SwapParams(const std::string& file_name, const CloudParams& cp) {
  *  @param file_name file containing integration parameters.
  */
 IntegrationParams::IntegrationParams(const std::string& file_name) {
-    int coolperiods;
-    int histperiods;
+    double coolperiods;
+    double histperiods;
 
     using boost::property_tree::iptree;
     iptree pt;

@@ -8,7 +8,7 @@
  *  all rods. The force on an ion is determined via the Mathieu equations.
  */
 
-#include "iontrap.h"
+#include "include/iontrap.h"
 
 /**
  *  @brief Create a new TwoFrequency ion trap, call the parent class to initialise 

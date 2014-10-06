@@ -5,7 +5,7 @@
  * @author Chris Rennick
  * @copyright Copyright 2014 University of Oxford.
  */
-#include "logger.h"
+#include "include/logger.h"
 
 #include <ctime>
 #include <iostream>

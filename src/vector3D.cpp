@@ -5,7 +5,7 @@
  * @author Chris Rennick
  * @copyright Copyright 2014 University of Oxford.
  */
-#include "vector3D.h"
+#include "include/vector3D.h"
 
 // vector operations
 inline double dot(const Vector3D& a, const Vector3D& b)
