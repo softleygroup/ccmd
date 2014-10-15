@@ -69,6 +69,7 @@
 #include "include/integrator.h"
 #include "include/logger.h"
 #include "include/stats.h"
+#include "include/timer.h"
 
 double stopWatchTimer();
 double KE;
@@ -98,7 +99,7 @@ void printProgBar(int percent) {
 }
 
 int main(int argc, char * const argv[]) {
-    printf("hello, there?\n");
+    Timer timer;
     Logger& log = Logger::getInstance();
 
     if (argc != 2) {
@@ -180,9 +181,9 @@ int main(int argc, char * const argv[]) {
         std::string stats_file = path + "energy.csv";
         int energy_row = 0;
 
-        //------------------------------------------------------------------------------
-        // Cooling
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Cooling
+//------------------------------------------------------------------------------
         for (int t = 0; t < nt_cool; ++t) {
             //            cloud->collide();
             //            if (cloud->number_of_ions() ==0) {
@@ -218,9 +219,9 @@ int main(int argc, char * const argv[]) {
         // Evolution
         int nt = integrationParams.hist_steps;
 
-        //------------------------------------------------------------------------------
-        // Histogram
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Histogram
+//------------------------------------------------------------------------------
 
         log.log(Logger::info, "Acquiring histogram data");
 
@@ -282,6 +283,12 @@ int main(int argc, char * const argv[]) {
             ionImages.writeFiles(path, microscope_params);
         }
         cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
+
+        timer.stop();
+        log.log(Logger::info, "Wall time = " + 
+                std::to_string(timer.get_wall_time()) + " s");
+      log.log(Logger::info, "CPU time  = " + 
+              std::to_string(timer.get_cpu_time()) + " s");
     } catch (std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
