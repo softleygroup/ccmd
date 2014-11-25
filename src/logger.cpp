@@ -38,14 +38,12 @@ Logger::~Logger() {
 /**
  *  @brief Log an event.
  *
- *  Write a log event to screen and file. This should be thread safe as we get
- *  a mutex lock before writing the log, and release it on return.
+ *  Write a log event to screen and file. This is not thread safe.
  *
  *  @param level Error level.
  *  @param message The log message.
  */
 void Logger::log(const Level level, const std::string message) {
-    lock scopelock(mtx_);
 
     if (maxlevel_ == -1) {
         std::cout << "Logger not initialised - " << message;

@@ -99,6 +99,7 @@ void printProgBar(int percent) {
 }
 
 int main(int argc, char * const argv[]) {
+    double PI = 3.1415926535897932;
     Timer timer;
     Logger& log = Logger::getInstance();
 
@@ -137,9 +138,9 @@ int main(int argc, char * const argv[]) {
             trap = std::make_shared<WaveformTrap>(trapParams);
         } else if (trapParams.wave == trapParams.cosine_decay) {
             // have to do some unit conversions here for the decay params
-            trapParams.tau *= M_PI;
+            trapParams.tau *= PI;
             trapParams.deltaT = (integrationParams.cool_steps + integrationParams.hist_steps)*
-                integrationParams.time_step-trapParams.deltaT*M_PI;
+                integrationParams.time_step-trapParams.deltaT*PI;
             trap = std::make_shared<CosineDecayTrap>(trapParams);
         } else if (trapParams.wave == trapParams.twofreq) {
             trap = std::make_shared<TwoFreq_trap>(trapParams);

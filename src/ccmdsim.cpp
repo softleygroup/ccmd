@@ -87,7 +87,6 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include <cmath>  // only for M_PI
 #include <sstream>
 #include <string>
 
@@ -469,7 +468,7 @@ IntegrationParams::IntegrationParams(const std::string& file_name) {
         throw std::runtime_error("Error reading integration params.");
     }
 
-    time_step = M_PI/steps_per_period;
+    time_step = 3.1415926535897932/steps_per_period;
     cool_steps = static_cast<int>(coolperiods*steps_per_period);
     hist_steps = static_cast<int>(histperiods*steps_per_period);
 

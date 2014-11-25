@@ -7,11 +7,10 @@
 
 #include "vector3D.h"
 #include "logger.h"
-//#include <boost/random.hpp>
-//
-#include <random>
 
-//using namespace boost;
+#include <random>
+#include <ctime>
+
 
 class Stochastic_heat {
      // create a Mersenne twister random number generator
