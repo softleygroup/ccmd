@@ -226,7 +226,8 @@ int main(int argc, char * const argv[]) {
         log.log(Logger::info, "Acquiring histogram data");
 
         // estimate number of steps per RF cycle
-        int cycle_steps = static_cast<int>(4.0/dt);
+        int cycle_steps = 2.0 * integrationParams.steps_per_period;
+        log.log(Logger::info, "Will plot RF phase for final " + std::to_string(cycle_steps) + " steps.");
         // Open a file to store step number and RF factor
         writer.writeComment(path + "RFphase.csv", "time step, phase factor");
 
@@ -266,7 +267,7 @@ int main(int argc, char * const argv[]) {
             // cycle.
             if (t >= nt-cycle_steps) {
                 std::list<double> line;
-                line.push_back(t);
+                line.push_back(static_cast<double>(t)/integrationParams.steps_per_period);
                 line.push_back(trap->get_phase());
                 writer.writeRow( path + "RFphase.csv", line);
             }
