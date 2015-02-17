@@ -43,6 +43,9 @@ class IonTrap {
     double get_length_scale() const { return length_scale_; }
     double get_time_scale() const { return time_scale_; }
 
+    // Return the current value of the trapping voltage multiplier.
+    virtual double get_phase() = 0;
+
     IonTrap(const IonTrap&) = delete;
     const IonTrap& operator=(const IonTrap&) = delete;
 
@@ -70,6 +73,7 @@ class CosineTrap : public IonTrap {
 
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+    double get_phase () { return cos_phase_; }
 
     CosineTrap(const CosineTrap&) = delete;
     const CosineTrap& operator=(const CosineTrap&) = delete;
@@ -83,6 +87,7 @@ class CosineDecayTrap : public CosineTrap {
     explicit CosineDecayTrap(const TrapParams& params);
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+    double get_phase () { return cos_phase_; }
 
     CosineDecayTrap(const CosineDecayTrap&) = delete;
     const CosineDecayTrap operator=(const CosineDecayTrap&) = delete;
@@ -97,6 +102,7 @@ class TwoFreq_trap : public IonTrap {
 
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+    double get_phase () { return cos_phase; }
 
     TwoFreq_trap(const TwoFreq_trap&) = delete;
     const TwoFreq_trap& operator=(const TwoFreq_trap&) = delete;
@@ -112,6 +118,7 @@ class PulsedTrap : public IonTrap {
 
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+    double get_phase () { return pulse_height_; }
 
     PulsedTrap(const PulsedTrap&) = delete;
     const PulsedTrap& operator=(const PulsedTrap&) = delete;
@@ -126,6 +133,7 @@ class WaveformTrap : public IonTrap {
 
     Vector3D force_now(const Vector3D& r) const;
     void evolve(double time);
+    double get_phase () { return potential_; }
 
     WaveformTrap(const WaveformTrap&) = delete;
     const WaveformTrap& operator=(const WaveformTrap&) = delete;

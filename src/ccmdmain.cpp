@@ -166,7 +166,7 @@ int main(int argc, char * const argv[]) {
         log.log(Logger::info, "Running cool down.");
         int nt_cool = integrationParams.cool_steps;
         double dt = integrationParams.time_step;
-        DataWriter writer("\t");
+        DataWriter writer(",");
         writer.writeComment(path + "totalEnergy.csv", "t\tE_tot");
 
         // int write_every = std::floor(6.2831/(15*dt));
@@ -225,6 +225,11 @@ int main(int argc, char * const argv[]) {
 
         log.log(Logger::info, "Acquiring histogram data");
 
+        // estimate number of steps per RF cycle
+        int cycle_steps = static_cast<int>(4.0/dt);
+        // Open a file to store step number and RF factor
+        writer.writeComment(path + "RFphase.csv", "time step, phase factor");
+
         IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5);
 
         // Start timer
@@ -257,6 +262,14 @@ int main(int argc, char * const argv[]) {
             KE += cloud->kinetic_energy();
             etot += cloud->total_energy();
 
+            // Output the trapping voltage scale factor during the final RF
+            // cycle.
+            if (t >= nt-cycle_steps) {
+                std::list<double> line;
+                line.push_back(t);
+                line.push_back(trap->get_phase());
+                writer.writeRow( path + "RFphase.csv", line);
+            }
         // if (swap_params.do_swap){
             // if (t%swap_count==0)
                 // cloud->swap_first(swap_params.from, swap_params.to);
