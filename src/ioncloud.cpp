@@ -89,8 +89,8 @@ struct position_ions {
  *
  */
 IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
-        const SimParams& sp)
-: cloudParams_(cp), simParams_(sp) {
+        const SimParams& sp, const TrapParams& tp)
+: cloudParams_(cp), simParams_(sp), trapParams_(tp) {
     // loop over ion types to initialise ion cloud
     for (auto& it : cloudParams_.ion_type_list) {
         // loop over ions number for type, construct ions using *trap to ensure
@@ -478,7 +478,7 @@ void IonCloud::savePos(const std::string basePath,
  */
 void IonCloud::update_energy_histogram(IonHistogram_ptr h) const {
     for (auto ion : ionVec_) {
-        ion->recordKE(h);
+        ion->recordKE(h, trapParams_);
     }
 }
 

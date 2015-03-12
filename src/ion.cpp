@@ -68,21 +68,22 @@ inline void Ion::kick(const double dt, const Vector3D& f) {
  *  as a label.
  *
  *  @param ionHistogram A reference to the histogram object to update.
+ *  @param trapParams A reference to the trap parameters for simulation conversion factors.
  */
-void Ion::recordKE(IonHistogram_ptr ionHistogram) const {
+void Ion::recordKE(IonHistogram_ptr ionHistogram, const TrapParams& trapParams) const {
     double energy;
     double mon2 = 0.5 * ionType_.mass;
     // total
-    energy = mon2 * vel_.norm_sq();
+    energy = mon2 * vel_.norm_sq() * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_total", energy);
     // x - directed
-    energy = mon2 * vel_[0] * vel_[0];
+    energy = mon2 * vel_[0] * vel_[0] * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_x", energy);
     // y - directed
-    energy = mon2 * vel_[1] * vel_[1];
+    energy = mon2 * vel_[1] * vel_[1] * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_y", energy);
     // z - directed
-    energy = mon2 * vel_[2] * vel_[2];
+    energy = mon2 * vel_[2] * vel_[2] * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_z", energy);
 }
 

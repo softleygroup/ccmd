@@ -51,9 +51,4 @@ IonTrap::IonTrap(const TrapParams& params)
         /(u_mass*omega*omega*params_.z0*params_.z0);
     q_unit_mass_ =  2.0*electron_charge*params_.v_rf
         /(u_mass*omega*omega*params_.r0*params_.r0);
-
-    length_scale_ = electron_charge*electron_charge
-        /(pi*epsilon_0*u_mass*omega*omega);
-    length_scale_ = std::pow(length_scale_, 1.0/3.0);
-    time_scale_ = 1/(pi * params_.freq);
 }

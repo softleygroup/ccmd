@@ -129,7 +129,7 @@ int main(int argc, char * const argv[]) {
         SimParams sim_params(info_file);
 
         // Construct trap based on parameters
-        std::shared_ptr<IonTrap> trap;
+        IonTrap_ptr trap;
         if (trapParams.wave == trapParams.cosine) {
             trap = std::make_shared<CosineTrap>(trapParams);
         } else if (trapParams.wave == trapParams.digital) {
@@ -151,7 +151,7 @@ int main(int argc, char * const argv[]) {
 
         // Construct ion cloud
         IonCloud_ptr cloud = std::make_shared<IonCloud>
-            (trap, cloud_params, sim_params);
+            (trap, cloud_params, sim_params, trapParams);
 
         // Construct integrator
         RespaIntegrator integrator(trap, cloud, integrationParams, sim_params);
@@ -161,14 +161,13 @@ int main(int argc, char * const argv[]) {
 
         // 3D histogram for image creation
         ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance *
-                                         trap->get_length_scale()));
+                                         trapParams.length_scale));
 
         // Cool down ion cloud
         log.log(Logger::info, "Running cool down.");
         int nt_cool = integrationParams.cool_steps;
         double dt = integrationParams.time_step;
         DataWriter writer(",");
-        writer.writeComment(path + "totalEnergy.csv", "t\tE_tot");
 
         // int write_every = std::floor(6.2831/(15*dt));
         // Write frame once every 2 RF cycles
@@ -198,15 +197,15 @@ int main(int argc, char * const argv[]) {
             if (t%write_every == 0) {
                 std::list<double> rowdata;
                 rowdata.push_back(energy_row++);
-                rowdata.push_back(mean_energy.average());
-                rowdata.push_back(mean_energy.variance());
+                rowdata.push_back(mean_energy.average() * trapParams.energy_scale);
+                rowdata.push_back(mean_energy.variance() * trapParams.energy_scale);
                 writer.writeRow(stats_file, rowdata);
                 mean_energy.reset();
 
                 // char buffer[50];
                 // std::sprintf(buffer, "%.4i", frameNumber++);
                 // std::string framepath = buffer;
-                // cloud->savePos(framepath, trap->get_length_scale(), trap->get_time_scale());
+                // cloud->savePos(framepath, trapParams->length_scale, trapParams.time_scale);
             }
             // Track progress
             int percent = static_cast<int>((t*100)/nt_cool);
@@ -232,7 +231,7 @@ int main(int argc, char * const argv[]) {
         // Open a file to store step number and RF factor
         writer.writeComment(path + "RFphase.csv", "time step, phase factor");
 
-        IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5);
+        IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5 * trapParams.energy_scale);
 
         // Start timer
         stopWatchTimer();
@@ -282,22 +281,24 @@ int main(int argc, char * const argv[]) {
                 // std::sprintf(buffer, "%.4i", frameNumber++);
                 // std::string framepath = buffer;
                 // cloud->savePos(framepath,
-                        // trap->get_length_scale(), trap->get_time_scale());
+                        // trapParams.length_scale, trapParams.time_scale);
             // }
         }
         KE /= nt;
         printProgBar(100);
         std::cout << std::endl;
 
-        log.log(Logger::info, "total kinetic energy = " + std::to_string(KE));
-        log.log(Logger::info, "total energy = " + std::to_string(etot));
-
+        char buffer[256];
+        snprintf(buffer, 256, "Total kinetic energy = %.4e J", KE * trapParams.energy_scale);
+        log.log(Logger::info, std::string(buffer));
+        snprintf(buffer, 256, "Total energy = %.4e J", etot * trapParams.energy_scale);
+        log.log(Logger::info, std::string(buffer));
         ionHistogram->writeFiles("ionEnergy");
 
         if (microscope_params.make_image) {
             ionImages.writeFiles(path, microscope_params);
         }
-        cloud->saveStats(path, trap->get_length_scale(), trap->get_time_scale());
+        cloud->saveStats(path, trapParams.length_scale, trapParams.time_scale);
 
         timer.stop();
         log.log(Logger::info, "Wall time = " + 

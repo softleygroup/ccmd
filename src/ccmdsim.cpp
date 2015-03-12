@@ -183,6 +183,24 @@ TrapParams::TrapParams(const std::string& file_name) {
         log.log(Logger::info, "\tz0: " + std::to_string(z0));
         log.log(Logger::info, "\tfreq: " + std::to_string(freq));
 
+        // Calculate conversion factors from simulation units to S.I. units.
+        /** @brief Over-precise value of pi. */
+        double pi = 3.141592653589793238462643383279502884;
+        /** @brief Over-precise value of epsilon_0. */
+        double epsilon_0 = 8.85418781762e-12;
+        /** @brief Over-precise value of electron charge. */
+        double electron_charge = 1.60217733e-19;
+        /** @brief 1 AMU in kg. */
+        double u_mass = 1.6605402e-27;
+        double omega = 2*pi*freq;
+        length_scale = electron_charge*electron_charge /(pi*epsilon_0*u_mass*omega*omega);
+        length_scale = std::pow(length_scale, 1.0/3.0);
+        time_scale = 1/(pi * freq);
+        energy_scale = u_mass * (length_scale * length_scale) / (time_scale * time_scale);
+        char buffer[256];
+        snprintf(buffer, 256, "Energy scale factor %.4e J per unit", energy_scale);
+        log.log(Logger::info, std::string(buffer));
+
         // Read trap-specific information.
         std::string typeString = pt.get<std::string>("trap.type.name");
         if (typeString == "cosine") {

@@ -11,8 +11,8 @@
 #include <memory>
 #include <string>
 
-#include "ionhistogram.h"
 #include "ccmdsim.h"
+#include "ionhistogram.h"
 #include "iontrap.h"
 #include "stats.h"
 #include "stochastic_heat.h"
@@ -20,9 +20,6 @@
 class Vector3D;
 class IonHistogram;
 template <class T> class Stats;
-
-class IonTrap;
-typedef std::shared_ptr<IonTrap> IonTrap_ptr;
 
 class Ion {
  public:
@@ -33,7 +30,7 @@ class Ion {
 
     // Base class functions
     void drift(double dt);
-    void recordKE(IonHistogram_ptr ionHistogram) const;
+    void recordKE(IonHistogram_ptr ionHistogram, const TrapParams& trapParams) const;
     void updateStats();
     void update_from(const IonType& from);
 

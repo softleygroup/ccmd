@@ -42,6 +42,10 @@ class TrapParams {
 
     double freq_mult;           ///< Multiplier for second waveform
 
+    double length_scale;    ///< Derived simulation length scale.
+    double time_scale;      ///< Derived simulation time scale.
+    double energy_scale;    ///< Derived simulation energy scale.
+
     TrapParams(const TrapParams&) = delete;
     const TrapParams& operator= (const TrapParams&) = delete;
 };
