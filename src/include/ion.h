@@ -54,7 +54,7 @@ class Ion {
     double get_mass() const {return ionType_.mass;}
     double get_charge() const {return ionType_.charge;}
     const Stats<Vector3D> get_posStats() const {return posStats_;}
-    const Stats<Vector3D> get_velStats() const {return velStats_;}
+    const Stats<double> get_velStats() const {return velStats_;}
 
     Ion(const Ion&) = delete;
     const Ion& operator=(const Ion&) = delete;
@@ -66,7 +66,7 @@ class Ion {
 
     // Store statistics for this ion
     Stats<Vector3D> posStats_;
-    Stats<Vector3D> velStats_;
+    Stats<double> velStats_;
 };
 
 

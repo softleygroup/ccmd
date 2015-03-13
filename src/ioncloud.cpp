@@ -349,8 +349,8 @@ void IonCloud::saveStats(const std::string basePath,
     std::string name;
 
     // Write the header for each file
-      std::string statsHeader="<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)";
-      std::string posHeader="x\ty\tz\tvx\tvy\tvz";
+      std::string statsHeader="avg(r), var(r), avg(z), var(z), avg(KE), var(KE)";
+      std::string posHeader="x, y, z, vx, vy, vz";
     for (auto& type : cloudParams_.ion_type_list) {
       name = basePath + type.name + statsFileEnding;
       writer.writeComment(name, statsHeader);
@@ -362,7 +362,7 @@ void IonCloud::saveStats(const std::string basePath,
         // Write the final position and velocity for each ion.
         name = basePath + ion->name() + posFileEnding;
         rowdata.clear();
-        // Scale reduced units to real=world units and rotate to align to
+        // Scale reduced units to real-world units and rotate to align to
         // axes between rods (calculation has axes crossing rods.)
         x = (ion->get_pos())[0] * length_scale;
         y = (ion->get_pos())[1] * length_scale;
@@ -388,26 +388,20 @@ void IonCloud::saveStats(const std::string basePath,
         name = basePath + ion->name() + statsFileEnding;
         rowdata.clear();
 
-        Stats<Vector3D> energy = ion->get_velStats();
-        Stats<Vector3D> pos = ion->get_posStats();
+        Stats<double> vel = (ion->get_velStats());
+        Stats<Vector3D> pos = (ion->get_posStats());
         double mon2 = (ion->get_mass())/2;
-        Vector3D avg_energy = energy.average();
-        Vector3D var_energy = energy.variance();
-        Vector3D avg_pos = pos.average();
-        Vector3D var_pos = pos.variance();
+        double avg_energy = (vel.average() * vel.average()) * (mon2 * trapParams_.energy_scale);
+        double var_energy = (vel.variance()/vel.average()) * (avg_energy * 1.41);
+        Vector3D avg_pos = pos.average() * trapParams_.length_scale;
+        Vector3D var_pos = pos.variance() * trapParams_.length_scale;
 
-        rowdata.push_back(avg_energy[0]*mon2);
-        rowdata.push_back(var_energy[0]*mon2);
-        rowdata.push_back(avg_energy[1]*mon2);
-        rowdata.push_back(var_energy[1]*mon2);
-        rowdata.push_back(avg_energy[2]*mon2);
-        rowdata.push_back(var_energy[2]*mon2);
         rowdata.push_back(avg_pos[0]);
         rowdata.push_back(var_pos[0]);
         rowdata.push_back(avg_pos[1]);
         rowdata.push_back(var_pos[1]);
-        rowdata.push_back(avg_pos[2]);
-        rowdata.push_back(var_pos[2]);
+        rowdata.push_back(avg_energy);
+        rowdata.push_back(var_energy);
 
         writer.writeRow(name, rowdata);
     }

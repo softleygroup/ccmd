@@ -199,7 +199,7 @@ TrapParams::TrapParams(const std::string& file_name) {
         energy_scale = u_mass * (length_scale * length_scale) / (time_scale * time_scale);
         char buffer[256];
         snprintf(buffer, 256, "Energy scale factor %.4e J per unit", energy_scale);
-        log.log(Logger::info, std::string(buffer));
+        log.log(Logger::debug, std::string(buffer));
 
         // Read trap-specific information.
         std::string typeString = pt.get<std::string>("trap.type.name");

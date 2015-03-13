@@ -133,6 +133,14 @@ class Vector3D {
 
     double norm_sq() const { return x*x + y*y + z*z; }
 
+    // Rotate 45 degrees along z axis to align trap axes with lab axes.
+    Vector3D rotate45() const{ 
+        double sqrt2 = 1.414213562;
+        double newx = (x+y)/sqrt2;
+        double newy = (x-y)/sqrt2;
+        return Vector3D(newx, newy, z);
+    }
+
     // make vector of unit length
     Vector3D& normalise();
 

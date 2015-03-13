@@ -9,11 +9,11 @@
 #define INCLUDE_IONTRAP_H_
 
 #include <cmath>
+#include <memory>
 #include <vector>
 
+#include "ccmdsim.h"
 #include "vector3D.h"
-
-class TrapParams;
 
 class IonTrap {
  public:

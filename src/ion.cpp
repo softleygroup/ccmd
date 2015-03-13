@@ -90,12 +90,15 @@ void Ion::recordKE(IonHistogram_ptr ionHistogram, const TrapParams& trapParams) 
 /** 
  *  @brief Update the statistics stored by this ion.
  *
- *  Appends the current kinetic energy (velocity^2, so this needs to be 
- *  multiplied by mass/2 before output) and position to the `Stats` objects.
+ *  Appends the current velocity and position to the `Stats` objects. Position
+ *  given only as average radial distance from trap centre, and average z
+ *  position because orbit of ions around trap centre results in mean x and y
+ *  coordinates around zero. The velocity vector is recorded as the speed.
  */
 void Ion::updateStats() {
-    posStats_.append(pos_);
-    velStats_.append(vel_*vel_);
+    double r = sqrt(pos_.x*pos_.x + pos_.y * pos_.y);
+    posStats_.append(Vector3D(r, pos_.z, 0));
+    velStats_.append(vel_.norm());
 }
 
 /**
