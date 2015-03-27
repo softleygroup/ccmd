@@ -1,0 +1,73 @@
+trap {
+    vrf     147
+    vend    2.6625
+    eta     0.08      ;0.244
+    r0      3.5e-3
+    z0      2.75e-3
+    freq    3.8118e6
+    type    {
+        name cosine
+    }
+}
+integrator {
+    stepsPerPeriod 20
+    respasteps  5       ; Respa inner loop steps
+    coolperiods 2000
+    histperiods 100
+}
+image {
+    makeimage   true
+    scale       1; 2.5     ; Image scaling in pixels per micron
+    blur        5      ; 5.0 , Blur radius in microns
+    dof         50.0    ; Depth of field in microns
+    nz          640     ; Number of pixels in z axis
+    nx          480     ; Number of pixels in x axis
+}
+simulation {
+    threads     0
+    seed        1234
+}
+ionnumbers {
+    Ca     200
+    ND3    ${i}
+    Xe     ${j}
+}
+iontype {
+    CaF {
+        name        CalciumFluoride
+        mass        59.0
+        charge      1
+    Ca {
+        name        Calcium
+        mass        40.0
+        charge      1
+        lasercooled true
+        beta        0.6
+        heated      true
+        recoil      0.1
+        direction   0.5
+    }
+    }
+    ND3 {
+        name        Ammonia-d3
+        mass    	20.0
+        charge  	1
+    }
+    Xe {
+        Name        Xenon
+        mass        131.29
+        charge  	1	
+    }
+    CaOH {
+        name       CalciumOH
+        symbol          CaOH
+        mass            47.0
+        charge          1
+         }
+    CaOD {
+        name       CalciumOD
+        symbol          CaOD
+        mass            48.0
+        charge          1
+         }
+}
