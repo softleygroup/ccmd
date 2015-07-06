@@ -39,7 +39,7 @@ void VerletIntegrator::evolve(double dt) {
     i = 0;
     for (auto ion : ions_->get_ions() ) {
         // Update velocity over second half time-step
-        ion->kick(half_dt, coulomb_force[i] );
+        ion->kick(half_dt, coulomb_force[i++] );
         ion->heat(half_dt);   // Heating
         ion->kick(half_dt);   // Trap, plus heating if LaserCooled.
     }

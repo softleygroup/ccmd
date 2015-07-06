@@ -57,6 +57,8 @@ class RespaIntegrator : public Integrator {
 
     RespaIntegrator(RespaIntegrator&) = delete;
     const RespaIntegrator operator=(const RespaIntegrator&) = delete;
+ private:
+    int n_iter_;
 };
 
 class VerletIntegrator : public Integrator {

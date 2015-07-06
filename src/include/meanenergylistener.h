@@ -6,8 +6,8 @@
  * @copyright Copyright 2015 University of Oxford.
  */
 
-#ifndef INCLUDE_MEANLISTENER_H_
-#define INCLUDE_MEANLISTENER_H_
+#ifndef INCLUDE_MEANENERGYLISTENER_H_
+#define INCLUDE_MEANENERGYLISTENER_H_
 
 #include "ccmdsim.h"
 #include "integratorlistener.h"
@@ -18,17 +18,17 @@
 
 #include <string>
 
-class MeanListener : public IntegratorListener {
+class MeanEnergyListener : public IntegratorListener {
  public:
-  MeanListener(const IntegrationParams& int_params,
+  MeanEnergyListener(const IntegrationParams& int_params,
                const TrapParams& trap_params,
                std::string stats_file);
 
   void update(const int i);
   void finished();
 
-  MeanListener(const MeanListener&) = delete;
-  const MeanListener& operator=(const MeanListener&) = delete;
+  MeanEnergyListener(const MeanEnergyListener&) = delete;
+  const MeanEnergyListener& operator=(const MeanEnergyListener&) = delete;
  private:
   const IntegrationParams& int_params_;
   const TrapParams& trap_params_;
@@ -40,4 +40,4 @@ class MeanListener : public IntegratorListener {
   Logger& log_;
 };
 
-#endif  // include_MEANLISTENER_H_
+#endif  // include_MEANENERGYLISTENER_H_

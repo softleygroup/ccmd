@@ -38,6 +38,7 @@ RespaIntegrator::RespaIntegrator(const IonTrap_ptr it, const IonCloud_ptr ic,
     : Integrator(it, ic, integrationParams, sp) {
         Logger& log = Logger::getInstance();
         log.info("Verlet integration.");
+        n_iter_ = 0;
 }
 
 
@@ -83,5 +84,6 @@ void RespaIntegrator::evolve(double dt) {
     // slow Coulomb force half-kick
     ions_->kick(half_dt, coulomb_.get_force());
 
-    return;
+    // Tell everyone we're done
+    notifyListeners(n_iter_++);
 }

@@ -50,29 +50,22 @@
  */
 
 #include <ctime>
-#include <iomanip>
 #include <iostream>
-#include <list>
 #include <algorithm>
 #include <memory>
-#include <fstream>
-#include <sstream>
 #include <string>
 
-#include "include/image.h"
 #include "include/ccmdsim.h"
-#include "include/datawriter.h"
 #include "include/iontrap.h"
 #include "include/ioncloud.h"
-#include "include/ionhistogram.h"
-#include "include/ionstatslistener.h"
-#include "include/imagehistogramlistener.h"
-#include "include/imagecollection.h"
 #include "include/integrator.h"
 #include "include/logger.h"
-#include "include/meanlistener.h"
-#include "include/stats.h"
 #include "include/timer.h"
+
+#include "include/ionstatslistener.h"
+#include "include/imagehistogramlistener.h"
+#include "include/meanenergylistener.h"
+#include "include/progressbarlistener.h"
 
 double stopWatchTimer();
 double KE;
@@ -157,129 +150,69 @@ int main(int argc, char * const argv[]) {
             (trap, cloud_params, sim_params, trap_params);
 
         // Construct integrator
-        RespaIntegrator integrator(trap, cloud, integration_params, sim_params);
-        //VerletIntegrator integrator(trap, cloud, integration_params, sim_params);
+        //RespaIntegrator integrator(trap, cloud, integration_params, sim_params);
+        VerletIntegrator integrator(trap, cloud, integration_params, sim_params);
 
-        // Construct integrator
-        // CUDA_integrator integrator(trap, cloud, integration_params);
-
-        // 3D histogram for image creation
-        //ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance *
-                                         //trap_params.length_scale));
-
-        // Cool down ion cloud
-        log.info("Running cool down.");
-        int nt_cool = integration_params.cool_steps;
-        double dt = integration_params.time_step;
-        DataWriter writer(",");
-
-        // Write frame once every 2 RF cycles
-        int write_every = (integration_params.steps_per_period);
-        write_every = std::max(1, write_every);
-        log.debug("Writing one frame every " + std::to_string(write_every));
 
 //------------------------------------------------------------------------------
 // Cooling
 //------------------------------------------------------------------------------
+        log.info("Running cool down.");
+        int nt_cool = integration_params.cool_steps;
+        int nt = integration_params.hist_steps;
+        double dt = integration_params.time_step;
 
-        std::string stats_file = path + "energy.csv";
-        auto meanListener = std::make_shared<MeanListener>(
-                                integration_params, trap_params, stats_file);
+        auto meanListener = std::make_shared<MeanEnergyListener>(
+            integration_params, trap_params, path + "energy.csv");
         integrator.registerListener(meanListener);
+        auto progListener = std::make_shared<ProgressBarListener>(nt_cool + nt);
+        integrator.registerListener(progListener);
 
         for (int t = 0; t < nt_cool; ++t) {
             integrator.evolve(dt);
-
-            // Track progress
-            int percent = static_cast<int>((t*100)/nt_cool);
-            if ( (t*100/5)%nt_cool == 0 ) {
-                printProgBar(percent);
-            }
         }
-        printProgBar(100);
-        std::cout << '\n';
 
         integrator.deregisterListener(meanListener);
 
-        // Evolution
-        int nt = integration_params.hist_steps;
 
 //------------------------------------------------------------------------------
 // Histogram
 //------------------------------------------------------------------------------
         log.info("Acquiring histogram data");
 
-        auto ionStatsListener = std::make_shared<IonStatsListener>(
-            integration_params, trap_params, cloud_params, path);
-        integrator.registerListener(ionStatsListener);
-
-        // estimate number of steps per RF cycle
-        //int cycle_steps = 2.0 * integration_params.steps_per_period;
-        //log.info("Will plot RF phase for final " + std::to_string(cycle_steps) + " steps.");
-        // Open a file to store step number and RF factor
-        //writer.writeComment(path + "RFphase.csv", "time step, phase factor");
-
-        //IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5 * trap_params.energy_scale);
-
-        // Start timer
-        stopWatchTimer();
         KE = 0;
         double etot = 0;
-        
+
         if (microscope_params.make_image) {
             auto imagesListener = std::make_shared<ImageHistogramListener>(
                 integration_params, trap_params, microscope_params, path);
             integrator.registerListener(imagesListener);
         }
+        auto ionStatsListener = std::make_shared<IonStatsListener>(
+            integration_params, trap_params, cloud_params, path);
+        integrator.registerListener(ionStatsListener);
 
         for (int t = 0; t < nt; ++t) {
-
             integrator.evolve(dt);
-            //if (microscope_params.make_image)
-                //cloud->update_position_histogram(ionImages);
-
-            //cloud->update_energy_histogram(ionHistogram);
-
-            // Track progress
-            int percent = static_cast<int>((t*100)/nt);
-            if ((t*100/5)%nt == 0) {
-                printProgBar(percent);
-                std::cout << std::setw(4) << stopWatchTimer() << "s";
-            }
             KE += cloud->kinetic_energy();
             etot += cloud->total_energy();
-
-            // Output the trapping voltage scale factor during the final RF
-            // cycle.
-            //if (t >= nt-cycle_steps) {
-                //std::list<double> line;
-                //line.push_back(static_cast<double>(t)/integration_params.steps_per_period);
-                //line.push_back(trap->get_phase());
-                //writer.writeRow( path + "RFphase.csv", line);
-            //}
         }
+        integrator.deregisterListener(progListener);
+
         KE /= nt;
-        printProgBar(100);
-        std::cout << std::endl;
 
         char buffer[256];
-        snprintf(buffer, 256, "Total kinetic energy = %.4e J", KE * trap_params.energy_scale);
+        snprintf(buffer, 256, "Total kinetic energy = %.4e J",
+                 KE * trap_params.energy_scale);
         log.info(std::string(buffer));
-        snprintf(buffer, 256, "Total energy = %.4e J", etot * trap_params.energy_scale);
+        snprintf(buffer, 256, "Total energy = %.4e J",
+                 etot * trap_params.energy_scale);
         log.info(std::string(buffer));
         //ionHistogram->writeFiles("ionEnergy");
 
-        //cloud->saveStats(path, trap_params.length_scale, trap_params.time_scale);
-
-        //if (microscope_params.make_image) {
-            //ionImages.writeFiles(path, microscope_params);
-        //}
-
         timer.stop();
-        log.info("Wall time = " + 
-                std::to_string(timer.get_wall_time()) + " s");
-      log.info("CPU time  = " + 
-              std::to_string(timer.get_cpu_time()) + " s");
+        log.info(timer.get_wall_string());
+        log.info(timer.get_cpu_string());
     } catch (std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;

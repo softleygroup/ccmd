@@ -130,6 +130,8 @@ IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
 /** @brief Clears the list of pointers to ions.
  */
 IonCloud::~IonCloud() {
+    Logger& log = Logger::getInstance();
+    log.debug("Deconstructing ion cloud.");
     ionVec_.clear();
 }
 
