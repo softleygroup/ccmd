@@ -157,8 +157,8 @@ int main(int argc, char * const argv[]) {
             (trap, cloud_params, sim_params, trap_params);
 
         // Construct integrator
-        // RespaIntegrator integrator(trap, cloud, integration_params, sim_params);
-        VerletIntegrator integrator(trap, cloud, integration_params, sim_params);
+        RespaIntegrator integrator(trap, cloud, integration_params, sim_params);
+        //VerletIntegrator integrator(trap, cloud, integration_params, sim_params);
 
         // Construct integrator
         // CUDA_integrator integrator(trap, cloud, integration_params);
