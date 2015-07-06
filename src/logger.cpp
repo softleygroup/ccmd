@@ -24,11 +24,11 @@ void Logger::initialise(const Level maxlevel, const std::string filename) {
     maxlevel_ = maxlevel;
 
     level_string_ = std::vector<std::string>(5, "");
-    level_string_[error] = "Error";
-    level_string_[warn] = "Warn";
-    level_string_[info] = "Info";
-    level_string_[debug] = "Debug";
-    level_string_[loop] = "Loop";
+    level_string_[ERROR] = "Error";
+    level_string_[WARN] = "Warn";
+    level_string_[INFO] = "Info";
+    level_string_[DEBUG] = "Debug";
+    level_string_[LOOP] = "Loop";
 }
 
 Logger::~Logger() {
@@ -68,3 +68,6 @@ void Logger::log(const Level level, const std::string message) {
         fileStream_.flush();
     }
 }
+
+
+

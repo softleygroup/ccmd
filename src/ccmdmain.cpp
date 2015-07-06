@@ -66,6 +66,7 @@
 #include "include/ioncloud.h"
 #include "include/ionhistogram.h"
 #include "include/ionstatslistener.h"
+#include "include/imagehistogramlistener.h"
 #include "include/imagecollection.h"
 #include "include/integrator.h"
 #include "include/logger.h"
@@ -163,8 +164,8 @@ int main(int argc, char * const argv[]) {
         // CUDA_integrator integrator(trap, cloud, integration_params);
 
         // 3D histogram for image creation
-        ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance *
-                                         trap_params.length_scale));
+        //ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance *
+                                         //trap_params.length_scale));
 
         // Cool down ion cloud
         log.info("Running cool down.");
@@ -172,16 +173,10 @@ int main(int argc, char * const argv[]) {
         double dt = integration_params.time_step;
         DataWriter writer(",");
 
-        // int write_every = std::floor(6.2831/(15*dt));
         // Write frame once every 2 RF cycles
         int write_every = (integration_params.steps_per_period);
         write_every = std::max(1, write_every);
-        log.debug("Writing one frame every " +
-                std::to_string(write_every));
-        int frameNumber = 0;
-
-        Stats<double> mean_energy;
-        int energy_row = 0;
+        log.debug("Writing one frame every " + std::to_string(write_every));
 
 //------------------------------------------------------------------------------
 // Cooling
@@ -194,13 +189,12 @@ int main(int argc, char * const argv[]) {
 
         for (int t = 0; t < nt_cool; ++t) {
             integrator.evolve(dt);
-            /*
+
             // Track progress
             int percent = static_cast<int>((t*100)/nt_cool);
             if ( (t*100/5)%nt_cool == 0 ) {
                 printProgBar(percent);
             }
-            */
         }
         printProgBar(100);
         std::cout << '\n';
@@ -213,33 +207,38 @@ int main(int argc, char * const argv[]) {
 //------------------------------------------------------------------------------
 // Histogram
 //------------------------------------------------------------------------------
-        
         log.info("Acquiring histogram data");
 
         auto ionStatsListener = std::make_shared<IonStatsListener>(
-            integration_params, trap_params, path);
+            integration_params, trap_params, cloud_params, path);
         integrator.registerListener(ionStatsListener);
 
         // estimate number of steps per RF cycle
-        int cycle_steps = 2.0 * integration_params.steps_per_period;
-        log.info("Will plot RF phase for final " + std::to_string(cycle_steps) + " steps.");
+        //int cycle_steps = 2.0 * integration_params.steps_per_period;
+        //log.info("Will plot RF phase for final " + std::to_string(cycle_steps) + " steps.");
         // Open a file to store step number and RF factor
-        writer.writeComment(path + "RFphase.csv", "time step, phase factor");
+        //writer.writeComment(path + "RFphase.csv", "time step, phase factor");
 
-        IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5 * trap_params.energy_scale);
+        //IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5 * trap_params.energy_scale);
 
         // Start timer
         stopWatchTimer();
         KE = 0;
         double etot = 0;
         
+        if (microscope_params.make_image) {
+            auto imagesListener = std::make_shared<ImageHistogramListener>(
+                integration_params, trap_params, microscope_params, path);
+            integrator.registerListener(imagesListener);
+        }
+
         for (int t = 0; t < nt; ++t) {
 
             integrator.evolve(dt);
-            if (microscope_params.make_image)
-                cloud->update_position_histogram(ionImages);
+            //if (microscope_params.make_image)
+                //cloud->update_position_histogram(ionImages);
 
-            cloud->update_energy_histogram(ionHistogram);
+            //cloud->update_energy_histogram(ionHistogram);
 
             // Track progress
             int percent = static_cast<int>((t*100)/nt);
@@ -252,20 +251,12 @@ int main(int argc, char * const argv[]) {
 
             // Output the trapping voltage scale factor during the final RF
             // cycle.
-            if (t >= nt-cycle_steps) {
-                std::list<double> line;
-                line.push_back(static_cast<double>(t)/integration_params.steps_per_period);
-                line.push_back(trap->get_phase());
-                writer.writeRow( path + "RFphase.csv", line);
-            }
-
-            // if (t%write_every==0) {
-                // char buffer[50];
-                // std::sprintf(buffer, "%.4i", frameNumber++);
-                // std::string framepath = buffer;
-                // cloud->savePos(framepath,
-                        // trap_params.length_scale, trap_params.time_scale);
-            // }
+            //if (t >= nt-cycle_steps) {
+                //std::list<double> line;
+                //line.push_back(static_cast<double>(t)/integration_params.steps_per_period);
+                //line.push_back(trap->get_phase());
+                //writer.writeRow( path + "RFphase.csv", line);
+            //}
         }
         KE /= nt;
         printProgBar(100);
@@ -276,13 +267,13 @@ int main(int argc, char * const argv[]) {
         log.info(std::string(buffer));
         snprintf(buffer, 256, "Total energy = %.4e J", etot * trap_params.energy_scale);
         log.info(std::string(buffer));
-        ionHistogram->writeFiles("ionEnergy");
+        //ionHistogram->writeFiles("ionEnergy");
 
-        cloud->saveStats(path, trap_params.length_scale, trap_params.time_scale);
+        //cloud->saveStats(path, trap_params.length_scale, trap_params.time_scale);
 
-        if (microscope_params.make_image) {
-            ionImages.writeFiles(path, microscope_params);
-        }
+        //if (microscope_params.make_image) {
+            //ionImages.writeFiles(path, microscope_params);
+        //}
 
         timer.stop();
         log.info("Wall time = " + 

@@ -16,7 +16,7 @@
 class IntegratorListener {
  public:
 
-  void setCloud (const IonCloud_ptr i);
+  void setCloud (IonCloud_ptr i);
 
   /// Called on each iteration of the integrator, with the current iteration
   //number.
@@ -24,7 +24,7 @@ class IntegratorListener {
   /// Called when the intergration is complete.
   virtual void finished() = 0;
  protected:
-  const IonCloud_ptr ions_;
+  IonCloud_ptr ions_;
 };
 
 typedef std::shared_ptr<IntegratorListener> IntegratorListener_ptr;

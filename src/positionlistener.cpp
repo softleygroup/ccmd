@@ -7,10 +7,10 @@
 PositionListener::PositionListener(const IntegrationParams& int_params,
                                    const TrapParams& trap_params,
                                    std::string path)
-    : int_params_(int_params), trap_params_(trap_params), path_(path){
+    : int_params_(int_params), trap_params_(trap_params), path_(path), 
+    log_(Logger::getInstance()) {
         write_every_ = int_params_.steps_per_period;
         frameNumber_ = 0;
-        log_ = Logger.getInstance();
         log_.debug("Started PositionListener.");
     }
 
@@ -38,7 +38,7 @@ void PositionListener::save(const std::string basePath) const {
     std::list<double> rowdata;
     std::string name;
 
-    for (auto ion : ions_->ions()) {
+    for (auto ion : ions_->get_ions()) {
         // Write the final position and velocity for each ion.
         name = basePath + ion->name() + fileEnding;
         rowdata.clear();

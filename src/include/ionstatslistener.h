@@ -8,17 +8,20 @@
 #define INCLUDE_IONSTATSLISTENER_H_
 
 #include "ccmdsim.h"
+#include "datawriter.h"
 #include "integratorlistener.h"
 #include "ioncloud.h"
+#include "logger.h"
 #include "stats.h"
-#include "datawriter.h"
 
 #include <string>
 
 class IonStatsListener : public IntegratorListener {
  public:
+  ~IonStatsListener();
   IonStatsListener(const IntegrationParams& int_params,
                const TrapParams& trap_params,
+               const CloudParams& cloud_params,
                std::string stats_file);
 
   void update(const int i);
@@ -28,8 +31,11 @@ class IonStatsListener : public IntegratorListener {
   const IonStatsListener& operator=(const IonStatsListener&) = delete;
  private:
   std::string base_path_;
-  IntegrationParams& int_params_;
-  TrapParams& trap_params_;
+  const IntegrationParams& int_params_;
+  const TrapParams& trap_params_;
+  const CloudParams& cloud_params_;
+  bool has_finished_;
+  Logger& log_;
 };
 
-#endif  // include_IONSTATSLISTENER_H_
+#endif  // INCLUDE_IONSTATSLISTENER_H_

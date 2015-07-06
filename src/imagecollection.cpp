@@ -73,13 +73,13 @@ void ImageCollection::writeFiles(const std::string &basePath,
     Logger& log = Logger::getInstance();
     std::string fileEnding = "_image.png";
     for (auto& it : collection_) {
-        log.log(Logger::info, "Generating image: " + it.first);
+        log.info("Generating image: " + it.first);
         Microscope_image image(it.second, p);
         while (!image.is_finished()) {
             image.draw();
         }
         image.ouput_to_file(basePath + it.first + fileEnding);
-        log.log(Logger::info, "Done generating image: " + it.first);
+        log.info("Done generating image: " + it.first);
     }
 }
 

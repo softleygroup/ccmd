@@ -14,10 +14,9 @@ MeanListener::MeanListener(const IntegrationParams& int_params,
                            const TrapParams& trap_params,
                            std::string stats_file)
     : int_params_(int_params), trap_params_(trap_params), writer_(","),
-    stats_file_(stats_file) {
+    stats_file_(stats_file), log_(Logger::getInstance()) {
         write_every_ = int_params_.steps_per_period;
         energy_row_ = 0;
-        log_ = Logger.getInstance();
         log_.debug("Started MeanListener");
 }
 
