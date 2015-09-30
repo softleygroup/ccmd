@@ -112,7 +112,7 @@
  *
  *  Parameter   | Description
  *  ------------|------------------------------------------------------------
- *  \c vrf      | Peak RF voltage, i.e. half the amplitude
+ *  \c vrf      | Peak-to-peak RF voltage (29/9/15)
  *  \c vend     | End-cap voltage
  *  \c eta      | Geometric non-ideality factor
  *  \c r0       | Distance between quadrupole rod centres
