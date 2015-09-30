@@ -17,8 +17,8 @@
 
 #include "include/datawriter.h"
 #include "include/imagecollection.h"
-#include "include/ionhistogram.h"
 #include "include/ion.h"
+#include "include/ionhistogram.h"
 #include "include/logger.h"
 #include "include/stats.h"
 #include "include/vector3D.h"
@@ -130,6 +130,8 @@ IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
 /** @brief Clears the list of pointers to ions.
  */
 IonCloud::~IonCloud() {
+    Logger& log = Logger::getInstance();
+    log.debug("Deconstructing ion cloud.");
     ionVec_.clear();
 }
 
@@ -179,7 +181,7 @@ void IonCloud::collide() {
     }
     std::stringstream ss;
     ss << "Removed " << n << " ions."<< std::endl;
-    log.log(Logger::info, ss.str());
+    log.info(ss.str());
 }
 */
 
@@ -192,12 +194,12 @@ void IonCloud::swap_first(const IonType& from, const IonType& to) {
     Logger& log = Logger::getInstance();
     for (auto ion : ionVec_) {
         if (ion->name() == from.name) {
-            log.log(Logger::debug, "Found first ion named " + from.name);
+            log.debug("Found first ion named " + from.name);
             ion->update_from(to);
             return;
         }
     }
-    log.log(Logger::warn, "Did not find ion named " + from.name);
+    log.warn("Did not find ion named " + from.name);
 }
 
 /**
@@ -334,6 +336,7 @@ void IonCloud::updateStats() {
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
+/*
 void IonCloud::saveStats(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
@@ -406,6 +409,8 @@ void IonCloud::saveStats(const std::string basePath,
         writer.writeRow(name, rowdata);
     }
 }
+*/
+
 
 /** @brief Save the current position and velocity of all ions in the cloud.
  *
@@ -421,6 +426,7 @@ void IonCloud::saveStats(const std::string basePath,
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
+/*
 void IonCloud::savePos(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
@@ -461,6 +467,7 @@ void IonCloud::savePos(const std::string basePath,
         writer.writeRow(name, rowdata);
     }
 }
+*/
 
 /**
  *  @brief Collect the kinetic energy of all ions into a histogram.
@@ -484,6 +491,7 @@ void IonCloud::update_energy_histogram(IonHistogram_ptr h) const {
  *
  *  @param h    The `ImageCollection` object that holds the histogram.
  */
+/*
 void IonCloud::update_position_histogram(ImageCollection& h) const {
     Vector3D posn;
     Vector3D rotated_pos;
@@ -496,7 +504,7 @@ void IonCloud::update_position_histogram(ImageCollection& h) const {
         h.addIon(ion->name(), rotated_pos);
     }
 }
-
+*/
 
 /**
  *  @brief Determine the aspect ratio of the ion cloud.

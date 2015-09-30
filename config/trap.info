@@ -1,6 +1,6 @@
 trap {
     vrf     150.75
-    vend    1.0
+    vend    1.5
     eta     0.244
     r0      3.5e-3
     z0      2.75e-3
@@ -13,7 +13,7 @@ integrator {
     stepsPerPeriod 20
     respasteps  50       ; Respa inner loop steps
     coolperiods 2000
-    histperiods   200
+    histperiods   500
 }
 image {
     makeimage   true
@@ -25,11 +25,10 @@ image {
 }
 simulation {
     threads     0
-    seed        -1
+    seed        213
 }
 ionnumbers {
     Ca      50
-     Xe      0
 }
 iontype {
     CaF {

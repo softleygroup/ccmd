@@ -56,7 +56,7 @@ class Logger {
      *  \c warn     | Warning that a default parameter is used as input file is out of range
      *  \c error    | Critical error, simulation will stop after this.
      */
-    enum Level {error, warn, info, debug, loop};
+    enum Level {ERROR, WARN, INFO, DEBUG, LOOP};
     ~Logger();
 
     static Logger& getInstance() {
@@ -66,6 +66,13 @@ class Logger {
 
     void initialise(const Level maxlevel, const std::string filename);
     void log(const Level level, const std::string message);
+
+    // Shortcuts
+    void loop(const std::string message) { log(LOOP, message); }
+    void debug(const std::string message) { log(DEBUG, message); }
+    void info(const std::string message) { log(INFO, message); }
+    void warn(const std::string message) { log(WARN, message); }
+    void error(const std::string message) { log(ERROR, message); }
 
  private:
     // Don't implement

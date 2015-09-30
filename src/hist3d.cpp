@@ -148,7 +148,7 @@ void Hist3D::prune(double threshold) {
 
     if (threshold < 0 || threshold > 1) {
         Logger& log = Logger::getInstance();
-        log.log(Logger::error, "Prune threshold out of range. Not pruning.");
+        log.error("Prune threshold out of range. Not pruning.");
         return;
     }
 

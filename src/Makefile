@@ -1,4 +1,4 @@
-EXECUTABLE:= ../bin/linux/ccmd 
+EXECUTABLE:= ../bin/ccmd 
 
 intel: CC = icpc
 intel: LD = icpc
@@ -14,7 +14,7 @@ CXX_OBJS := ${CXX_SRCS:.cpp=.o}
 # program_CU_OBJS := ${program_CU_SRCS:.cu=.o}
 OBJS := $(C_OBJS) $(CXX_OBJS)
 
-BUILD_DIR := ../build/linux/
+BUILD_DIR := ../build/
 OBJS := $(addprefix $(BUILD_DIR), $(OBJS))
 VPATH = ./ 
 
@@ -22,7 +22,7 @@ BOOST_INCLUDE = /u/tps/crennick/boost_1_55_0
 
 
 intel: INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
-gnu: INCLUDE_DIRS :=  ./include
+gnu: INCLUDE_DIRS :=  ./include /opt/local/include
 
 intel: LIBRARY_DIR := -L/u/tps/crennick/boost_1_55_0/stage/lib/
 LIBRARIES := -lpng -lz

@@ -24,6 +24,8 @@ class TrapParams;
 class Vector3D;
 class IonType;
 
+typedef std::vector<Ion_ptr> Ion_ptr_vector;
+
 class IonCloud {
  public:
     IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
@@ -44,6 +46,7 @@ class IonCloud {
     double aspect_ratio() const;
 
     size_t number_of_ions() const { return ionVec_.size(); }
+    const Ion_ptr_vector& get_ions() const { return ionVec_; }
 
     void update_position_histogram(ImageCollection&) const;
     void update_energy_histogram(IonHistogram_ptr) const;
@@ -64,7 +67,6 @@ class IonCloud {
     /** @brief Keep a reference to the parameters. */
     const SimParams& simParams_;
     const TrapParams& trapParams_;
-    typedef std::vector<Ion_ptr> Ion_ptr_vector;
     /** A list of pointers to the ion objects. */
     Ion_ptr_vector ionVec_;
 

@@ -1,2 +1,10 @@
 *.o
 .DS_Store
+config/*
+bin/*
+build/*
+.sync/
+*.swp
+docs/build/
+docs/source/_*
+docs/doxygen/

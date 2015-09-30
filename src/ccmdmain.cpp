@@ -50,26 +50,23 @@
  */
 
 #include <ctime>
-#include <iomanip>
 #include <iostream>
-#include <list>
 #include <algorithm>
 #include <memory>
-#include <fstream>
-#include <sstream>
 #include <string>
 
-#include "include/image.h"
 #include "include/ccmdsim.h"
-#include "include/datawriter.h"
 #include "include/iontrap.h"
 #include "include/ioncloud.h"
-#include "include/ionhistogram.h"
-#include "include/imagecollection.h"
 #include "include/integrator.h"
 #include "include/logger.h"
-#include "include/stats.h"
 #include "include/timer.h"
+
+#include "include/ionstatslistener.h"
+#include "include/imagehistogramlistener.h"
+#include "include/meanenergylistener.h"
+#include "include/progressbarlistener.h"
+#include "include/positionlistener.h"
 
 double stopWatchTimer();
 double KE;
@@ -112,199 +109,115 @@ int main(int argc, char * const argv[]) {
     if (path[path.length()-1] != '/')
         path += "/";
 
-    log.initialise(Logger::debug, path + "log.txt");
-    log.log(Logger::info, "CCMD - Coulomb crystal molecular dynamics");
-    log.log(Logger::info, "Version 2.1.0");
+    log.initialise(Logger::DEBUG, path + "log.txt");
+    log.info("CCMD - Coulomb crystal molecular dynamics");
+    log.info("Version 2.1.0");
 
     // Parameter file paths
     std::string info_file = path + "trap.info";
-    log.log(Logger::info, "Loading input file " + info_file);
+    log.info("Loading input file " + info_file);
 
     try {
         // Get simulation parameters from files
-        TrapParams trapParams(info_file);
+        TrapParams trap_params(info_file);
         CloudParams cloud_params(info_file);
-        IntegrationParams integrationParams(info_file);
+        IntegrationParams integration_params(info_file);
         MicroscopeParams microscope_params(info_file);
         SimParams sim_params(info_file);
 
         // Construct trap based on parameters
         IonTrap_ptr trap;
-        if (trapParams.wave == trapParams.cosine) {
-            trap = std::make_shared<CosineTrap>(trapParams);
-        } else if (trapParams.wave == trapParams.digital) {
-            trap = std::make_shared<PulsedTrap>(trapParams);
-        } else if (trapParams.wave == trapParams.waveform) {
-            trap = std::make_shared<WaveformTrap>(trapParams);
-        } else if (trapParams.wave == trapParams.cosine_decay) {
+        if (trap_params.wave == trap_params.cosine) {
+            trap = std::make_shared<CosineTrap>(trap_params);
+        } else if (trap_params.wave == trap_params.digital) {
+            trap = std::make_shared<PulsedTrap>(trap_params);
+        } else if (trap_params.wave == trap_params.waveform) {
+            trap = std::make_shared<WaveformTrap>(trap_params);
+        } else if (trap_params.wave == trap_params.cosine_decay) {
             // have to do some unit conversions here for the decay params
-            trapParams.tau *= PI;
-            trapParams.deltaT = (integrationParams.cool_steps + integrationParams.hist_steps)*
-                integrationParams.time_step-trapParams.deltaT*PI;
-            trap = std::make_shared<CosineDecayTrap>(trapParams);
-        } else if (trapParams.wave == trapParams.twofreq) {
-            trap = std::make_shared<TwoFreq_trap>(trapParams);
+            trap_params.tau *= PI;
+            trap_params.deltaT = (integration_params.cool_steps + integration_params.hist_steps)*
+                integration_params.time_step-trap_params.deltaT*PI;
+            trap = std::make_shared<CosineDecayTrap>(trap_params);
+        } else if (trap_params.wave == trap_params.twofreq) {
+            trap = std::make_shared<TwoFreq_trap>(trap_params);
         } else {
-            log.log(Logger::error, "Unrecognised trap type");
+            log.error("Unrecognised trap type");
             throw std::runtime_error("Unrecognised trap type");
         }
 
         // Construct ion cloud
         IonCloud_ptr cloud = std::make_shared<IonCloud>
-            (trap, cloud_params, sim_params, trapParams);
+            (trap, cloud_params, sim_params, trap_params);
 
         // Construct integrator
-        RespaIntegrator integrator(trap, cloud, integrationParams, sim_params);
+        //RespaIntegrator integrator(trap, cloud, integration_params, sim_params);
+        VerletIntegrator integrator(trap, cloud, integration_params, sim_params);
 
-        // Construct integrator
-        // CUDA_integrator integrator(trap, cloud, integrationParams);
-
-        // 3D histogram for image creation
-        ImageCollection ionImages((1.0)/(1e6 * microscope_params.pixels_to_distance *
-                                         trapParams.length_scale));
-
-        // Cool down ion cloud
-        log.log(Logger::info, "Running cool down.");
-        int nt_cool = integrationParams.cool_steps;
-        double dt = integrationParams.time_step;
-        DataWriter writer(",");
-
-        // int write_every = std::floor(6.2831/(15*dt));
-        // Write frame once every 2 RF cycles
-        int write_every = (integrationParams.steps_per_period);
-        write_every = std::max(1, write_every);
-        log.log(Logger::debug, "Writing one frame every " +
-                std::to_string(write_every));
-        int frameNumber = 0;
-
-        Stats<double> mean_energy;
-        std::string stats_file = path + "energy.csv";
-        int energy_row = 0;
 
 //------------------------------------------------------------------------------
 // Cooling
 //------------------------------------------------------------------------------
+        log.info("Running cool down.");
+        int nt_cool = integration_params.cool_steps;
+        int nt = integration_params.hist_steps;
+        double dt = integration_params.time_step;
+
+        auto meanListener = std::make_shared<MeanEnergyListener>(
+            integration_params, trap_params, path + "energy.csv");
+        integrator.registerListener(meanListener);
+        //auto positionListener = std::make_shared<PositionListener>(
+            //integration_params, trap_params, path);
+        //integrator.registerListener(positionListener);
+        auto progListener = std::make_shared<ProgressBarListener>(nt_cool + nt);
+        integrator.registerListener(progListener);
+
         for (int t = 0; t < nt_cool; ++t) {
-            //            cloud->collide();
-            //            if (cloud->number_of_ions() ==0) {
-            //                log.log(Logger::warn, "No ions remaining, stopping.");
-            //                break;
-            //            }
-
             integrator.evolve(dt);
-            mean_energy.append(cloud->kinetic_energy());
-
-            if (t%write_every == 0) {
-                std::list<double> rowdata;
-                rowdata.push_back(energy_row++);
-                rowdata.push_back(mean_energy.average() * trapParams.energy_scale);
-                rowdata.push_back(mean_energy.variance() * trapParams.energy_scale);
-                writer.writeRow(stats_file, rowdata);
-                mean_energy.reset();
-
-                // char buffer[50];
-                // std::sprintf(buffer, "%.4i", frameNumber++);
-                // std::string framepath = buffer;
-                // cloud->savePos(framepath, trapParams->length_scale, trapParams.time_scale);
-            }
-            // Track progress
-            int percent = static_cast<int>((t*100)/nt_cool);
-            if ( (t*100/5)%nt_cool == 0 ) {
-                printProgBar(percent);
-            }
         }
-        printProgBar(100);
-        std::cout << '\n';
 
-        // Evolution
-        int nt = integrationParams.hist_steps;
+        integrator.deregisterListener(meanListener);
+        //integrator.deregisterListener(positionListener);
+
 
 //------------------------------------------------------------------------------
 // Histogram
 //------------------------------------------------------------------------------
+        log.info("Acquiring histogram data");
 
-        log.log(Logger::info, "Acquiring histogram data");
-
-        // estimate number of steps per RF cycle
-        int cycle_steps = 2.0 * integrationParams.steps_per_period;
-        log.log(Logger::info, "Will plot RF phase for final " + std::to_string(cycle_steps) + " steps.");
-        // Open a file to store step number and RF factor
-        writer.writeComment(path + "RFphase.csv", "time step, phase factor");
-
-        IonHistogram_ptr ionHistogram = std::make_shared<IonHistogram>(0.5 * trapParams.energy_scale);
-
-        // Start timer
-        stopWatchTimer();
         KE = 0;
         double etot = 0;
-        int swap_count = 0;
-        // if (swap_params.do_swap)
-            // swap_count = std::floor(0.5*nt/swap_params.from.number);
-        for (int t = 0; t < nt; ++t) {
-//            cloud->collide();
-//            if (cloud->number_of_ions() ==0) {
-//                log.log(Logger::warn, "No ions remaining, stopping.");
-//                break;
-//            }
-
-            integrator.evolve(dt);
-            if (microscope_params.make_image)
-                cloud->update_position_histogram(ionImages);
-
-            cloud->updateStats();
-            cloud->update_energy_histogram(ionHistogram);
-
-            // Track progress
-            int percent = static_cast<int>((t*100)/nt);
-            if ((t*100/5)%nt == 0) {
-                printProgBar(percent);
-                std::cout << std::setw(4) << stopWatchTimer() << "s";
-            }
-            KE += cloud->kinetic_energy();
-            etot += cloud->total_energy();
-
-            // Output the trapping voltage scale factor during the final RF
-            // cycle.
-            if (t >= nt-cycle_steps) {
-                std::list<double> line;
-                line.push_back(static_cast<double>(t)/integrationParams.steps_per_period);
-                line.push_back(trap->get_phase());
-                writer.writeRow( path + "RFphase.csv", line);
-            }
-        // if (swap_params.do_swap){
-            // if (t%swap_count==0)
-                // cloud->swap_first(swap_params.from, swap_params.to);
-        // }
-
-            // if (t%write_every==0) {
-                // char buffer[50];
-                // std::sprintf(buffer, "%.4i", frameNumber++);
-                // std::string framepath = buffer;
-                // cloud->savePos(framepath,
-                        // trapParams.length_scale, trapParams.time_scale);
-            // }
-        }
-        KE /= nt;
-        printProgBar(100);
-        std::cout << std::endl;
-
-        char buffer[256];
-        snprintf(buffer, 256, "Total kinetic energy = %.4e J", KE * trapParams.energy_scale);
-        log.log(Logger::info, std::string(buffer));
-        snprintf(buffer, 256, "Total energy = %.4e J", etot * trapParams.energy_scale);
-        log.log(Logger::info, std::string(buffer));
-        ionHistogram->writeFiles("ionEnergy");
 
         if (microscope_params.make_image) {
-            ionImages.writeFiles(path, microscope_params);
+            auto imagesListener = std::make_shared<ImageHistogramListener>(
+                integration_params, trap_params, microscope_params, path);
+            integrator.registerListener(imagesListener);
         }
-        cloud->saveStats(path, trapParams.length_scale, trapParams.time_scale);
+        auto ionStatsListener = std::make_shared<IonStatsListener>(
+            integration_params, trap_params, cloud_params, path);
+        integrator.registerListener(ionStatsListener);
+
+        for (int t = 0; t < nt; ++t) {
+            integrator.evolve(dt);
+            KE += cloud->kinetic_energy();
+            etot += cloud->total_energy();
+        }
+        integrator.deregisterListener(progListener);
+
+        KE /= nt;
+
+        char buffer[256];
+        snprintf(buffer, 256, "Total kinetic energy = %.4e J",
+                 KE * trap_params.energy_scale);
+        log.info(std::string(buffer));
+        snprintf(buffer, 256, "Total energy = %.4e J",
+                 etot * trap_params.energy_scale);
+        log.info(std::string(buffer));
+        //ionHistogram->writeFiles("ionEnergy");
 
         timer.stop();
-        log.log(Logger::info, "Wall time = " + 
-                std::to_string(timer.get_wall_time()) + " s");
-      log.log(Logger::info, "CPU time  = " + 
-              std::to_string(timer.get_cpu_time()) + " s");
+        log.info(timer.get_wall_string());
+        log.info(timer.get_cpu_string());
     } catch (std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;

@@ -10,6 +10,7 @@
 #include "include/integrator.h"
 #include "include/ioncloud.h"
 #include "include/iontrap.h"
+#include "include/logger.h"
 
 /**
  *  @class RespaIntegrator
@@ -19,7 +20,7 @@
  *  This force is used in each
  *
  *  See: M. Tuckerman, B. J. Berne and G. J. Martyna,
- *  J. Chem. Phys. 92, 1990 (1992)
+ *  J. Chem. Phys. 97, 1990 (1992)
  */
 
 
@@ -34,7 +35,11 @@
 RespaIntegrator::RespaIntegrator(const IonTrap_ptr it, const IonCloud_ptr ic,
                                    const IntegrationParams& integrationParams,
                                    const SimParams& sp)
-    : Integrator(it, ic, integrationParams, sp) { }
+    : Integrator(it, ic, integrationParams, sp) {
+        Logger& log = Logger::getInstance();
+        log.info("Verlet integration.");
+        n_iter_ = 0;
+}
 
 
 /** @brief Increment by one set of respa time steps.
@@ -79,5 +84,6 @@ void RespaIntegrator::evolve(double dt) {
     // slow Coulomb force half-kick
     ions_->kick(half_dt, coulomb_.get_force());
 
-    return;
+    // Tell everyone we're done
+    notifyListeners(n_iter_++);
 }
