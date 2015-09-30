@@ -13,7 +13,7 @@
  *
  *  Note: the names in the input file are not case sensitive.
  *
- *  # Example input file #
+ *  ## Example input file
  *
  *     trap {
  *         vrf     150.75

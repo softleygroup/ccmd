@@ -66,6 +66,7 @@
 #include "include/imagehistogramlistener.h"
 #include "include/meanenergylistener.h"
 #include "include/progressbarlistener.h"
+#include "include/positionlistener.h"
 
 double stopWatchTimer();
 double KE;
@@ -165,6 +166,9 @@ int main(int argc, char * const argv[]) {
         auto meanListener = std::make_shared<MeanEnergyListener>(
             integration_params, trap_params, path + "energy.csv");
         integrator.registerListener(meanListener);
+        //auto positionListener = std::make_shared<PositionListener>(
+            //integration_params, trap_params, path);
+        //integrator.registerListener(positionListener);
         auto progListener = std::make_shared<ProgressBarListener>(nt_cool + nt);
         integrator.registerListener(progListener);
 
@@ -173,6 +177,7 @@ int main(int argc, char * const argv[]) {
         }
 
         integrator.deregisterListener(meanListener);
+        //integrator.deregisterListener(positionListener);
 
 
 //------------------------------------------------------------------------------

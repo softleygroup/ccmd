@@ -11,6 +11,7 @@
 
 #include <ctime>
 #include <chrono>
+#include <string>
 
 class Timer {
  public:

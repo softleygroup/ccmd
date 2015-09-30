@@ -5,3 +5,6 @@ bin/*
 build/*
 .sync/
 *.swp
+docs/build/
+docs/source/_*
+docs/doxygen/
