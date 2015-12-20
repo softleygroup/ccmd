@@ -98,7 +98,7 @@ In the block `trap`
 
 Parameter   | Description
 ------------|------------------------------------------------------------
-`vrf`      | Peak RF voltage, i.e. half the amplitude
+`vrf`      | Peak-to-peak RF voltage
 `vend`     | End-cap voltage
 `eta`      | Geometric non-ideality factor
 `r0`       | Distance between quadrupole rod centres
