@@ -36,16 +36,6 @@
  * IonCloud and SimParams.
  *
  */
-CoulombForce::CoulombForce(const IonCloud_ptr ic, const SimParams& sp)
-    : cloud_(ic), params_(sp) {
-    }
-
-
-/** @brief Start calculating Coulomb force vector.
- *
- * This function makes use of the antisymmetric nature of the force : F_ji =
- * -F_ij, so only calculates the upper triangle of the NxN array.
- */
 void CoulombForce::update() {
     Vector3D r1, r2, f;
     double r, r3;
@@ -60,43 +50,38 @@ void CoulombForce::update() {
 
 #ifdef _OPENMP
 
-#pragma omp parallel default(shared) private(i,j, r1, q1, r2, q2, r3, f, r)
+//#pragma omp parallel default(shared) private(i,j, r1, q1, r2, q2, r3, f, r)
 //{
     
-#pragma omp for
+//#pragma omp for collapse(2)
     
 #endif
 
     // sum Coulomb force over all particles
     for (i = 0; i < cloud_size; ++i) {
-        Vector3D forces[cloud_size];
         for (j = i+1; j < cloud_size; ++j) {
             r1 = cloud_->ionVec_[i]->get_pos();
             q1 = cloud_->ionVec_[i]->get_charge();
             r2 = cloud_->ionVec_[j]->get_pos();
             q2 = cloud_->ionVec_[j]->get_charge();
-            
 
             // force term calculation
             r = Vector3D::dist(r1, r2);
             r3 = r*r*r;
-            forces[j] = (r1-r2)/r3*q1*q2;
-            Vector3D totalforce = Reduction(forces,cloud_size);
-            force_[i] = totalforce;
-            force_[j] = -totalforce;
-//#ifdef _OPENMP
+            f = (r1-r2)/r3*q1*q2;
+#ifdef _OPENMP
 //#pragma omp critical (force_update) 
 //{
-//#endif
+#endif
 
             // update sum for ion "i"
-            //force_[i] += f;
+            force_[i] += f;
             // update sum for ion "j"
-            //force_[j] -= f;
+            force_[j] -= f;
             
-//#ifdef _OPENMP
+#ifdef _OPENMP
 //}
-//#endif            
+#endif            
             
         }
     }
