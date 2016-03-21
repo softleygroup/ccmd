@@ -36,6 +36,12 @@
  * IonCloud and SimParams.
  *
  */
+ 
+ CoulombForce::CoulombForce(const IonCloud_ptr ic, const SimParams& sp)
+    : cloud_(ic), params_(sp) {
+    }
+
+	
 void CoulombForce::update() {
     Vector3D r1, r2, f;
     double r, r3;
