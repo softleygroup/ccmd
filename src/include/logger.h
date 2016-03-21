@@ -69,7 +69,7 @@ class Logger {
 
     // Shortcuts
     void loop(const std::string message) { log(LOOP, message); }
-    void debug(const std::string message) { log(DEBUG, message); }
+    void debug(const std::string message) {log(DEBUG, message); }
     void info(const std::string message) { log(INFO, message); }
     void warn(const std::string message) { log(WARN, message); }
     void error(const std::string message) { log(ERROR, message); }

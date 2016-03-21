@@ -14,6 +14,11 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <array>
+#include <string.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "include/ioncloud.h"
 #include "include/ion.h"
@@ -45,6 +50,7 @@ void CoulombForce::update() {
     Vector3D r1, r2, f;
     double r, r3;
     int q1, q2;
+    int i,j;
     int cloud_size = cloud_->number_of_ions();
 
     // Initialise vector that will contain force on each ion when we're done.
@@ -52,25 +58,53 @@ void CoulombForce::update() {
     Vector3D null_vec = Vector3D(0.0, 0.0, 0.0);
     std::fill(force_.begin(), force_.end(), null_vec);
 
+#ifdef _OPENMP
+
+#pragma omp parallel default(shared) private(i,j, r1, q1, r2, q2, r3, f, r)
+//{
+    
+#pragma omp for
+    
+#endif
+
     // sum Coulomb force over all particles
-    for (int i = 0; i < cloud_size; ++i) {
-        r1 = cloud_->ionVec_[i]->get_pos();
-        q1 = cloud_->ionVec_[i]->get_charge();
-        for (int j = i+1; j < cloud_size; ++j) {
+    for (i = 0; i < cloud_size; ++i) {
+        Vector3D forces[cloud_size];
+        for (j = i+1; j < cloud_size; ++j) {
+            r1 = cloud_->ionVec_[i]->get_pos();
+            q1 = cloud_->ionVec_[i]->get_charge();
             r2 = cloud_->ionVec_[j]->get_pos();
             q2 = cloud_->ionVec_[j]->get_charge();
+            
 
             // force term calculation
             r = Vector3D::dist(r1, r2);
             r3 = r*r*r;
-            f = (r1-r2)/r3*q1*q2;
+            forces[j] = (r1-r2)/r3*q1*q2;
+            Vector3D totalforce = Reduction(forces,cloud_size);
+            force_[i] = totalforce;
+            force_[j] = -totalforce;
+//#ifdef _OPENMP
+//#pragma omp critical (force_update) 
+//{
+//#endif
 
             // update sum for ion "i"
-            force_[i] += f;
+            //force_[i] += f;
             // update sum for ion "j"
-            force_[j] -= f;
+            //force_[j] -= f;
+            
+//#ifdef _OPENMP
+//}
+//#endif            
+            
         }
     }
+    
+#ifdef _OPENMP
+//}
+#endif    
+    
 }
 
 
@@ -78,4 +112,23 @@ void CoulombForce::update() {
  */
 const std::vector<Vector3D>& CoulombForce::get_force() {
     return force_;
+}
+
+
+Vector3D CoulombForce::Reduction(Vector3D x[], int len) {
+    Vector3D s;
+    if (len < 4) {
+        int i = 0;
+        for (i=0; i < len; i++) { s += x[i]; }
+    }
+    else
+    {
+        int halflen = floor(len/2);
+        Vector3D array1[halflen];
+        Vector3D array2[len-halflen];
+        memcpy(array1, x, halflen * sizeof(double)); 
+        memcpy(array2, &x[halflen], (len-halflen) * sizeof(double)); 
+        s = Reduction(array1, halflen) + Reduction(array2, len-halflen);
+    }
+    return s;
 }

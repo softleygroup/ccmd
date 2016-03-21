@@ -35,8 +35,8 @@
  *  @see TrappedIon, LaserCooledIon
  */
 
-Ion::Ion(const IonType& type)
-: ionType_(type) {
+Ion::Ion(const IonType& type, const LaserParams& lp): 
+    ionType_(type), lp_(lp) {
 }
 
 /**
@@ -55,11 +55,10 @@ void Ion::drift(double dt) {
  *  @param dt   Time step.
  *  @param f    Force vector.
  */
-inline void Ion::kick(const double dt, const Vector3D& f) {
+ inline void Ion::kick(const double dt, const Vector3D& f) {
     double time_over_mass = dt/ionType_.mass;
     vel_ += f*time_over_mass;
-}
-
+ }
 /**
  *  @brief Add the kinetic energy of this ion to a histogram.
  *

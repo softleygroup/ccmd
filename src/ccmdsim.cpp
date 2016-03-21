@@ -355,10 +355,9 @@ CloudParams::CloudParams(const std::string& file_name) {
         ionType.mass = ionTypeTree.get<double>("mass");
         ionType.charge = ionTypeTree.get<int>("charge");
         ionType.is_laser_cooled = ionTypeTree.get<bool>("lasercooled", false);
-        ionType.is_heated = ionTypeTree.get<bool>("heating", false);
-        ionType.beta = ionTypeTree.get<double>("beta", 0.0);
         ionType.recoil = ionTypeTree.get<double>("recoil", 0.0);
         ionType.direction = ionTypeTree.get<double>("direction", 0.5);
+		ionType.A21 = ionTypeTree.get<double>("A21",0);
         if (ionType.direction < 0.0) {
             std::stringstream ss;
             ss << "Warning: direction=" << ionType.direction;
@@ -569,3 +568,39 @@ SimParams::SimParams(const std::string& file_name) {
     log.info("Random seed " + std::to_string(random_seed));
 }
 
+/**
+ *  @class LaserParams
+ *  @brief Store parameters related to the Laser
+ *
+ *  These parameters determine the degree of interaction with the laser
+ *  All parameters input as scientific format (i.e. X.YeZ)
+ *
+ * Parameter     | Description
+ * --------------|---------------------------------------------------------------
+ *  \c wavelength| Wavelength of laser
+ *               | 
+ *  \c delta     | Detuning of laser from resonance
+ *               | 
+ *  \c IdIsat    | Intensity of Laser divided by saturation intensity
+ */
+LaserParams::LaserParams(const std::string& file_name) {
+    using boost::property_tree::iptree;
+    iptree pt;
+    Logger& log = Logger::getInstance();
+    read_info(file_name, pt);
+	
+    try {
+        wavelength= pt.get<float>("laser.wavelength");
+        delta = pt.get<float>("laser.delta");
+        IdIsat   = pt.get<float>("laser.IdIsat");
+    } catch(const boost::property_tree::ptree_error &e) {
+        log.error("Error reading Laser params.");
+        log.error(e.what());
+        throw std::runtime_error("Error reading Laser params.");
+    }
+	
+	log.info("Laser parameters:");
+    log.info("\tWavelength: " + std::to_string(wavelength));
+    log.info("\tdelta: " + std::to_string(delta));
+    log.info("\tI/Isat: " + std::to_string(IdIsat));
+}

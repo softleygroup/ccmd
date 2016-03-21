@@ -65,7 +65,7 @@ void Logger::log(const Level level, const std::string message) {
         ss <<std::endl;
         std::cout << ss.str();
         fileStream_ << ss.str();
-        fileStream_.flush();
+        fileStream_.flush(); 
     }
 }
 

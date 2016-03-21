@@ -95,6 +95,8 @@ class IonType {
     bool is_laser_cooled;
     bool is_heated;
 
+    float A21;			   ///< Einstein A21 coefficient
+    
     // IonType(IonType&&) = default;
     // IonType(const IonType& ) = delete;
     // const IonType& operator=(const IntegrationParams&) = delete;
@@ -157,5 +159,20 @@ class SimParams {
     const SimParams& operator=(const SimParams&) = delete;
 };
 
+class LaserParams {
+ public:
+	explicit LaserParams(const std::string& file_name);
+
+	// Wavelength of laser
+	float wavelength;
+	// Detuning of laser
+	float delta;
+	// I/Isat
+	float IdIsat;
+	
+	private:
+    LaserParams(const LaserParams& ) = delete;
+    const LaserParams& operator=(const LaserParams&) = delete;
+};
 
 #endif  // INCLUDE_CCMDSIM_H_

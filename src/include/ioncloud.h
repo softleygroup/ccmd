@@ -29,7 +29,7 @@ typedef std::vector<Ion_ptr> Ion_ptr_vector;
 class IonCloud {
  public:
     IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
-            const SimParams& sp, const TrapParams& tp);
+            const SimParams& sp, const TrapParams& tp, const LaserParams& lp);
     ~IonCloud();
 
     void drift(double t);
@@ -64,9 +64,9 @@ class IonCloud {
  private:
     /** @brief Keep a reference to the parameters. */
     const CloudParams& cloudParams_;
-    /** @brief Keep a reference to the parameters. */
     const SimParams& simParams_;
     const TrapParams& trapParams_;
+    const LaserParams& lp_;
     /** A list of pointers to the ion objects. */
     Ion_ptr_vector ionVec_;
 

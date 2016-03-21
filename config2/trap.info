@@ -1,19 +1,19 @@
 trap {
-    vrf     150.75
-    vend    1.5
+    vrf     125
+    vend    1.2
     eta     0.244
     r0      3.5e-3
     z0      2.75e-3
-    freq    3.85e6
+    freq    3.8e6
     type    {
         name cosine
     }
 }
 integrator {
-    stepsPerPeriod 2000
-    respasteps  50       ; Respa inner loop steps
-    coolperiods 20000
-    histperiods   5000
+    stepsPerPeriod 100
+    respasteps  500       ; Respa inner loop steps
+    coolperiods 10000
+    histperiods 10000
 }
 image {
     makeimage   true
@@ -24,12 +24,13 @@ image {
     nx          480     ; Number of pixels in x axis
 }
 simulation {
-    threads     0
+    threads     2
     seed        213
 }
 ionnumbers {
-    Ca      900
-    Xe      200
+    Ca      400
+	ND3		200
+	Xe		100
 }
 iontype {
     CaF {
@@ -42,10 +43,9 @@ iontype {
         mass        40.0
         charge      1
         lasercooled true
-        beta        0.8
-        heated      true
         recoil      0.00001
         direction   0.5
+		A21			1.4e8
     }
     ND3 {
         name        Ammonia-d3
@@ -60,7 +60,7 @@ iontype {
 }
 
 laser {
-	wavelength 130
-	delta 1
+	wavelength 0.000000396908
+	delta 7.5e8
 	IdIsat 1
 }

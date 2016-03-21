@@ -66,6 +66,10 @@ class Stats {
     T average() const {
         return mean_;
     }
+    
+    T count() const {
+        return count_;
+    }
   private:
     /** @brief A running count of the number of elements added to this object.
      */

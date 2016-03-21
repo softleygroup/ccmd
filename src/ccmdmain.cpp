@@ -109,9 +109,9 @@ int main(int argc, char * const argv[]) {
     if (path[path.length()-1] != '/')
         path += "/";
 
-    log.initialise(Logger::DEBUG, path + "log.txt");
+    log.initialise(Logger::INFO, path + "log.txt");
     log.info("CCMD - Coulomb crystal molecular dynamics");
-    log.info("Version 2.1.0");
+    log.info("Version 2.2.0 alpha");
 
     // Parameter file paths
     std::string info_file = path + "trap.info";
@@ -124,6 +124,7 @@ int main(int argc, char * const argv[]) {
         IntegrationParams integration_params(info_file);
         MicroscopeParams microscope_params(info_file);
         SimParams sim_params(info_file);
+		LaserParams laser_params(info_file);
 
         // Construct trap based on parameters
         IonTrap_ptr trap;
@@ -148,7 +149,7 @@ int main(int argc, char * const argv[]) {
 
         // Construct ion cloud
         IonCloud_ptr cloud = std::make_shared<IonCloud>
-            (trap, cloud_params, sim_params, trap_params);
+            (trap, cloud_params, sim_params, trap_params, laser_params);
 
         // Construct integrator
         //RespaIntegrator integrator(trap, cloud, integration_params, sim_params);
@@ -183,7 +184,7 @@ int main(int argc, char * const argv[]) {
 //------------------------------------------------------------------------------
 // Histogram
 //------------------------------------------------------------------------------
-        log.info("Acquiring histogram data");
+        log.debug("Acquiring histogram data");
 
         KE = 0;
         double etot = 0;

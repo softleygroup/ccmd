@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "include/hist3D.h"
+#include "include/logger.h"
 
 /**
  *  @class Image
@@ -187,6 +188,7 @@ void Image::transpose() {
  * after any other processing has been completed.
  */
 void Image::ouput_to_file(std::string file_name) {
+    Logger& log = Logger::getInstance();
     normalise();
     boost::gil::gray8_image_t img(rows+1, cols+1);
     boost::gil::gray8_view_t view = boost::gil::view(img);

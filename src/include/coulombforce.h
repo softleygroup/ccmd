@@ -26,6 +26,7 @@ class CoulombForce {
 
     CoulombForce( const CoulombForce & other ) = delete;
     CoulombForce& operator=( const CoulombForce& ) = delete;
+    Vector3D Reduction(Vector3D x[], int len);
  private:
     void direct_force();
     void split_force(int n);

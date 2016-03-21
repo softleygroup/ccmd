@@ -36,6 +36,7 @@ struct compare_ions_by_mass {
 struct position_ions {
     Ion_ptr& operator() (Ion_ptr& ion, const Vector3D& r) const {
         ion->set_position(r);
+        ion->set_ElecState(0);
         return ion;
     }
 };
@@ -89,8 +90,8 @@ struct position_ions {
  *
  */
 IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
-        const SimParams& sp, const TrapParams& tp)
-: cloudParams_(cp), simParams_(sp), trapParams_(tp) {
+        const SimParams& sp, const TrapParams& tp, const LaserParams& lp)
+: cloudParams_(cp), simParams_(sp), trapParams_(tp), lp_(lp) {
     // loop over ion types to initialise ion cloud
     for (auto& it : cloudParams_.ion_type_list) {
         // loop over ions number for type, construct ions using *trap to ensure
@@ -99,10 +100,10 @@ IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
             if (it.is_laser_cooled) {
                 ionVec_.push_back(
                         std::make_shared<LaserCooledIon>(
-                            ion_trap, it, simParams_));
+                            ion_trap, tp, it, simParams_, lp_));
             } else {
                 ionVec_.push_back(
-                        std::make_shared<TrappedIon>(ion_trap, it));
+                        std::make_shared<TrappedIon>(ion_trap, it, lp_));
             }
         }
     }
@@ -165,7 +166,7 @@ void IonCloud::kick(double dt) {
  *  Simulate trap ejection and electrode collision by removing ions. Note the
  *  radial-only test is not a physical representation of the electrodes.
  */
-/*
+/* IonCloud::collide
 void IonCloud::collide() {
     Logger& log = Logger::getInstance();
     int n=0;
@@ -245,7 +246,7 @@ void IonCloud::heat(double dt) {
 
 
 /**
- *  @brief Determine the total kinetic energy the ion cloud.
+ *  @brief Determine the total kinetic energy of the ion cloud.
  *
  *  The function sums the kinetic energy of each ion.
  *
@@ -263,7 +264,7 @@ double IonCloud::kinetic_energy() const {
 
 
 /**
- *  @brief Determine the total Coulomb energy the ion cloud.
+ *  @brief Determine the total Coulomb energy of the ion cloud.
  *
  *  The function sums the Coulomb energy contribution of each ion.
  *
@@ -296,7 +297,7 @@ double IonCloud::coulomb_energy() const {
 
 
 /**
- *  @brief Determine the total energy the ion cloud.
+ *  @brief Determine the total energy of the ion cloud.
  *
  *  The function sums the Coulomb and kinetic energy contribution of each ion
  *  by calling the IonCloud::coulomb_energy() and IonCloud::kinetic_energy()
@@ -336,7 +337,7 @@ void IonCloud::updateStats() {
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
-/*
+/* IonCloud::saveStats
 void IonCloud::saveStats(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
@@ -426,7 +427,7 @@ void IonCloud::saveStats(const std::string basePath,
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
-/*
+/* IonCloud::savePos
 void IonCloud::savePos(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
@@ -610,7 +611,6 @@ std::vector<Vector3D> IonCloud::get_lattice(size_t n) {
  *
  *  @return     An integer close to \n^3
  */
-
 int IonCloud::get_nearest_cube(int n) {
     // returns integer which when cubed is closest to n
     int min_cube = 1;
