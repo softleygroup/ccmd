@@ -26,7 +26,6 @@ void VerletIntegrator::evolve(double dt) {
     int k = 0;
     auto _ions = ions_->get_ions();
     long length = _ions.size();
-    std::cout<<n_iter_<<"\t";
 
 #ifdef _OPENMP  
   

@@ -1,40 +1,36 @@
-Thu Mar 17 12:16:33 2016 [Info] CCMD - Coulomb crystal molecular dynamics
-Thu Mar 17 12:16:33 2016 [Info] Version 2.2.0 alpha
-Thu Mar 17 12:16:33 2016 [Info] Loading input file ../config2/trap.info
-Thu Mar 17 12:16:33 2016 [Info] Trap parameters:
-Thu Mar 17 12:16:33 2016 [Info] 	Vrf: 125.000000
-Thu Mar 17 12:16:33 2016 [Info] 	End cap: 1.200000
-Thu Mar 17 12:16:33 2016 [Info] 	eta: 0.244000
-Thu Mar 17 12:16:33 2016 [Info] 	r0: 0.003500
-Thu Mar 17 12:16:33 2016 [Info] 	z0: 0.002750
-Thu Mar 17 12:16:33 2016 [Info] 	freq: 3800000.000000
-Thu Mar 17 12:16:33 2016 [Info] Making a cosine trap.
-Thu Mar 17 12:16:33 2016 [Info]  ions:
-Thu Mar 17 12:16:33 2016 [Info] 	Number: 400
-Thu Mar 17 12:16:33 2016 [Info] 	Mass: 40.000000
-Thu Mar 17 12:16:33 2016 [Info] 	Charge: 1
-Thu Mar 17 12:16:33 2016 [Info] 	Laser Cooled.
-Thu Mar 17 12:16:33 2016 [Info] 	beta: 0.000000
-Thu Mar 17 12:16:33 2016 [Info] 	recoil: 0.000010
-Thu Mar 17 12:16:33 2016 [Info] 	direction: 0.500000
-Thu Mar 17 12:16:33 2016 [Info]  ions:
-Thu Mar 17 12:16:33 2016 [Info] 	Number: 200
-Thu Mar 17 12:16:33 2016 [Info] 	Mass: 20.000000
-Thu Mar 17 12:16:33 2016 [Info] 	Charge: 1
-Thu Mar 17 12:16:33 2016 [Info]  ions:
-Thu Mar 17 12:16:33 2016 [Info] 	Number: 100
-Thu Mar 17 12:16:33 2016 [Info] 	Mass: 130.000000
-Thu Mar 17 12:16:33 2016 [Info] 	Charge: 1
-Thu Mar 17 12:16:33 2016 [Info] Integrator parameters:
-Thu Mar 17 12:16:33 2016 [Info] 	Time step: 0.031416
-Thu Mar 17 12:16:33 2016 [Info] 	RESPA steps: 500
-Thu Mar 17 12:16:33 2016 [Info] 	Will take 1000000 steps to allow ions to equilibrate,
-Thu Mar 17 12:16:33 2016 [Info] 	 then 1000000 steps while collecting data
-Thu Mar 17 12:16:33 2016 [Info] Coulomb Force using 2 threads.
-Thu Mar 17 12:16:33 2016 [Info] Random seed 213
-Thu Mar 17 12:16:33 2016 [Info] Laser parameters:
-Thu Mar 17 12:16:33 2016 [Info] 	Wavelength: 0.000000
-Thu Mar 17 12:16:33 2016 [Info] 	delta: 750000000.000000
-Thu Mar 17 12:16:33 2016 [Info] 	I/Isat: 1.000000
-Thu Mar 17 12:16:34 2016 [Info] Verlet integration.
-Thu Mar 17 12:16:34 2016 [Info] Running cool down.
+Mon Mar 21 14:14:31 2016 [Info] CCMD - Coulomb crystal molecular dynamics
+Mon Mar 21 14:14:31 2016 [Info] Version 2.2.0 alpha
+Mon Mar 21 14:14:31 2016 [Info] Loading input file ../config2/trap.info
+Mon Mar 21 14:14:31 2016 [Info] Trap parameters:
+Mon Mar 21 14:14:31 2016 [Info] 	Vrf: 125.000000
+Mon Mar 21 14:14:31 2016 [Info] 	End cap: 1.200000
+Mon Mar 21 14:14:31 2016 [Info] 	eta: 0.244000
+Mon Mar 21 14:14:31 2016 [Info] 	r0: 0.003500
+Mon Mar 21 14:14:31 2016 [Info] 	z0: 0.002750
+Mon Mar 21 14:14:31 2016 [Info] 	freq: 3800000.000000
+Mon Mar 21 14:14:31 2016 [Info] Making a cosine trap.
+Mon Mar 21 14:14:31 2016 [Info]  ions:
+Mon Mar 21 14:14:31 2016 [Info] 	Number: 100
+Mon Mar 21 14:14:31 2016 [Info] 	Mass: 40.000000
+Mon Mar 21 14:14:31 2016 [Info] 	Charge: 1
+Mon Mar 21 14:14:31 2016 [Info] 	Laser Cooled.
+Mon Mar 21 14:14:31 2016 [Info] 	beta: 0.000000
+Mon Mar 21 14:14:31 2016 [Info] 	recoil: 0.000010
+Mon Mar 21 14:14:31 2016 [Info] 	direction: 0.500000
+Mon Mar 21 14:14:31 2016 [Info]  ions:
+Mon Mar 21 14:14:31 2016 [Info] 	Number: 50
+Mon Mar 21 14:14:31 2016 [Info] 	Mass: 20.000000
+Mon Mar 21 14:14:31 2016 [Info] 	Charge: 1
+Mon Mar 21 14:14:31 2016 [Info] Integrator parameters:
+Mon Mar 21 14:14:31 2016 [Info] 	Time step: 0.031416
+Mon Mar 21 14:14:31 2016 [Info] 	RESPA steps: 500
+Mon Mar 21 14:14:31 2016 [Info] 	Will take 1000000 steps to allow ions to equilibrate,
+Mon Mar 21 14:14:31 2016 [Info] 	 then 1000000 steps while collecting data
+Mon Mar 21 14:14:31 2016 [Info] Coulomb Force using 2 threads.
+Mon Mar 21 14:14:31 2016 [Info] Random seed 213
+Mon Mar 21 14:14:31 2016 [Info] Laser parameters:
+Mon Mar 21 14:14:31 2016 [Info] 	Wavelength: 0.000000
+Mon Mar 21 14:14:31 2016 [Info] 	delta: 750000000.000000
+Mon Mar 21 14:14:31 2016 [Info] 	I/Isat: 1.000000
+Mon Mar 21 14:14:31 2016 [Info] Verlet integration.
+Mon Mar 21 14:14:31 2016 [Info] Running cool down.
