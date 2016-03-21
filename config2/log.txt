@@ -34,3 +34,11 @@ Mon Mar 21 14:14:31 2016 [Info] 	delta: 750000000.000000
 Mon Mar 21 14:14:31 2016 [Info] 	I/Isat: 1.000000
 Mon Mar 21 14:14:31 2016 [Info] Verlet integration.
 Mon Mar 21 14:14:31 2016 [Info] Running cool down.
+Mon Mar 21 14:28:49 2016 [Info] Total kinetic energy = 8.0393e-021 J
+Mon Mar 21 14:28:49 2016 [Info] Total energy = 3.3663e-014 J
+Mon Mar 21 14:28:49 2016 [Info] Wall time = 857.88 s
+Mon Mar 21 14:28:49 2016 [Info] CPU time  = 857.00 s
+Mon Mar 21 14:28:49 2016 [Info] Generating image: Ammonia-d3
+Mon Mar 21 14:28:50 2016 [Info] Done generating image: Ammonia-d3
+Mon Mar 21 14:28:50 2016 [Info] Generating image: Calcium
+Mon Mar 21 14:28:55 2016 [Info] Done generating image: Calcium
