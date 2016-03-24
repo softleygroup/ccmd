@@ -36,14 +36,18 @@
  * IonCloud and SimParams.
  *
  */
- 
- CoulombForce::CoulombForce(const IonCloud_ptr ic, const SimParams& sp)
+CoulombForce::CoulombForce(const IonCloud_ptr ic, const SimParams& sp)
     : cloud_(ic), params_(sp) {
     }
 
-	
+
+/** @brief Start calculating Coulomb force vector.
+ *
+ * This function makes use of the antisymmetric nature of the force : F_ji =
+ * -F_ij, so only calculates the upper triangle of the NxN array.
+ */
 void CoulombForce::update() {
-    Vector3D r1, r2, f;
+    Vector3D r1, r2, f, tot;
     double r, r3;
     int q1, q2;
     int i,j;
@@ -56,46 +60,38 @@ void CoulombForce::update() {
 
 #ifdef _OPENMP
 
-//#pragma omp parallel default(shared) private(i,j, r1, q1, r2, q2, r3, f, r)
-//{
-    
-//#pragma omp for collapse(2)
-    
+#pragma omp parallel default(shared) private(i,j, r1, q1, r2, q2, r3, f, r)
+{   
+#pragma omp for
 #endif
 
     // sum Coulomb force over all particles
     for (i = 0; i < cloud_size; ++i) {
-        for (j = i+1; j < cloud_size; ++j) {
-            r1 = cloud_->ionVec_[i]->get_pos();
-            q1 = cloud_->ionVec_[i]->get_charge();
-            r2 = cloud_->ionVec_[j]->get_pos();
-            q2 = cloud_->ionVec_[j]->get_charge();
+        Vector3D forces[cloud_size];
+        for (j = 0; j < cloud_size; ++j) {
+            if (i==j) {
+                forces[j] = Vector3D(0,0,0);
+            }
+            else
+            {
+                r1 = cloud_->ionVec_[i]->get_pos();
+                q1 = cloud_->ionVec_[i]->get_charge();
+                r2 = cloud_->ionVec_[j]->get_pos();
+                q2 = cloud_->ionVec_[j]->get_charge();
 
-            // force term calculation
-            r = Vector3D::dist(r1, r2);
-            r3 = r*r*r;
-            f = (r1-r2)/r3*q1*q2;
-#ifdef _OPENMP
-//#pragma omp critical (force_update) 
-//{
-#endif
-
-            // update sum for ion "i"
-            force_[i] += f;
-            // update sum for ion "j"
-            force_[j] -= f;
-            
-#ifdef _OPENMP
-//}
-#endif            
-            
+                // force term calculation
+                r = Vector3D::dist(r1, r2);
+                r3 = r*r*r;
+                forces[j] = (r1-r2)/r3*q1*q2;
+            }
         }
+        Vector3D totalforce = Reduction(forces,cloud_size);
+        tot += totalforce;
+        force_[i] = totalforce;            
     }
-    
 #ifdef _OPENMP
-//}
+}
 #endif    
-    
 }
 
 
@@ -117,8 +113,8 @@ Vector3D CoulombForce::Reduction(Vector3D x[], int len) {
         int halflen = floor(len/2);
         Vector3D array1[halflen];
         Vector3D array2[len-halflen];
-        memcpy(array1, x, halflen * sizeof(double)); 
-        memcpy(array2, &x[halflen], (len-halflen) * sizeof(double)); 
+        memcpy(array1, x, halflen * sizeof(Vector3D)); 
+        memcpy(array2, &x[halflen], (len-halflen) * sizeof(Vector3D));
         s = Reduction(array1, halflen) + Reduction(array2, len-halflen);
     }
     return s;

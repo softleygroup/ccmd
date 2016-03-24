@@ -109,7 +109,7 @@ int main(int argc, char * const argv[]) {
     if (path[path.length()-1] != '/')
         path += "/";
 
-    log.initialise(Logger::INFO, path + "log.txt");
+    log.initialise(Logger::DEBUG, path + "log.txt");
     log.info("CCMD - Coulomb crystal molecular dynamics");
     log.info("Version 2.2.0 alpha");
 
@@ -146,15 +146,18 @@ int main(int argc, char * const argv[]) {
             log.error("Unrecognised trap type");
             throw std::runtime_error("Unrecognised trap type");
         }
-
+        log.debug("Constructing Ion Cloud");
         // Construct ion cloud
         IonCloud_ptr cloud = std::make_shared<IonCloud>
             (trap, cloud_params, sim_params, trap_params, laser_params);
+        log.debug("Finished constructing Ion Cloud");
 
         // Construct integrator
         //RespaIntegrator integrator(trap, cloud, integration_params, sim_params);
+        log.debug("Initialising integrator");
         VerletIntegrator integrator(trap, cloud, integration_params, sim_params);
-
+        log.debug("Finished initialising integrator");
+        
 
 //------------------------------------------------------------------------------
 // Cooling
@@ -174,7 +177,9 @@ int main(int argc, char * const argv[]) {
         integrator.registerListener(progListener);
 
         for (int t = 0; t < nt_cool; ++t) {
+            //std::cout<<"Here\n";
             integrator.evolve(dt);
+            //std::cout<<"Here 2\n";
         }
 
         integrator.deregisterListener(meanListener);
