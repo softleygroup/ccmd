@@ -35,8 +35,8 @@
  *  @see TrappedIon, LaserCooledIon
  */
 
-Ion::Ion(const IonType& type)
-: ionType_(type) {
+Ion::Ion(const IonType& type, const LaserParams& lp): 
+    ionType_(type), lp_(lp) {
 }
 
 /**
@@ -55,11 +55,10 @@ void Ion::drift(double dt) {
  *  @param dt   Time step.
  *  @param f    Force vector.
  */
-inline void Ion::kick(const double dt, const Vector3D& f) {
+ inline void Ion::kick(const double dt, const Vector3D& f) {
     double time_over_mass = dt/ionType_.mass;
     vel_ += f*time_over_mass;
-}
-
+ }
 /**
  *  @brief Add the kinetic energy of this ion to a histogram.
  *
@@ -68,33 +67,37 @@ inline void Ion::kick(const double dt, const Vector3D& f) {
  *  as a label.
  *
  *  @param ionHistogram A reference to the histogram object to update.
+ *  @param trapParams A reference to the trap parameters for simulation conversion factors.
  */
-void Ion::recordKE(IonHistogram_ptr ionHistogram) const {
+void Ion::recordKE(IonHistogram_ptr ionHistogram, const TrapParams& trapParams) const {
     double energy;
     double mon2 = 0.5 * ionType_.mass;
     // total
-    energy = mon2 * vel_.norm_sq();
+    energy = mon2 * vel_.norm_sq() * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_total", energy);
     // x - directed
-    energy = mon2 * vel_[0] * vel_[0];
+    energy = mon2 * vel_[0] * vel_[0] * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_x", energy);
     // y - directed
-    energy = mon2 * vel_[1] * vel_[1];
+    energy = mon2 * vel_[1] * vel_[1] * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_y", energy);
     // z - directed
-    energy = mon2 * vel_[2] * vel_[2];
+    energy = mon2 * vel_[2] * vel_[2] * trapParams.energy_scale;
     ionHistogram->addIon(name() + "_z", energy);
 }
 
 /** 
  *  @brief Update the statistics stored by this ion.
  *
- *  Appends the current kinetic energy (velocity^2, so this needs to be 
- *  multiplied by mass/2 before output) and position to the `Stats` objects.
+ *  Appends the current velocity and position to the `Stats` objects. Position
+ *  given only as average radial distance from trap centre, and average z
+ *  position because orbit of ions around trap centre results in mean x and y
+ *  coordinates around zero. The velocity vector is recorded as the speed.
  */
 void Ion::updateStats() {
-    posStats_.append(pos_);
-    velStats_.append(vel_*vel_);
+    double r = sqrt(pos_.x*pos_.x + pos_.y * pos_.y);
+    posStats_.append(Vector3D(r, pos_.z, 0));
+    velStats_.append(vel_.norm());
 }
 
 /**

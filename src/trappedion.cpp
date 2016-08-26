@@ -21,8 +21,8 @@
  *  @param ion_trap A pointer to the ion trap.
  *  @param type     A pointer to ion parameters.
  */
-TrappedIon::TrappedIon(const IonTrap_ptr trap, const IonType& type)
-    : trap_(trap), Ion(type) {
+TrappedIon::TrappedIon(const IonTrap_ptr trap, const IonType& type, const LaserParams& lp)
+    : trap_(trap), Ion(type, lp) {
 }
 
 /**
@@ -36,7 +36,6 @@ TrappedIon::TrappedIon(const IonTrap_ptr trap, const IonType& type)
 inline void TrappedIon::kick(double dt) {
     Vector3D f = trap_->force_now(pos_);
     f *= ionType_.charge;
-
     this->Ion::kick(dt, f);
 }
 

@@ -11,6 +11,7 @@
 
 #include <ctime>
 #include <chrono>
+#include <string>
 
 class Timer {
  public:
@@ -18,6 +19,9 @@ class Timer {
   void stop();
   double get_cpu_time() const;
   double get_wall_time() const;
+
+  std::string get_cpu_string() const;
+  std::string get_wall_string() const;
  private:
   /// Start time for CPU time clock.
   std::clock_t clock_start_;

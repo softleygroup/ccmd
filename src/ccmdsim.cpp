@@ -13,7 +13,7 @@
  *
  *  Note: the names in the input file are not case sensitive.
  *
- *  # Example input file #
+ *  ## Example input file
  *
  *     trap {
  *         vrf     150.75
@@ -87,9 +87,9 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include <cmath>  // only for M_PI
 #include <sstream>
 #include <string>
+#include <cmath>
 
 #include "include/logger.h"
 
@@ -112,7 +112,7 @@
  *
  *  Parameter   | Description
  *  ------------|------------------------------------------------------------
- *  \c vrf      | Peak-to-peak Voltage (29/9/15)
+ *  \c vrf      | Peak-to-peak RF voltage (29/9/15)
  *  \c vend     | End-cap voltage
  *  \c eta      | Geometric non-ideality factor
  *  \c r0       | Distance between quadrupole rod centres
@@ -168,7 +168,7 @@ TrapParams::TrapParams(const std::string& file_name) {
     iptree pt;
     read_info(file_name, pt);
     try {
-        log.log(Logger::debug, "Loading trap parameters.");
+        log.debug("Loading trap parameters.");
         v_rf    = pt.get<double>("trap.vrf");
         v_end   = pt.get<double>("trap.vend");
         eta     = pt.get<double>("trap.eta");
@@ -176,62 +176,79 @@ TrapParams::TrapParams(const std::string& file_name) {
         z0      = pt.get<double>("trap.z0");
         freq    = pt.get<double>("trap.freq");
 
-        log.log(Logger::info, "Trap parameters:");
-        log.log(Logger::info, "\tVrf: " + std::to_string(v_rf));
-        log.log(Logger::info, "\tEnd cap: " + std::to_string(v_end));
-        log.log(Logger::info, "\teta: " + std::to_string(eta));
-        log.log(Logger::info, "\tr0: " + std::to_string(r0));
-        log.log(Logger::info, "\tz0: " + std::to_string(z0));
-        log.log(Logger::info, "\tfreq: " + std::to_string(freq));
+        log.info("Trap parameters:");
+        log.info("\tVrf: " + std::to_string(v_rf));
+        log.info("\tEnd cap: " + std::to_string(v_end));
+        log.info("\teta: " + std::to_string(eta));
+        log.info("\tr0: " + std::to_string(r0));
+        log.info("\tz0: " + std::to_string(z0));
+        log.info("\tfreq: " + std::to_string(freq));
+
+        // Calculate conversion factors from simulation units to S.I. units.
+        /** @brief Over-precise value of pi. */
+        double pi = 3.141592653589793238462643383279502884;
+        /** @brief Over-precise value of epsilon_0. */
+        double epsilon_0 = 8.85418781762e-12;
+        /** @brief Over-precise value of electron charge. */
+        double electron_charge = 1.60217733e-19;
+        /** @brief 1 AMU in kg. */
+        double u_mass = 1.6605402e-27;
+        double omega = 2*pi*freq;
+        length_scale = electron_charge*electron_charge /(pi*epsilon_0*u_mass*omega*omega);
+        length_scale = std::pow(length_scale, 1.0/3.0);
+        time_scale = 1/(pi * freq);
+        energy_scale = u_mass * (length_scale * length_scale) / (time_scale * time_scale);
+        char buffer[256];
+        snprintf(buffer, 256, "Energy scale factor %.4e J per unit", energy_scale);
+        log.debug(std::string(buffer));
 
         // Read trap-specific information.
         std::string typeString = pt.get<std::string>("trap.type.name");
         if (typeString == "cosine") {
-            log.log(Logger::info, "Making a cosine trap.");
+            log.info("Making a cosine trap.");
             wave = cosine;
         } else if (typeString == "digital") {
-            log.log(Logger::info, "Making a digital trap.");
+            log.info("Making a digital trap.");
             wave = digital;
             tau = pt.get<double>("trap.type.tau");
             if (tau < 0.0) {
                 std::stringstream ss;
                 ss << "Warning: Tau=" << tau;
                 ss << " out of range. Limiting to 0.0";
-                log.log(Logger::warn, ss.str());
+                log.warn(ss.str());
                 tau = 0.0;
             } else if (tau > 1.0) {
                 std::stringstream ss;
                 ss << "Warning: Tau=" << tau;
                 ss << " out of range. Limiting to 1.0";
-                log.log(Logger::warn, ss.str());
+                log.warn(ss.str());
                 tau = 1.0;
             }
         } else if (typeString == "waveform") {
-            log.log(Logger::info, "Making a waveform trap.");
+            log.info("Making a waveform trap.");
             wave = waveform;
             // The waveform file is in the same directory as the trap parameters
             size_t found;
             found = file_name.find_last_of("/\\");
             waveformFile = file_name.substr(0, found) + "/waveform.dat";
         } else if (typeString == "cosine_decay") {
-            log.log(Logger::info, "Making a decaying cosine trap.");
+            log.info("Making a decaying cosine trap.");
             wave = cosine_decay;
             tau = pt.get<double>("trap.type.tau");
             deltaT = pt.get<double>("trap.type.deltaT");
         } else if (typeString == "twofreq") {
-            log.log(Logger::info, "Making a two-frequency trap.");
+            log.info("Making a two-frequency trap.");
             wave = twofreq;
             freq_mult = pt.get<double>("trap.type.mult");
-            log.log(Logger::info,
-                    "\tFreq multiple:" + std::to_string(freq_mult));
+            log.info("\tFreq multiple:" + std::to_string(freq_mult));
         } else {
             std::stringstream ss;
             ss << "Unrecognised trap type " << typeString;
-            log.log(Logger::error, ss.str());
+            log.error(ss.str());
             throw std::runtime_error("unrecognised trap");
         }
     } catch(boost::property_tree::ptree_error& e) {
-        log.log(Logger::error, e.what());
+        log.error(e.what());
         throw std::runtime_error(e.what());
     }
 }
@@ -338,21 +355,20 @@ CloudParams::CloudParams(const std::string& file_name) {
         ionType.mass = ionTypeTree.get<double>("mass");
         ionType.charge = ionTypeTree.get<int>("charge");
         ionType.is_laser_cooled = ionTypeTree.get<bool>("lasercooled", false);
-        ionType.is_heated = ionTypeTree.get<bool>("heating", false);
-        ionType.beta = ionTypeTree.get<double>("beta", 0.0);
         ionType.recoil = ionTypeTree.get<double>("recoil", 0.0);
         ionType.direction = ionTypeTree.get<double>("direction", 0.5);
+		ionType.A21 = ionTypeTree.get<double>("A21",0);
         if (ionType.direction < 0.0) {
             std::stringstream ss;
             ss << "Warning: direction=" << ionType.direction;
             ss << " out of range. Limiting to 0.0";
-            log.log(Logger::warn, ss.str());
+            log.warn(ss.str());
             ionType.direction = 0.0;
         } else if (ionType.direction > 1.0) {
             std::stringstream ss;
             ss << "Warning: direction=" << ionType.direction;
             ss << " out of range. Limiting to 1.0";
-            log.log(Logger::warn, ss.str());
+            log.warn(ss.str());
             ionType.direction = 1.0;
         }
 
@@ -360,17 +376,17 @@ CloudParams::CloudParams(const std::string& file_name) {
         // Append this to the list
         ion_type_list.push_back(std::move(ionType));
 
-        log.log(Logger::info, ionType.name + " ions:");
-        log.log(Logger::info, "\tNumber: " + std::to_string(ionType.number));
-        log.log(Logger::info, "\tMass: " + std::to_string(ionType.mass));
-        log.log(Logger::info, "\tCharge: " + std::to_string(ionType.charge));
+        log.info(ionType.name + " ions:");
+        log.info("\tNumber: " + std::to_string(ionType.number));
+        log.info("\tMass: " + std::to_string(ionType.mass));
+        log.info("\tCharge: " + std::to_string(ionType.charge));
         if (ionType.is_laser_cooled) {
-            log.log(Logger::info, "\tLaser Cooled.");
-            log.log(Logger::info,
+            log.info("\tLaser Cooled.");
+            log.info(
                     "\tbeta: " + std::to_string(ionType.beta));
-            log.log(Logger::info,
+            log.info(
                     "\trecoil: " + std::to_string(ionType.recoil));
-            log.log(Logger::info,
+            log.info(
                     "\tdirection: " + std::to_string(ionType.direction));
         }
     }
@@ -389,7 +405,7 @@ SwapParams::SwapParams(const std::string& file_name, const CloudParams& cp) {
     read_info(file_name, pt);
     boost::optional<iptree&> swap = pt.get_child_optional("ionswapper");
     if (swap) {
-            log.log(Logger::debug, "Loading swap parameters.");
+            log.debug("Loading swap parameters.");
             std::string from_formula = swap.get().get<std::string>("from");
             std::string to_formula = swap.get().get<std::string>("to");
             p = swap.get().get<double>("prob");
@@ -402,7 +418,7 @@ SwapParams::SwapParams(const std::string& file_name, const CloudParams& cp) {
                     to = type;
                 }
             }
-            log.log(Logger::info, "Will swap from " + from.formula + " to "
+            log.info("Will swap from " + from.formula + " to "
                     + to.formula);
             do_swap=true;
     } else {
@@ -464,21 +480,21 @@ IntegrationParams::IntegrationParams(const std::string& file_name) {
         coolperiods   = pt.get<double>("integrator.coolperiods");
         histperiods   = pt.get<double>("integrator.histperiods");
     } catch(const boost::property_tree::ptree_error &e) {
-        log.log(Logger::error, "Error reading integration params.");
-        log.log(Logger::error, e.what());
+        log.error("Error reading integration params.");
+        log.error(e.what());
         throw std::runtime_error("Error reading integration params.");
     }
 
-    time_step = M_PI/steps_per_period;
+    time_step = 3.1415926535897932/steps_per_period;
     cool_steps = static_cast<int>(coolperiods*steps_per_period);
     hist_steps = static_cast<int>(histperiods*steps_per_period);
 
-    log.log(Logger::info, "Integrator parameters:");
-    log.log(Logger::info, "\tTime step: " + std::to_string(time_step));
-    log.log(Logger::info, "\tRESPA steps: " + std::to_string(respa_steps));
-    log.log(Logger::info, "\tWill take " + std::to_string(cool_steps) +
+    log.info("Integrator parameters:");
+    log.info("\tTime step: " + std::to_string(time_step));
+    log.info("\tRESPA steps: " + std::to_string(respa_steps));
+    log.info("\tWill take " + std::to_string(cool_steps) +
             " steps to allow ions to equilibrate,");
-    log.log(Logger::info, "\t then " + std::to_string(hist_steps) +
+    log.info("\t then " + std::to_string(hist_steps) +
             " steps while collecting data");
 }
 
@@ -547,9 +563,44 @@ SimParams::SimParams(const std::string& file_name) {
     }
 
     Logger& log = Logger::getInstance();
-    log.log(Logger::info,
-            "Coulomb Force using " + std::to_string(coulomb_threads)
+    log.info("Coulomb Force using " + std::to_string(coulomb_threads)
             + " threads.");
-    log.log(Logger::info, "Random seed " + std::to_string(random_seed));
+    log.info("Random seed " + std::to_string(random_seed));
 }
 
+/**
+ *  @class LaserParams
+ *  @brief Store parameters related to the Laser
+ *
+ *  These parameters determine the degree of interaction with the laser
+ *  All parameters input as scientific format (i.e. X.YeZ)
+ *
+ * Parameter     | Description
+ * --------------|---------------------------------------------------------------
+ *  \c wavelength| Wavelength of laser
+ *               | 
+ *  \c delta     | Detuning of laser from resonance
+ *               | 
+ *  \c IdIsat    | Intensity of Laser divided by saturation intensity
+ */
+LaserParams::LaserParams(const std::string& file_name) {
+    using boost::property_tree::iptree;
+    iptree pt;
+    Logger& log = Logger::getInstance();
+    read_info(file_name, pt);
+	
+    try {
+        wavelength= pt.get<float>("laser.wavelength");
+        delta = pt.get<float>("laser.delta");
+        IdIsat   = pt.get<float>("laser.IdIsat");
+    } catch(const boost::property_tree::ptree_error &e) {
+        log.error("Error reading Laser params.");
+        log.error(e.what());
+        throw std::runtime_error("Error reading Laser params.");
+    }
+	
+	log.info("Laser parameters:");
+    log.info("\tWavelength: " + std::to_string(wavelength));
+    log.info("\tdelta: " + std::to_string(delta));
+    log.info("\tI/Isat: " + std::to_string(IdIsat));
+}

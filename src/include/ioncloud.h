@@ -14,20 +14,22 @@
 #include <vector>
 
 #include "ion.h"
+#include "iontrap.h"
 
 class ImageCollection;
 class IonHistogram;
 class IonTrap;
 class CloudParams;
+class TrapParams;
 class Vector3D;
 class IonType;
 
-typedef std::shared_ptr<IonTrap> IonTrap_ptr;
+typedef std::vector<Ion_ptr> Ion_ptr_vector;
 
 class IonCloud {
  public:
     IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
-            const SimParams& sp);
+            const SimParams& sp, const TrapParams& tp, const LaserParams& lp);
     ~IonCloud();
 
     void drift(double t);
@@ -44,6 +46,7 @@ class IonCloud {
     double aspect_ratio() const;
 
     size_t number_of_ions() const { return ionVec_.size(); }
+    const Ion_ptr_vector& get_ions() const { return ionVec_; }
 
     void update_position_histogram(ImageCollection&) const;
     void update_energy_histogram(IonHistogram_ptr) const;
@@ -61,9 +64,9 @@ class IonCloud {
  private:
     /** @brief Keep a reference to the parameters. */
     const CloudParams& cloudParams_;
-    /** @brief Keep a reference to the parameters. */
     const SimParams& simParams_;
-    typedef std::vector<Ion_ptr> Ion_ptr_vector;
+    const TrapParams& trapParams_;
+    const LaserParams& lp_;
     /** A list of pointers to the ion objects. */
     Ion_ptr_vector ionVec_;
 

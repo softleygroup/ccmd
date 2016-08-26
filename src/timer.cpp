@@ -46,3 +46,17 @@ double Timer::get_wall_time() const {
     auto duration = std::chrono::duration<double>(timer_end_ - timer_start_);
     return duration.count();
 }
+
+
+std::string Timer::get_cpu_string() const {
+    char buffer[256];
+    snprintf(buffer, 256, "CPU time  = %.2f s", get_cpu_time());
+    return std::string(buffer);
+}
+
+std::string Timer::get_wall_string() const {
+    char buffer[256];
+    snprintf(buffer, 256, "Wall time = %.2f s", get_wall_time());
+    return std::string(buffer);
+}
+

@@ -5,13 +5,18 @@
 #ifndef CCMD_Stochastic_heat_h
 #define CCMD_Stochastic_heat_h
 
+//#include "dc.h"
 #include "vector3D.h"
 #include "logger.h"
-//#include <boost/random.hpp>
-//
-#include <random>
 
-//using namespace boost;
+#include <random>
+#include <ctime>
+#include <cstdlib>
+
+//Sample Code for usage of mtrnd
+//MT::MersenneTwist mtrnd;
+//mtrnd.init_genrand(5489UL); //initialize the Mersenne Twister.
+//int n = static_cast<int>(floor(mtrnd.genrand_res53()*Nmax)); 
 
 class Stochastic_heat {
      // create a Mersenne twister random number generator
@@ -47,6 +52,28 @@ public:
     
     Stochastic_heat(const Stochastic_heat&) = delete;
     const Stochastic_heat& operator=(const Stochastic_heat&) = delete;
+    
+	
+	Vector3D random_sphere_vector() {
+		
+		const double pi = 3.14159265359;
+//	    int tid = omp_get_thread_num()
+        double rnumu = flat_dist(generator);
+        double rnumv = flat_dist(generator);
+      
+		double theta = 2 * pi * rnumu;
+		double phi = acos((2 * rnumv) -1);
+		double rndsphx = cos(theta) * sin(phi);
+		double rndsphy = sin(theta) * sin(phi);
+		double rndsphz = cos(phi);
+		Vector3D spherevector(rndsphx,rndsphy,rndsphz);
+		return spherevector;
+	}
+    
+    bool testfscatt(double fscatt){
+//        int tid = omp_get_thread_num()
+        return (flat_dist(generator) < fscatt);       
+    }
 };
 
 #endif

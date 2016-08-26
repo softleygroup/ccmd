@@ -17,8 +17,8 @@
 
 #include "include/datawriter.h"
 #include "include/imagecollection.h"
-#include "include/ionhistogram.h"
 #include "include/ion.h"
+#include "include/ionhistogram.h"
 #include "include/logger.h"
 #include "include/stats.h"
 #include "include/vector3D.h"
@@ -36,6 +36,7 @@ struct compare_ions_by_mass {
 struct position_ions {
     Ion_ptr& operator() (Ion_ptr& ion, const Vector3D& r) const {
         ion->set_position(r);
+        ion->set_ElecState(0);
         return ion;
     }
 };
@@ -89,8 +90,8 @@ struct position_ions {
  *
  */
 IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
-        const SimParams& sp)
-: cloudParams_(cp), simParams_(sp) {
+        const SimParams& sp, const TrapParams& tp, const LaserParams& lp)
+: cloudParams_(cp), simParams_(sp), trapParams_(tp), lp_(lp) {
     // loop over ion types to initialise ion cloud
     for (auto& it : cloudParams_.ion_type_list) {
         // loop over ions number for type, construct ions using *trap to ensure
@@ -99,10 +100,10 @@ IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
             if (it.is_laser_cooled) {
                 ionVec_.push_back(
                         std::make_shared<LaserCooledIon>(
-                            ion_trap, it, simParams_));
+                            ion_trap, tp, it, simParams_, lp_));
             } else {
                 ionVec_.push_back(
-                        std::make_shared<TrappedIon>(ion_trap, it));
+                        std::make_shared<TrappedIon>(ion_trap, it, lp_));
             }
         }
     }
@@ -130,6 +131,8 @@ IonCloud::IonCloud(const IonTrap_ptr ion_trap, const CloudParams& cp,
 /** @brief Clears the list of pointers to ions.
  */
 IonCloud::~IonCloud() {
+    Logger& log = Logger::getInstance();
+    log.debug("Deconstructing ion cloud.");
     ionVec_.clear();
 }
 
@@ -163,7 +166,7 @@ void IonCloud::kick(double dt) {
  *  Simulate trap ejection and electrode collision by removing ions. Note the
  *  radial-only test is not a physical representation of the electrodes.
  */
-/*
+/* IonCloud::collide
 void IonCloud::collide() {
     Logger& log = Logger::getInstance();
     int n=0;
@@ -179,7 +182,7 @@ void IonCloud::collide() {
     }
     std::stringstream ss;
     ss << "Removed " << n << " ions."<< std::endl;
-    log.log(Logger::info, ss.str());
+    log.info(ss.str());
 }
 */
 
@@ -192,12 +195,12 @@ void IonCloud::swap_first(const IonType& from, const IonType& to) {
     Logger& log = Logger::getInstance();
     for (auto ion : ionVec_) {
         if (ion->name() == from.name) {
-            log.log(Logger::debug, "Found first ion named " + from.name);
+            log.debug("Found first ion named " + from.name);
             ion->update_from(to);
             return;
         }
     }
-    log.log(Logger::warn, "Did not find ion named " + from.name);
+    log.warn("Did not find ion named " + from.name);
 }
 
 /**
@@ -243,7 +246,7 @@ void IonCloud::heat(double dt) {
 
 
 /**
- *  @brief Determine the total kinetic energy the ion cloud.
+ *  @brief Determine the total kinetic energy of the ion cloud.
  *
  *  The function sums the kinetic energy of each ion.
  *
@@ -261,7 +264,7 @@ double IonCloud::kinetic_energy() const {
 
 
 /**
- *  @brief Determine the total Coulomb energy the ion cloud.
+ *  @brief Determine the total Coulomb energy of the ion cloud.
  *
  *  The function sums the Coulomb energy contribution of each ion.
  *
@@ -294,7 +297,7 @@ double IonCloud::coulomb_energy() const {
 
 
 /**
- *  @brief Determine the total energy the ion cloud.
+ *  @brief Determine the total energy of the ion cloud.
  *
  *  The function sums the Coulomb and kinetic energy contribution of each ion
  *  by calling the IonCloud::coulomb_energy() and IonCloud::kinetic_energy()
@@ -334,6 +337,7 @@ void IonCloud::updateStats() {
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
+/* IonCloud::saveStats
 void IonCloud::saveStats(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
@@ -349,8 +353,8 @@ void IonCloud::saveStats(const std::string basePath,
     std::string name;
 
     // Write the header for each file
-      std::string statsHeader="<KE_x>\tvar(KE_x)\t<KE_y>\tvar(KE_y)\t<KE_z>\tvar(KE_z)\t<pos_x>\tvar(pos_x)\t<pos_y>\tvar(pos_y)\t<pos_z>\tvar(pos_z)";
-      std::string posHeader="x\ty\tz\tvx\tvy\tvz";
+      std::string statsHeader="avg(r), var(r), avg(z), var(z), avg(KE), var(KE)";
+      std::string posHeader="x, y, z, vx, vy, vz";
     for (auto& type : cloudParams_.ion_type_list) {
       name = basePath + type.name + statsFileEnding;
       writer.writeComment(name, statsHeader);
@@ -362,7 +366,7 @@ void IonCloud::saveStats(const std::string basePath,
         // Write the final position and velocity for each ion.
         name = basePath + ion->name() + posFileEnding;
         rowdata.clear();
-        // Scale reduced units to real=world units and rotate to align to
+        // Scale reduced units to real-world units and rotate to align to
         // axes between rods (calculation has axes crossing rods.)
         x = (ion->get_pos())[0] * length_scale;
         y = (ion->get_pos())[1] * length_scale;
@@ -388,30 +392,26 @@ void IonCloud::saveStats(const std::string basePath,
         name = basePath + ion->name() + statsFileEnding;
         rowdata.clear();
 
-        Stats<Vector3D> energy = ion->get_velStats();
-        Stats<Vector3D> pos = ion->get_posStats();
+        Stats<double> vel = (ion->get_velStats());
+        Stats<Vector3D> pos = (ion->get_posStats());
         double mon2 = (ion->get_mass())/2;
-        Vector3D avg_energy = energy.average();
-        Vector3D var_energy = energy.variance();
-        Vector3D avg_pos = pos.average();
-        Vector3D var_pos = pos.variance();
+        double avg_energy = (vel.average() * vel.average()) * (mon2 * trapParams_.energy_scale);
+        double var_energy = (vel.variance()/vel.average()) * (avg_energy * 1.41);
+        Vector3D avg_pos = pos.average() * trapParams_.length_scale;
+        Vector3D var_pos = pos.variance() * trapParams_.length_scale;
 
-        rowdata.push_back(avg_energy[0]*mon2);
-        rowdata.push_back(var_energy[0]*mon2);
-        rowdata.push_back(avg_energy[1]*mon2);
-        rowdata.push_back(var_energy[1]*mon2);
-        rowdata.push_back(avg_energy[2]*mon2);
-        rowdata.push_back(var_energy[2]*mon2);
         rowdata.push_back(avg_pos[0]);
         rowdata.push_back(var_pos[0]);
         rowdata.push_back(avg_pos[1]);
         rowdata.push_back(var_pos[1]);
-        rowdata.push_back(avg_pos[2]);
-        rowdata.push_back(var_pos[2]);
+        rowdata.push_back(avg_energy);
+        rowdata.push_back(var_energy);
 
         writer.writeRow(name, rowdata);
     }
 }
+*/
+
 
 /** @brief Save the current position and velocity of all ions in the cloud.
  *
@@ -427,6 +427,7 @@ void IonCloud::saveStats(const std::string basePath,
  *  @param length_scale Factor to convert distance to S.I. units.
  *  @param time_scale   Factor to convert time to S.I. units.
  */
+/* IonCloud::savePos
 void IonCloud::savePos(const std::string basePath,
                           const double length_scale,
                           const double time_scale) const {
@@ -467,6 +468,7 @@ void IonCloud::savePos(const std::string basePath,
         writer.writeRow(name, rowdata);
     }
 }
+*/
 
 /**
  *  @brief Collect the kinetic energy of all ions into a histogram.
@@ -478,7 +480,7 @@ void IonCloud::savePos(const std::string basePath,
  */
 void IonCloud::update_energy_histogram(IonHistogram_ptr h) const {
     for (auto ion : ionVec_) {
-        ion->recordKE(h);
+        ion->recordKE(h, trapParams_);
     }
 }
 
@@ -490,6 +492,7 @@ void IonCloud::update_energy_histogram(IonHistogram_ptr h) const {
  *
  *  @param h    The `ImageCollection` object that holds the histogram.
  */
+/*
 void IonCloud::update_position_histogram(ImageCollection& h) const {
     Vector3D posn;
     Vector3D rotated_pos;
@@ -502,7 +505,7 @@ void IonCloud::update_position_histogram(ImageCollection& h) const {
         h.addIon(ion->name(), rotated_pos);
     }
 }
-
+*/
 
 /**
  *  @brief Determine the aspect ratio of the ion cloud.
@@ -608,7 +611,6 @@ std::vector<Vector3D> IonCloud::get_lattice(size_t n) {
  *
  *  @return     An integer close to \n^3
  */
-
 int IonCloud::get_nearest_cube(int n) {
     // returns integer which when cubed is closest to n
     int min_cube = 1;

@@ -11,7 +11,6 @@
 
 #include <memory>
 #include <mutex>
-#include <thread>
 #include <vector>
 
 #include "vector3D.h"
@@ -27,17 +26,14 @@ class CoulombForce {
 
     CoulombForce( const CoulombForce & other ) = delete;
     CoulombForce& operator=( const CoulombForce& ) = delete;
+    Vector3D Reduction(Vector3D x[], int len);
  private:
     void direct_force();
     void split_force(int n);
 
     const IonCloud_ptr cloud_;   ///< Pointer to IonCloud.
     const SimParams& params_;  ///< Simulation parameters; uses coulomb_threads.
-    std::vector<Vector3D> pos_;  ///< Local working copy of ion positions.
     std::vector<Vector3D> force_;   ///< Vector of forces when completed.
-    std::thread m_Thread_;
-    std::mutex mutex_;
-    std::vector<std::thread> threads_;
 };
 
 #endif  // INCLUDE_COULOMBFORCE_H_

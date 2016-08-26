@@ -24,11 +24,11 @@ void Logger::initialise(const Level maxlevel, const std::string filename) {
     maxlevel_ = maxlevel;
 
     level_string_ = std::vector<std::string>(5, "");
-    level_string_[error] = "Error";
-    level_string_[warn] = "Warn";
-    level_string_[info] = "Info";
-    level_string_[debug] = "Debug";
-    level_string_[loop] = "Loop";
+    level_string_[ERROR] = "Error";
+    level_string_[WARN] = "Warn";
+    level_string_[INFO] = "Info";
+    level_string_[DEBUG] = "Debug";
+    level_string_[LOOP] = "Loop";
 }
 
 Logger::~Logger() {
@@ -38,14 +38,12 @@ Logger::~Logger() {
 /**
  *  @brief Log an event.
  *
- *  Write a log event to screen and file. This should be thread safe as we get
- *  a mutex lock before writing the log, and release it on return.
+ *  Write a log event to screen and file. This is not thread safe.
  *
  *  @param level Error level.
  *  @param message The log message.
  */
 void Logger::log(const Level level, const std::string message) {
-    lock scopelock(mtx_);
 
     if (maxlevel_ == -1) {
         std::cout << "Logger not initialised - " << message;
@@ -67,6 +65,9 @@ void Logger::log(const Level level, const std::string message) {
         ss <<std::endl;
         std::cout << ss.str();
         fileStream_ << ss.str();
-        fileStream_.flush();
+        fileStream_.flush(); 
     }
 }
+
+
+

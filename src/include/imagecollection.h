@@ -13,7 +13,6 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <thread>
 
 #include "hist3D.h"
 
@@ -33,32 +32,10 @@ class ImageCollection {
     const ImageCollection operator=(const ImageCollection&) = delete;
  private:
     typedef std::map<std::string, Hist3D_ptr> Collection;
-    typedef std::shared_ptr<ImageWorker> ImageWorker_ptr;
-    typedef std::list<ImageWorker_ptr> ThreadList;
 
     Collection collection_;
     double binsize_;
-
-    friend class ImageWorker;
 };
-
-class ImageWorker {
- public:
-    ImageWorker(const std::string &basePath, const std::string &name,
-            Hist3D_ptr hist, const MicroscopeParams &p);
-    void join();
-
- private:
-    friend class ImageCollection;
-    std::string base_path_;
-    std::thread thread_;
-    std::string filename_;
-    Hist3D_ptr  hist_;
-    const MicroscopeParams& params_;
-
-    void generateAndSave();
-};
-
 
 
 #endif  // INCLUDE_IMAGECOLLECTION_H_

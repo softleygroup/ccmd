@@ -9,12 +9,11 @@
 #define INCLUDE_IONTRAP_H_
 
 #include <cmath>
+#include <memory>
 #include <vector>
 
-#include "ion.h"
+#include "ccmdsim.h"
 #include "vector3D.h"
-
-class TrapParams;
 
 class IonTrap {
  public:
@@ -39,9 +38,6 @@ class IonTrap {
      */
     virtual void evolve(double dt) = 0;
 
-    // the ion trap parameters sets real length scale
-    double get_length_scale() const { return length_scale_; }
-    double get_time_scale() const { return time_scale_; }
 
     // Return the current value of the trapping voltage multiplier.
     virtual double get_phase() = 0;
@@ -52,8 +48,6 @@ class IonTrap {
  protected:
     double a_unit_mass_;     ///< Mathieu \c a parameter.
     double q_unit_mass_;     ///< Matheiu \c q parameter.
-    double length_scale_;    ///< Derived simulation length scale.
-    double time_scale_;      ///< Derived simulation time scale.
 
     double time_now_;        ///< Current time in simulation units.
 
@@ -65,7 +59,7 @@ class IonTrap {
     /** @brief Reference to trap parameters object. */
     const TrapParams& params_;
 };
-
+typedef std::shared_ptr<IonTrap> IonTrap_ptr;
 
 class CosineTrap : public IonTrap {
  public:

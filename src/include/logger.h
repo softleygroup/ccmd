@@ -11,7 +11,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <mutex>
 
 /**
  *  @class Logger
@@ -21,8 +20,6 @@
  *  calling getInstance(). Before the first logging event, set the output level
  *  and file name using the initialise function.
  *
- *  Logging should be thread safe as a boost::mutex log is set before writing
- *  and released immediately after.
  *
  *  Messages are logged with a timestamp, the level and the message:
  *
@@ -59,7 +56,7 @@ class Logger {
      *  \c warn     | Warning that a default parameter is used as input file is out of range
      *  \c error    | Critical error, simulation will stop after this.
      */
-    enum Level {error, warn, info, debug, loop};
+    enum Level {ERROR, WARN, INFO, DEBUG, LOOP};
     ~Logger();
 
     static Logger& getInstance() {
@@ -70,6 +67,13 @@ class Logger {
     void initialise(const Level maxlevel, const std::string filename);
     void log(const Level level, const std::string message);
 
+    // Shortcuts
+    void loop(const std::string message) { log(LOOP, message); }
+    void debug(const std::string message) {log(DEBUG, message); }
+    void info(const std::string message) { log(INFO, message); }
+    void warn(const std::string message) { log(WARN, message); }
+    void error(const std::string message) { log(ERROR, message); }
+
  private:
     // Don't implement
     Logger() : maxlevel_(-1) {}
@@ -79,27 +83,8 @@ class Logger {
     std::ofstream fileStream_;               ///< Log file stream.
     int maxlevel_;                           ///< Verbosity set in initialise.
     std::vector<std::string> level_string_;  ///< Names of each level.
-    std::mutex mtx_;                         ///< Mutex lock.
 };
 
-/**
- *  @class lock
- *  @brief Holds a reference to a mutex lock and ensures the lock is released
- *  on exception.
- *
- *  Releasing the lock in the destructor ensures the lock is released when this
- *  object goes out of scope, either through completing the function that
- *  needed a lock, or after an exception.
- */
-class lock {
- public:
-    explicit lock(std::mutex &mtx) : mtx_(mtx) { mtx.lock(); }
-
-    ~lock() { mtx_.unlock(); }
-
- private:
-    std::mutex& mtx_;
-};
 
 
 #endif  // INCLUDE_LOGGER_H_

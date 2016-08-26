@@ -44,7 +44,7 @@
 WaveformTrap::WaveformTrap(const TrapParams& params)
     : IonTrap(params) {
     Logger &log = Logger::getInstance();
-    log.log(Logger::info, "Initialising a waveform trap...");
+    log.info("Initialising a waveform trap...");
     std::ifstream wfFile(params_.waveformFile.c_str(), std::ifstream::in);
     double val;
     while (wfFile.good()) {
@@ -54,11 +54,11 @@ WaveformTrap::WaveformTrap(const TrapParams& params)
     wfFile.close();
     npts_ = static_cast<int>(amplitudes_.size());
     if (npts_ == 0) {
-        log.log(Logger::error, "Error: no points loaded from waveform file.");
-        log.log(Logger::error, "loaded from file " + params_.waveformFile);
+        log.error("Error: no points loaded from waveform file.");
+        log.error("loaded from file " + params_.waveformFile);
         throw std::runtime_error("No waveform loaded");
     }
-    log.log(Logger::info, "Read " + std::to_string(npts_)
+    log.info("Read " + std::to_string(npts_)
            + " points from waveform file");
 }
 
