@@ -1,6 +1,6 @@
 
 #include "include/imagehistogramlistener.h"
-#include "include/vector3d.h"
+#include "include/vector3D.h"
 
 ImageHistogramListener::ImageHistogramListener(const IntegrationParams& int_params,
                                    const TrapParams& trap_params,

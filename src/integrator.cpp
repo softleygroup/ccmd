@@ -26,7 +26,7 @@ Integrator::Integrator(const IonTrap_ptr it, const IonCloud_ptr ic,
     : trap_(it), ions_(ic), coulomb_(ic, sp), params_(params), listeners_(){
     // get Coulomb forces on construction
     coulomb_.update();
-}
+    }
 
 Integrator::~Integrator() {}
 

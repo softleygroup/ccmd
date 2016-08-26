@@ -17,11 +17,11 @@ OBJS := $(addprefix $(BUILD_DIR), $(OBJS))
 VPATH = ./ 
 EXECUTABLE:= ../bin/ccmd 
 
-BOOST_INCLUDE = /u/tps/crennick/boost_1_55_0
-
+BOOST_INCLUDE = /system/software/linux-x86_64/lib/boost/1_58_0/include
 
 intel: INCLUDE_DIRS := $(BOOST_INCLUDE) ./include
-gnu: INCLUDE_DIRS :=  ./include /opt/local/include C:\MinGW\boost_1_58_0 C:\MinGW\lib\gcc\mingw32\4.8.1\include C:\mingw\include\libpng C:\mingw\dcmt0.6.2\include
+gnu: INCLUDE_DIRS :=  ./include /opt/local/include C:\MinGW\boost_1_58_0 C:\MinGW\lib\gcc\mingw32\4.8.1\include C:\mingw\include\libpng C:\mingw\dcmt0.6.2\include /system/software/linux-x86_64/lib/boost/1_58_0/include
+
 
 intel: LIBRARY_DIR := -LC:\MinGW\mingw32\lib\gcc\mingw32\4.8.1 C:\mingw\include\libpng
 gnu: LIBRARY_DIR := -LC:\mingw\include\libpng -LC:\mingw\dcmt0.6.2\lib
@@ -30,8 +30,8 @@ LIBRARIES := -lpng -lz
 CPPFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 
 intel: CPPFLAGS += -O3 -std=c++11
-gnu: CPPFLAGS +=  -Ofast -std=c++11  -march=native -ffast-math -m64 -funroll-loops
-gnu: LDFLAGS +=  -Ofast -std=c++11 -march=native -ffast-math -m64 -funroll-loops
+gnu: CPPFLAGS +=  -Ofast -std=c++11 -ffast-math -m64 -funroll-loops
+gnu: LDFLAGS +=  -Ofast -std=c++11 -ffast-math -m64 -funroll-loops
 gnu: CFLAGS += -fopenmp
 
 #LIBRARY_PATH = $(foreach librarydir,$(LIBRARIES),$(librarydir))
